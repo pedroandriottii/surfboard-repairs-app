@@ -1,12 +1,12 @@
 
 import { RegisterForm } from "@/components/auth/register-form";
 
-const RegisterPage = () =>{
-    return(
+const RegisterPage = () => {
+    return (
         <div>
             <RegisterForm />
         </div>
-        
+
     )
 }
 

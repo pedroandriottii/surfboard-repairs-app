@@ -25,8 +25,8 @@ import {
 import { FormSuccess } from "../form-success";
 
 export const RegisterForm = () => {
-    const [error, setError] = useState<string | undefined >("");
-    const [success, setSuccess] = useState<string | undefined >("");
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -55,45 +55,45 @@ export const RegisterForm = () => {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
-                    <FormField control={form.control} name="name" render={({ field }) => (
+                        <FormField control={form.control} name="name" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Nome</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="João Silva" type="name" disabled={isPending}/>
+                                    <Input {...field} placeholder="João Silva" type="name" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                         <FormField control={form.control} name="email" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending}/>
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Telefone</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="(01) 98765-4321" type="name" disabled={isPending}/>
+                                    <Input {...field} placeholder="(01) 98765-4321" type="name" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                         <FormField control={form.control} name="password" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending}/>
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                     </div>
-                    <FormError message={error}/>
-                    <FormSuccess message={success}/>
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
                     <Button type="submit" className="w-full" disabled={isPending}>
                         Cadastrar
                     </Button>
