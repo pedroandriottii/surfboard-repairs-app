@@ -1,11 +1,12 @@
-import type { NextAuthConfig } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
+import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
-import { LoginSchema } from "@/schemas"
+import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/user";
 
 export default {
+    secret: process.env.AUTH_SECRET,
     providers: [
         Credentials({
             async authorize(credentials){
