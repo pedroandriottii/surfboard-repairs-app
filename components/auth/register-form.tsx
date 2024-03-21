@@ -95,7 +95,7 @@ export const RegisterForm = () => {
                     <FormError message={error}/>
                     <FormSuccess message={success}/>
                     <Button type="submit" className="w-full" disabled={isPending}>
-                        Entrar
+                        Cadastrar
                     </Button>
                 </form>
             </Form>
