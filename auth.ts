@@ -33,7 +33,8 @@ export const {
       if(account?.provider !== "credentials") return true;
 
       const existingUser = await getUserById(user.id);
-
+      
+      // Bloqueia login se o email não foi verificado
       if(!existingUser?.emailVerified) return false;
 
       //TODO: 2FA

@@ -2,7 +2,8 @@
 *  Rotas que serão acessíveis publicamente (Não precisam de autenticação) @type {string[]}
 */
 export const publicRoutes = [
-    "/"
+    "/",
+    "/auth/new-verification",
 ];
 
 /**
