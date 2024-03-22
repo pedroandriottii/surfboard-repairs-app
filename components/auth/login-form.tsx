@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 
+import { useSearchParams } from "next/navigation"
 import { useState, useTransition } from "react";
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { useForm } from "react-hook-form";
@@ -25,6 +26,9 @@ import {
 import { FormSuccess } from "../form-success";
 
 export const LoginForm = () => {
+    const searchParamns = useSearchParams();
+    const urlError = searchParamns.get("error") === "OAuthAccountNotLinked" ? "Email já em uso!" : "";
+
     const [error, setError] = useState<string | undefined >("");
     const [success, setSuccess] = useState<string | undefined >("");
     const [isPending, startTransition] = useTransition();
@@ -43,8 +47,9 @@ export const LoginForm = () => {
 
         startTransition(() => {
             login(values).then((data) => {
-                setError(data.error);
-                setSuccess(data.success);
+                setError(data?.error);
+                // TODO: Lançar quando tiver 2FA
+                // setSuccess(data?.success);
             })
         });
     }
@@ -73,7 +78,7 @@ export const LoginForm = () => {
                             </FormItem>
                         )}/>
                     </div>
-                    <FormError message={error}/>
+                    <FormError message={error || urlError }/>
                     <FormSuccess message={success}/>
                     <Button type="submit" className="w-full" disabled={isPending}>
                         Entrar
