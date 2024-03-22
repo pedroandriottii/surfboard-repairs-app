@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, InputHTMLAttributes } from "react";
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 
 import { register } from "@/actions/register"
+
+import InputMask from "react-input-mask";
 
 import {
     Form,
@@ -74,13 +76,15 @@ export const RegisterForm = () => {
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Telefone</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="(01) 98765-4321" type="name" disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
+                        <FormItem>
+                            <FormLabel>Telefone</FormLabel>
+                            <FormControl>
+                                <InputMask mask="(99) 99999-9999" value={field.value} onChange={field.onChange} disabled={isPending}>
+                                    {(inputProps) => <Input {...inputProps} placeholder="(81) 98765-4321" type="text" />}
+                                </InputMask>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
                         )} />
                         <FormField control={form.control} name="password" render={({ field }) => (
                             <FormItem>
