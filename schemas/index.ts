@@ -23,3 +23,9 @@ export const ResetSchema = z.object({
         {message: "Insira o e-mail!"}
     ),
 });
+
+export const NewPasswordSchema = z.object({
+    password: z.string().min(6,
+        {message: "A senha deve ter no mínimo 6 caracteres."}
+    ),
+});
