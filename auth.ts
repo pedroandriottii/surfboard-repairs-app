@@ -32,12 +32,10 @@ export const {
       // Permitir OAuth sem verificação de email
       if(account?.provider !== "credentials") return true;
 
-      const existingUser = await getUserById(user.id);
+      const existingUser = await getUserById(user.id as string);
       
       // Bloqueia login se o email não foi verificado
       if(!existingUser?.emailVerified) return false;
-
-      //TODO: 2FA
 
       return true;
     },
