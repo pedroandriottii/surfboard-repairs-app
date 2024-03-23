@@ -21,7 +21,7 @@ export default async function RootLayout({
 
   return (
     <SessionProvider session= {session} >
-      <html lang="en">
+      <html lang="en" className="bg-slate-600">
         <body className={inter.className}>
           <Toaster />
           {children}</body>
