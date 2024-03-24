@@ -76,13 +76,12 @@ export const RegisterForm = () => {
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
+                            // TODO: COLOCAR INPUTMASK
                         <FormItem>
                             <FormLabel>Telefone</FormLabel>
-                            <FormControl>
-                                <InputMask mask="(99) 99999-9999" value={field.value} onChange={field.onChange} disabled={isPending}>
-                                    {(inputProps) => <Input {...inputProps} placeholder="(81) 98765-4321" type="text" />}
-                                </InputMask>
-                            </FormControl>
+                                <FormControl>
+                                <Input {...field} placeholder="(81) 98765-4321" type="text" pattern="\d*" disabled={isPending} />
+                                </FormControl>
                             <FormMessage />
                         </FormItem>
                         )} />
