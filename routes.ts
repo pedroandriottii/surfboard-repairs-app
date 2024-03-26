@@ -7,7 +7,7 @@ export const publicRoutes = [
 ];
 
 /**
- * Rotas que são utilizadas para autenticação, elas vão redirecionar usuários logados para /settings @type {string[]}
+ * Rotas que são utilizadas para autenticação, elas vão redirecionar usuários logados para /home @type {string[]}
 */
 
 export const authRoutes = [
@@ -28,4 +28,4 @@ export const apiAuthPrefix = "/api/auth";
  * Rota para redirecionar usuários logados @type {string}
 */
 
-export const DEFAULT_LOGIN_REDIRECT = "/settings";
+export const DEFAULT_LOGIN_REDIRECT = "/home";

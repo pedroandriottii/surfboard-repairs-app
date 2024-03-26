@@ -1,6 +1,7 @@
 "use client";
 
 import { FaUser } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
 import { ExitIcon } from "@radix-ui/react-icons"
 
 import { 
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { SettingsButton } from "@/components/auth/settings-button";
 
 export const UserButton = () => {
     const user = useCurrentUser();
@@ -31,7 +33,13 @@ export const UserButton = () => {
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-40 align-end">
+            <DropdownMenuContent>
+                <SettingsButton>
+                    <DropdownMenuItem>
+                        <IoSettingsOutline className="h-4 w-4 mr-2"/>
+                        Configurações
+                    </DropdownMenuItem>
+                </SettingsButton>
                 <LogoutButton>
                     <DropdownMenuItem>
                         <ExitIcon className="h-4 w-4 mr-2" />

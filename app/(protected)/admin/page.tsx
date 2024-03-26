@@ -20,6 +20,7 @@ const AdminPage = () => {
         }
     })
     }
+    
     const onApiRouteClick = () => {
         fetch("/api/admin").then((response) => {
             if(response.ok){
@@ -31,7 +32,7 @@ const AdminPage = () => {
     }
 
     return (
-        <Card className="w-[600px]">
+        <Card>
             <CardHeader>
                 <p className="text-2xl font-semibold text-center">
                     Admin

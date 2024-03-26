@@ -13,6 +13,20 @@ enum UserRole {
   USER
 }
 
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+}
+
+enum ServiceStatus {
+  PENDING
+  IN_PROGRESS
+  FINISHED
+  CANCELED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -60,4 +74,17 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model Service {
+  id String @id @default(cuid())
+  client_name String
+  user_mail String
+  phone String
+  value Float
+  max_time DateTime
+  now_time DateTime
+  description String
+  payment_method PaymentMethod
+  status ServiceStatus
 }
