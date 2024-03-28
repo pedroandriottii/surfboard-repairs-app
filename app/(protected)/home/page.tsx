@@ -12,26 +12,23 @@ const HomePage = () => {
     const user = useCurrentUser();
     const [services, setServices] = useState <Service[] | null>();
 
-    if(role === "USER") {
-        useEffect(() => {
+    useEffect(() => {
+        if(role === "ADMIN"){
             const getServices = async () => {
-              const services = await getServicesByEmail(user?.email!!)
-              setServices(services);
-            }
-        
+                const services = await getAllServices()
+                setServices(services);
+                }
             getServices();
-        }, [user?.email])
-    }
-    if(role === "ADMIN"){
-        useEffect(() => {
+
+        }
+        if(role === "USER"){
             const getServices = async () => {
-              const services = await getAllServices()
-              setServices(services);
-            }
-        
+                const services = await getServicesByEmail(user?.email!!)
+                setServices(services);
+                }
             getServices();
-        }, [user?.email])
-    }
+        }
+    }, [user?.email])
     
 
 
