@@ -62,7 +62,7 @@ const HomePage = () => {
                 <div className={cn("flex flex-col align-center justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5 font-[700]", font.className)}>
                     {services?.map((service) => {
                         return (
-                            <div className='flex align-center items-center border-b-2 last:border-none'>
+                            <div key={service.id} className='flex align-center items-center border-b-2 last:border-none'>
                                 <div className='justify-center align-center flex flex-col p-2'>
                                     <Avatar>
                                         <AvatarImage src={user?.image || ""} />
@@ -72,7 +72,7 @@ const HomePage = () => {
                                     </Avatar>
                                 </div>
                                 <div className='flex  w-full justify-between items-center'>
-                                    <div key={service.id} className='flex justify-between'>
+                                    <div className='flex justify-between'>
                                         <div className='text-left align-left justify-start pl-4'>
                                             <p>{service.client_name}</p>
                                             <p className='text-[#6B7589]'>{formatDate(service.max_time)}</p>
@@ -100,7 +100,7 @@ const HomePage = () => {
                 <div className={cn("flex flex-col align-center justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5 font-[700]", font.className)}>
                     {services?.map((service) => {
                         return (
-                            <div className='flex align-center items-center border-b-2 last:border-none'>
+                            <div key={service.id} className='flex align-center items-center border-b-2 last:border-none'>
                                 <div className='justify-center align-center flex flex-col p-2'>
                                     <Avatar>
                                         <AvatarImage src={user?.image || ""} />
@@ -110,7 +110,7 @@ const HomePage = () => {
                                     </Avatar>
                                 </div>
                                 <div className='flex  w-full justify-between items-center'>
-                                    <div key={service.id} className='flex justify-between'>
+                                    <div className='flex justify-between'>
                                         <div className='text-left align-left justify-start pl-4'>
                                             <p>{service.client_name}</p>
                                             <p className='text-[#6B7589]'>{formatDate(service.max_time)}</p>

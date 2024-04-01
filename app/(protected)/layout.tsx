@@ -4,9 +4,9 @@ interface ProtectedLayoutProps {
     children: React.ReactNode;
 }
 
-const ProtectedLayout = ({children}: ProtectedLayoutProps) => {
-    return(
-        <div>
+const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
+    return (
+        <div className="bg-[#D0D5DD]">
             <Navbar />
             {children}
         </div>
