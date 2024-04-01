@@ -39,4 +39,6 @@ export const ServiceSchema = z.object({
     description: z.string(),
     payment_method: z.enum(["CASH", "CREDIT_CARD", "DEBIT_CARD", "PIX"]),
     status: z.enum(["PENDING", "IN_PROGRESS", "FINISHED", "CANCELED"]),
+    photo_url: z.union([z.string().url(), z.literal(""), z.null()]),
+
 });

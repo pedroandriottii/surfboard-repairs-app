@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 import {
     Form,
     FormControl,
@@ -38,8 +41,10 @@ export const CreateServiceForm = () => {
             description: "",
             payment_method: "CASH",
             status: "PENDING",
+            photo_url: "",
         }
     })
+
 
     const paymentMethodOptions = {
         CASH: "Dinheiro",
@@ -54,12 +59,45 @@ export const CreateServiceForm = () => {
         CANCELED: "Cancelado",
     }
 
+    const [imgURL, setImgURL] = useState("");
+    const [progress, setProgress] = useState(0);
+
     const onSubmit = async (values: z.infer<typeof ServiceSchema>) => {
-        const result = await createService(values);
-        if (result.success) {
-            setSuccess(result.success);
+
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        const file = fileInput?.files ? fileInput.files[0] : null;
+
+        if (file) {
+            const storageRef = ref(storage, `images/${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed', (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setProgress(progress);
+            },
+                (error) => {
+                    console.error(error);
+                    setError("Falha no upload da imagem.")
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+                        const formValues = { ...values, photo_url: downloadURL };
+
+                        createService(formValues).then(result => {
+                            if (result.success) {
+                                setSuccess(result.success);
+                            } else {
+                                setError(result.error);
+                            }
+
+                        }).catch(error => {
+                            console.error("Erro ao criar serviço", error);
+                            setError("Erro ao criar serviço.")
+                        })
+                    })
+                })
         } else {
-            setError(result.error);
+            setError("Selecione uma imagem para o serviço.")
         }
     };
 
@@ -70,6 +108,18 @@ export const CreateServiceForm = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
                         <div className="space-y-4">
+                            <FormField control={form.control} name="photo_url" render={({ field }) => {
+                                const { value, ...inputProps } = field;
+                                return (
+                                    <FormItem>
+                                        <FormLabel>Foto</FormLabel>
+                                        <FormControl>
+                                            <Input {...inputProps} type="file" disabled={isPending} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                );
+                            }} />
                             <FormField control={form.control} name="client_name" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Nome do Ciente</FormLabel>
@@ -141,9 +191,9 @@ export const CreateServiceForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                            <FormField control={form.control} name="payment_method" render={({ field }) => (
+                            <FormField control={form.control} name="status" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Método de Pagamento</FormLabel>
+                                    <FormLabel>Status</FormLabel>
                                     <FormControl>
                                         <select {...field} disabled={isPending} className="input-class-name flex flex-col border w-full rounded-md h-10 border-input px-3 py-2">
                                             {Object.entries(statusOptions).map(([value, name]) => (

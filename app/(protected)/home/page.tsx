@@ -7,14 +7,11 @@ import Link from 'next/link';
 import { getAllServices, getServicesByEmail } from '@/data/services';
 import { Service } from '@prisma/client';
 
-
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 
-import { FaUser } from 'react-icons/fa';
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
+
 const font = Montserrat({
     subsets: ['latin'],
     weight: ["600"]
@@ -54,8 +51,6 @@ const HomePage = () => {
         return `${day}/${month}`;
     }
 
-
-
     if (role === "ADMIN") {
         return (
             <div>
@@ -63,33 +58,27 @@ const HomePage = () => {
                 <div className={cn("flex flex-col align-center justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5 font-[700]", font.className)}>
                     {services?.map((service) => {
                         return (
-                            <div key={service.id} className='flex align-center items-center border-b-2 last:border-none'>
-                                <div className='justify-center align-center flex flex-col p-2'>
-                                    <Avatar>
-                                        <AvatarImage src={user?.image || ""} />
-                                        <AvatarFallback className="bg-sky-500">
-                                            <FaUser className="text-white" />
-                                        </AvatarFallback>
-                                    </Avatar>
+                            <div key={service.id} className='flex items-center border-b-2 last:border-none'>
+                                <div className="relative w-32 h-20 flex-shrink-0">
+                                    <img src={service.photo_url} alt="Foto do Serviço" className="absolute h-full w-full object-cover rounded-l-lg" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#F9FAFB]"></div>
                                 </div>
-                                <div className='flex  w-full justify-between items-center'>
-                                    <div className='flex justify-between'>
-                                        <div className='text-left align-left justify-start pl-4'>
-                                            <p>{service.client_name}</p>
-                                            <p className='text-[#6B7589]'>{formatDate(service.max_time)}</p>
-                                        </div>
+                                <div className='flex flex-1 justify-between items-center pl-4'>
+                                    <div>
+                                        <p className='truncate'>{service.client_name}</p>
+                                        <p className='text-[#6B7589]'>{formatDate(service.max_time)}</p>
                                     </div>
                                     <ChevronRightIcon style={{ width: '22px', height: '22px' }} />
                                 </div>
                             </div>
                         )
-                    })
-                    }
-                    <Button variant="default">
-                        <Link href="/create-service">Registar Conserto</Link>
+                    })}
+                    <Button variant="default" className=" mt-4">
+                        <Link href="/create-service">Registrar Conserto</Link>
                     </Button>
                 </div>
             </div>
+
         )
     }
     if (role === "USER") {
@@ -102,13 +91,8 @@ const HomePage = () => {
                     {services?.map((service) => {
                         return (
                             <div key={service.id} className='flex align-center items-center border-b-2 last:border-none'>
-                                <div className='justify-center align-center flex flex-col p-2'>
-                                    <Avatar>
-                                        <AvatarImage src={user?.image || ""} />
-                                        <AvatarFallback className="bg-sky-500">
-                                            <FaUser className="text-white" />
-                                        </AvatarFallback>
-                                    </Avatar>
+                                <div className='justify-center align-center flex flex-col max-w-4'>
+                                    <img src={service.photo_url} alt="Foto da Prancha" style={{ width: "10px", height: "10px" }} />
                                 </div>
                                 <div className='flex  w-full justify-between items-center'>
                                     <div className='flex justify-between'>

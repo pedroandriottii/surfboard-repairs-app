@@ -78,6 +78,7 @@ model PasswordResetToken {
 
 model Service {
   id String @id @default(cuid())
+  photo_url String?
   client_name String
   user_mail String
   phone String
