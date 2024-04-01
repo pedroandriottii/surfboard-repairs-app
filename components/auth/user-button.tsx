@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { ExitIcon } from "@radix-ui/react-icons"
 
-import { 
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -23,20 +23,20 @@ import { SettingsButton } from "@/components/auth/settings-button";
 export const UserButton = () => {
     const user = useCurrentUser();
 
-    return(
+    return (
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
-                    <AvatarImage src={user?.image || ""}/>
+                    <AvatarImage src={user?.image || ""} />
                     <AvatarFallback className="bg-sky-500">
-                        <FaUser className="text-white"/>
+                        <FaUser className="text-white" />
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <SettingsButton>
                     <DropdownMenuItem>
-                        <IoSettingsOutline className="h-4 w-4 mr-2"/>
+                        <IoSettingsOutline className="h-4 w-4 mr-2" />
                         Configurações
                     </DropdownMenuItem>
                 </SettingsButton>
