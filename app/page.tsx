@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { LoginButton } from "@/components/auth/login-button";
 
-import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/base/navbar";
 
+import { Montserrat } from "next/font/google";
 const font = Montserrat({
   subsets: ['latin'],
   weight: ["600"]

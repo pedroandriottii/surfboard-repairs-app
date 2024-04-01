@@ -59,6 +59,7 @@ const HomePage = () => {
     if (role === "ADMIN") {
         return (
             <div>
+                <h1 className={cn('font-bold ml-5 mb-1 mt-4', font.className)}>Consertos em Andamento</h1>
                 <div className={cn("flex flex-col align-center justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5 font-[700]", font.className)}>
                     {services?.map((service) => {
                         return (
