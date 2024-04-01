@@ -41,9 +41,9 @@ const HomePage = () => {
             }
             getServices();
         }
-    }, [user?.email])
+    }, [user?.email, role])
 
-    function formatDate(date) {
+    function formatDate(date: any) {
         const day = date.getDate().toString().padStart(2, '0');
         const months = [
             'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
