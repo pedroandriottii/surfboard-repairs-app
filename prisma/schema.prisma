@@ -1,11 +1,10 @@
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 enum UserRole {
@@ -18,13 +17,13 @@ enum PaymentMethod {
   CREDIT_CARD
   DEBIT_CARD
   PIX
+  FREE
 }
 
 enum ServiceStatus {
   PENDING
-  IN_PROGRESS
-  FINISHED
-  CANCELED
+  READY
+  DELIVERED
 }
 
 model User {
@@ -40,18 +39,18 @@ model User {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -59,33 +58,33 @@ model Account {
 }
 
 model VerificationToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
 model PasswordResetToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
 model Service {
-  id String @id @default(cuid())
-  photo_url String?
-  client_name String
-  user_mail String
-  phone String
-  value Float
-  max_time DateTime
-  now_time DateTime
-  description String
+  id             String        @id @default(cuid())
+  photo_url      String?
+  client_name    String
+  user_mail      String
+  phone          String
+  value          Float
+  max_time       DateTime
+  now_time       DateTime
+  description    String
   payment_method PaymentMethod
-  status ServiceStatus
+  status         ServiceStatus
 }

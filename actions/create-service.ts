@@ -14,7 +14,8 @@ export const createService = async (values: z.infer<typeof ServiceSchema>) => {
     }
 
     try {
-        const { client_name, user_mail, phone, value, max_time, description, payment_method, status } = validatedFields.data;
+        const { client_name, user_mail, phone, value, max_time, description, payment_method } = validatedFields.data;
+        const status = "PENDING";
         const now_time = new Date();
         const photo_url = validatedFields.data.photo_url || "";
 
