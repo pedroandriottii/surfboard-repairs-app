@@ -14,7 +14,7 @@ export const createService = async (values: z.infer<typeof ServiceSchema>) => {
     }
 
     try {
-        const { client_name, user_mail, phone, value, max_time, description, payment_method, status} = validatedFields.data;
+        const { client_name, user_mail, phone, value, max_time, description, payment_method, status } = validatedFields.data;
         const now_time = new Date();
         const photo_url = validatedFields.data.photo_url || "";
 
@@ -32,8 +32,6 @@ export const createService = async (values: z.infer<typeof ServiceSchema>) => {
                 photo_url,
             }
         });
-
-        console.log("Serviço criado com sucesso:", service);
         return { success: "Serviço criado com sucesso" };
     } catch (error) {
         console.error("Erro ao criar serviço:", error);
