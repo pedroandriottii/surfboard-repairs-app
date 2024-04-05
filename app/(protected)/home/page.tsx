@@ -5,18 +5,18 @@ import Link from 'next/link';
 
 const HomePage = () => {
     return (
-        <div>
-            <Button>
+        <div className='flex flex-col items-center gap-10 p-10 '>
+            <Button className=' w-full h-full'>
                 <Link href="/services">
                     Ver Serviços
                 </Link>
             </Button>
-            <Button>
+            <Button className=' w-full h-full'>
                 <Link href="/dashboard">
-                    Ver Serviços
+                    Relatórios
                 </Link>
             </Button>
-            <Button>
+            <Button className=' w-full h-full'>
                 <Link href="/services">
                     Ver Serviços
                 </Link>

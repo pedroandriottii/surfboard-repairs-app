@@ -98,7 +98,7 @@ export const CreateServiceForm = () => {
     return (
         <div className="flex items-center align-center justify-center m-2">
             <RoleGate allowedRole="ADMIN">
-                <CardWrapper headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/home">
+                <CardWrapper headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/services">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
                             <div className="space-y-4">
