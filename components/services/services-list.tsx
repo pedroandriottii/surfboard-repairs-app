@@ -1,74 +1,64 @@
-"use client";
-import React, { useEffect, useState } from 'react';
-
-import { ChevronRightIcon } from '@radix-ui/react-icons';
-
-import { Montserrat } from "next/font/google";
+import { Button } from "@/components/ui/button";
+import { LoginButton } from "@/components/auth/login-button";
 import { cn } from "@/lib/utils";
-import { useCurrentRole } from '@/hooks/use-current-role';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { Service } from '@prisma/client';
-import { getAllServices, getServicesByEmail } from '@/data/services';
-import { Button } from '../ui/button';
+import { Navbar } from "@/components/base/navbar";
+import { Montserrat } from "next/font/google";
 import Link from 'next/link';
+import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getAllServices, getServicesByEmail } from '@/data/services';
+import { Service, ServiceStatus } from '@prisma/client';
+import React, { useEffect, useState } from 'react';
 
 const font = Montserrat({
     subsets: ['latin'],
     weight: ["600"]
 });
 
-type ServiceStatus = "PENDING" | "READY" | "DELIVERED";
-
 const statusTexts = {
     PENDING: "Serviços Pendentes",
     READY: "Serviços Prontos",
     DELIVERED: "Serviços Entregues"
-
 }
 
 const ServicesList = () => {
     const role = useCurrentRole();
     const user = useCurrentUser();
-    const [services, setServices] = useState<Service[] | null>();
+    const [services, setServices] = useState<Service[] | null>(null);
     const [statusFilter, setStatusFilter] = useState<ServiceStatus>("PENDING");
 
     useEffect(() => {
         if (role === "ADMIN") {
-            const getServices = async () => {
-                const services = await getAllServices()
+            const fetchServices = async () => {
+                const services = await getAllServices();
                 setServices(services);
-            }
-            getServices();
-
-        }
-        if (role === "USER") {
-            const getServices = async () => {
-                const services = await getServicesByEmail(user?.email!!)
+            };
+            fetchServices();
+        } else if (role === "USER") {
+            const fetchServices = async () => {
+                const services = await getServicesByEmail(user?.email ?? '');
                 setServices(services);
-            }
-            getServices();
+            };
+            fetchServices();
         }
-    }, [user?.email, role])
+    }, [role, user?.email]);
 
-    function formatDate(date: any) {
-        const day = date.getDate().toString().padStart(2, '0');
-        const months = [
-            'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
-            'jul', 'ago', 'set', 'out', 'nov', 'dez'
-        ];
-        const monthIndex = date.getMonth();
+    function formatDate(date: Date) {
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0');
+        const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+        const monthIndex = d.getMonth();
         const month = months[monthIndex];
         return `${day}/${month}`;
     }
 
-    const filteredServices = services?.filter((service) => {
-        return service.status === statusFilter;
-    })
+    const filteredServices = services?.filter(service => service.status === statusFilter);
 
-    function getMaxtimeClass(max_time: string | number): string {
+    function getMaxtimeClass(maxTime: Date): string {
         const now = new Date();
-        const maxTime = new Date(max_time);
-        const diffTime = Math.abs(maxTime.getTime() - now.getTime());
+        const deadline = new Date(maxTime);
+        const diffTime = Math.abs(deadline.getTime() - now.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         if (diffDays > 3) {
@@ -78,49 +68,43 @@ const ServicesList = () => {
         } else {
             return 'text-red-500';
         }
-
     }
-
 
     return (
         <div className='mb-24'>
-            <div className="flex items-center align-center justify-center gap-4 p-2">
+            <div className="flex items-center justify-center gap-4 p-2">
                 <Button onClick={() => setStatusFilter('PENDING')} className={statusFilter === 'PENDING' ? 'active' : ''}>Pendentes</Button>
                 <Button onClick={() => setStatusFilter('READY')} className={statusFilter === 'READY' ? 'active' : ''}>Prontos</Button>
                 <Button onClick={() => setStatusFilter('DELIVERED')} className={statusFilter === 'DELIVERED' ? 'active' : ''}>Entregues</Button>
             </div>
-
             <h1 className={cn('font-bold ml-5 mb-1 mt-4', font.className)}>{statusTexts[statusFilter]}</h1>
-            <div className={cn("flex flex-col align-center justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5", font.className)}>
-
-                {filteredServices?.map((service, index) => {
-                    const isLast = index === filteredServices.length - 1;
-                    const maxtimeClass = service.status === "PENDING" ? getMaxtimeClass(service.max_time.toISOString()) : '';
-                    return (
-                        <div key={service.id} className={`flex items-center border-b-2 ${isLast ? 'border-none' : ''}`}>
-                            <div className="relative w-32 h-20 flex-shrink-0">
-                                <img src={service.photo_url ?? '/placeholder.png'} alt="Foto do Serviço" className="absolute h-full w-full object-cover rounded-l-lg" />
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#F9FAFB]"></div>
-                            </div>
-                            <div className='flex flex-1 justify-between items-center pl-4'>
-                                <div>
-                                    <p className='truncate'>{service.client_name}</p>
-                                    <p className={`${maxtimeClass}`}>{formatDate(service.max_time)}</p>
-                                </div>
-                                <ChevronRightIcon style={{ width: '22px', height: '22px' }} />
-                            </div>
+            <div className={cn("flex flex-col justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5", font.className)}>
+                {filteredServices?.map((service, index) => (
+                    <div key={service.id} className={`flex items-center border-b-2 ${index === filteredServices.length - 1 ? 'border-none' : ''}`}>
+                        <div className="relative w-32 h-20 flex-shrink-0">
+                            <img src={service.photo_url ?? '/placeholder.png'} alt="Foto do Serviço" className="absolute h-full w-full object-cover rounded-l-lg" />
                         </div>
-
-                    )
-                })}
+                        <div className='flex flex-1 justify-between items-center pl-4'>
+                            <div>
+                                <p className='truncate'>{service.client_name}</p>
+                                <p className={`${getMaxtimeClass(service.max_time)}`}>{formatDate(service.max_time)}</p>
+                            </div>
+                            <Link href={`/services/${service.id}`} passHref className=" text-white bg-[#1E293B] rounded-full mr-2">
+                                <ChevronRightIcon style={{ width: '26px', height: '26px' }} />
+                            </Link>
+                        </div>
+                    </div>
+                ))}
                 {role === "ADMIN" && (
-                    <Button variant="default" className=" mt-4">
-                        <Link href="/create-service">Registrar Conserto</Link>
-                    </Button>
+                    <Link href="/create-service" passHref>
+                        <Button variant="default" className="mt-4 w-full">
+                            Registrar Conserto
+                        </Button>
+                    </Link>
                 )}
             </div>
         </div >
+    );
+};
 
-    )
-}
 export default ServicesList;

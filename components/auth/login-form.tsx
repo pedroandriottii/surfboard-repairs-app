@@ -30,8 +30,8 @@ export const LoginForm = () => {
     const searchParamns = useSearchParams();
     const urlError = searchParamns.get("error") === "OAuthAccountNotLinked" ? "Email já em uso!" : "";
 
-    const [error, setError] = useState<string | undefined >("");
-    const [success, setSuccess] = useState<string | undefined >("");
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -55,7 +55,7 @@ export const LoginForm = () => {
     }
 
     return (
-        <CardWrapper headerLabel="Bem Vindo!" backButtonLabel="Não tem uma conta? Cadastre-se" backButtonHref="/auth/register" showSocial>
+        <CardWrapper headerLabel="Entre na sua conta e acompanhe o andamento do seu conserto!" backButtonLabel="Não tem uma conta? Cadastre-se" backButtonHref="/auth/register" showSocial>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
@@ -63,16 +63,16 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending}/>
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                         <FormField control={form.control} name="password" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending}/>
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} />
                                 </FormControl>
                                 <Button size="sm" variant="link" asChild className="px-0 font-normal">
                                     <Link href="/auth/reset">
@@ -81,10 +81,10 @@ export const LoginForm = () => {
                                 </Button>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                     </div>
-                    <FormError message={error || urlError }/>
-                    <FormSuccess message={success}/>
+                    <FormError message={error || urlError} />
+                    <FormSuccess message={success} />
                     <Button type="submit" className="w-full" disabled={isPending}>
                         Entrar
                     </Button>

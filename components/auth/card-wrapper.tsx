@@ -5,7 +5,7 @@ import { Header } from "@/components/auth/header";
 import { Social } from "@/components/auth/social";
 import { BackButton } from "@/components/auth/back-button";
 
-interface CardWrapperProps{
+interface CardWrapperProps {
     children: React.ReactNode,
     headerLabel: string,
     backButtonLabel: string,
@@ -22,8 +22,8 @@ export const CardWrapper = ({
 }: CardWrapperProps) => {
     return (
         <Card className="w-[400px] shadow-md">
-            <CardHeader>
-                <Header label={headerLabel}/>
+            <CardHeader className="text-center">
+                <Header label={headerLabel} />
             </CardHeader>
             <CardContent>
                 {children}

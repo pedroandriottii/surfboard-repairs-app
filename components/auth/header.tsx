@@ -14,7 +14,7 @@ export const Header = ({ label }: HeaderProps) => {
     return (
         <div className={cn(font, "w-full flex flex-col gap-y-4 items-center justify-center")}>
             <h1 className={cn("text-3xl font-semibold", font.className)}>
-                Realce Nordeste
+                Login
             </h1>
             <p className="text-muted-foreground text-sm">
                 {label}

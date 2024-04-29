@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 
 export const getServicesByEmail = async (email: string) => {
-    try{
+    try {
         const services = await db.service.findMany({
             where: {
                 user_mail: email,
@@ -17,12 +17,27 @@ export const getServicesByEmail = async (email: string) => {
 }
 
 export const getAllServices = async () => {
-    try{
+    try {
         const services = await db.service.findMany();
         return services;
     }
-    catch(error){
+    catch (error) {
         console.error("Erro ao buscar serviços", error);
+        return null;
+    }
+}
+
+export const getServiceById = async (id: string) => {
+    try {
+        const service = await db.service.findUnique({
+            where: {
+                id: id.toString(),
+            },
+        });
+        return service;
+    }
+    catch (error) {
+        console.error("Erro ao buscar serviço pelo id", error);
         return null;
     }
 }
