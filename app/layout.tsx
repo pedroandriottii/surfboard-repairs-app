@@ -22,11 +22,10 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session} >
       <html lang="pt-br">
-        <body className="h-screen">
-          <Toaster />
+        <body>
           {children}
         </body>
       </html>
-    </SessionProvider>
+    </SessionProvider >
   );
 }

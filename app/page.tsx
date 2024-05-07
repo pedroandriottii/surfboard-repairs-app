@@ -12,8 +12,8 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <div className="relative flex items-center justify-center h-screen" style={{ backgroundImage: 'url("/image.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="text-center p-5 bg-slate-200 m-10 rounded-2xl">
+      <div className="flex overflow-y-hidden items-center" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: 'url("/image.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="text-center p-5 bg-slate-200 m-10 rounded-2xl translate-y-[-50px]">
           <h1 className={cn("text-md sm:text-xl md:text-2xl pb-4 bg-opacity-50 rounded px-3", font.className)}>
             Entre agora e acompanhe o andamento do conserto de sua prancha!
           </h1>

@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LoginButton } from "@/components/auth/login-button";
 import { cn } from "@/lib/utils";
-import { Navbar } from "@/components/base/navbar";
 import { Montserrat } from "next/font/google";
 import Link from 'next/link';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
@@ -10,6 +8,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { getAllServices, getServicesByEmail } from '@/data/services';
 import { Service, ServiceStatus } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
+
 
 const font = Montserrat({
     subsets: ['latin'],
@@ -53,6 +52,7 @@ const ServicesList = () => {
         return `${day}/${month}`;
     }
 
+
     const filteredServices = services?.filter(service => service.status === statusFilter);
 
     function getMaxtimeClass(maxTime: Date): string {
@@ -78,7 +78,7 @@ const ServicesList = () => {
                 <Button onClick={() => setStatusFilter('DELIVERED')} className={statusFilter === 'DELIVERED' ? 'active' : ''}>Entregues</Button>
             </div>
             <h1 className={cn('font-bold ml-5 mb-1 mt-4', font.className)}>{statusTexts[statusFilter]}</h1>
-            <div className={cn("flex flex-col justify-center p-2 bg-[#F9FAFB] rounded-lg mr-5 ml-5", font.className)}>
+            <div className={cn("flex flex-col justify-center p-2 bg-realce-seccondary-background rounded-lg mr-5 ml-5", font.className)}>
                 {filteredServices?.map((service, index) => (
                     <div key={service.id} className={`flex items-center border-b-2 ${index === filteredServices.length - 1 ? 'border-none' : ''}`}>
                         <div className="relative w-32 h-20 flex-shrink-0">
