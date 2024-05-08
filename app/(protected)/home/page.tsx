@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import Link from 'next/link';
 import TopServicesList from '@/components/services/top-services-list';
@@ -7,6 +8,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import BuildIcon from '@mui/icons-material/Build';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import InfoCard from '@/components/dashboard/info-card';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 const font = Montserrat({
     subsets: ['latin'],
@@ -14,6 +16,7 @@ const font = Montserrat({
 });
 
 const HomePage: React.FC = () => {
+    const role = useCurrentRole();
     return (
         <div className={cn('flex flex-col items-center gap-10 p-10', font.className)}>
             <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
@@ -33,23 +36,25 @@ const HomePage: React.FC = () => {
                 </div>
                 <TopServicesList />
             </div>
-            <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
-                <Link href="/dashboard" passHref>
-                    <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
-                        <span className='flex gap-2 text-white'>
-                            <AssessmentIcon fontSize='medium' />
-                            <h1 className='font-bold rounded-lg text-center'>Relatórios</h1>
-                        </span>
-                        <span className='bg-white rounded-full flex p-1 text-lg'>
-                            <ChevronRightIcon fontSize='medium' />
-                        </span>
+            {role === "ADMIN" && (
+                <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
+                    <Link href="/dashboard" passHref>
+                        <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
+                            <span className='flex gap-2 text-white'>
+                                <AssessmentIcon fontSize='medium' />
+                                <h1 className='font-bold rounded-lg text-center'>Relatórios</h1>
+                            </span>
+                            <span className='bg-white rounded-full flex p-1 text-lg'>
+                                <ChevronRightIcon fontSize='medium' />
+                            </span>
+                        </div>
+                    </Link>
+                    <div className='flex flex-col justify-between pb-4 pt-4'>
+                        <h1>Dados de Faturamento</h1>
+                        <InfoCard />
                     </div>
-                </Link>
-                <div className='flex flex-col justify-between pb-4 pt-4'>
-                    <h1>Dados de Faturamento</h1>
-                    <InfoCard />
                 </div>
-            </div>
+            )}
         </div>
     )
 };

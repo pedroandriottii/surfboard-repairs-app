@@ -1,28 +1,43 @@
-"use client";
 import React, { useEffect, useState } from 'react';
 import { Service } from '@prisma/client';
 import { getAllServices } from '@/data/services';
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useCurrentRole } from '@/hooks/use-current-role';
 import Link from 'next/link';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 
+interface User {
+    email: string;
+}
+
+type Role = 'ADMIN' | 'USER';
+
 const TopServicesList: React.FC = () => {
-    const user = useCurrentUser();
+    const role = useCurrentRole() as Role;
+    const user = useCurrentUser() as User;
     const [services, setServices] = useState<Service[]>([]);
 
     useEffect(() => {
         const fetchServices = async () => {
             const allServices = await getAllServices();
             if (allServices) {
-                const filteredServices = allServices.filter(service =>
-                    service.status === "PENDING" || service.status === "READY")
-                    .sort((a, b) => new Date(a.max_time).getTime() - new Date(b.max_time).getTime())
-                    .slice(0, 4);
+                let filteredServices = allServices.filter(service =>
+                    service.status === "PENDING" || service.status === "READY"
+                );
+
+                if (role === 'USER') {
+                    filteredServices = filteredServices.filter(service =>
+                        service.user_mail === user.email
+                    );
+                }
+
+                filteredServices.sort((a, b) => new Date(a.max_time).getTime() - new Date(b.max_time).getTime()).slice(0, 4);
                 setServices(filteredServices);
             }
         };
+
         fetchServices();
-    }, [user?.email]);
+    }, [user?.email, role]);
 
     function formatDate(date: Date) {
         const d = new Date(date);
@@ -50,11 +65,11 @@ const TopServicesList: React.FC = () => {
 
     return (
         <div>
-            {services.map((service, index) => (
-                <div key={service.id} className={`flex items-center justify-between p-2 border-b ${index === services.length - 1 ? 'border-none' : 'border-gray-300'}`}>
+            {services.map((service) => (
+                <div key={service.id} className={`flex items-center justify-between p-2 border-b ${services.indexOf(service) === services.length - 1 ? 'border-none' : 'border-gray-300'}`}>
                     <div className='flex-grow'>
                         <p className='truncate'>{service.client_name}</p>
-                        <p className={`${getMaxtimeClass(service.max_time)}`}>{formatDate(service.max_time)}</p>
+                        <p className={`${getMaxtimeClass(new Date(service.max_time))}`}>{formatDate(new Date(service.max_time))}</p>
                     </div>
                     <Link href={`/services/${service.id}`} passHref>
                         <span className="flex items-center justify-center p-2">

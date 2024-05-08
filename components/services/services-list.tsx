@@ -73,10 +73,20 @@ const ServicesList = () => {
     return (
         <div className='mb-24'>
             <div className="flex items-center justify-center gap-4 p-2">
-                <Button onClick={() => setStatusFilter('PENDING')} className={statusFilter === 'PENDING' ? 'active' : ''}>Pendentes</Button>
-                <Button onClick={() => setStatusFilter('READY')} className={statusFilter === 'READY' ? 'active' : ''}>Prontos</Button>
-                <Button onClick={() => setStatusFilter('DELIVERED')} className={statusFilter === 'DELIVERED' ? 'active' : ''}>Entregues</Button>
+                <Button onClick={() => setStatusFilter('PENDING')} className={statusFilter === 'PENDING' ? "secondary" : "ghost"}>Pendentes</Button>
+                <Button onClick={() => setStatusFilter('READY')} className={statusFilter === 'READY' ? "secondary" : "ghost"}>Prontos</Button>
+                <Button onClick={() => setStatusFilter('DELIVERED')} className={statusFilter === 'DELIVERED' ? "secondary" : "ghost"}>Entregues</Button>
             </div>
+            {role === "ADMIN" && (
+                <div className="flex justify-center">
+                    <Link href="/create-service" passHref >
+                        <button className="bg-[#15803D] text-white p-2 rounded-lg mt-4 font-bold">
+                            Registrar Novo Conserto
+                        </button>
+                    </Link>
+                </div>
+
+            )}
             <h1 className={cn('font-bold ml-5 mb-1 mt-4', font.className)}>{statusTexts[statusFilter]}</h1>
             <div className={cn("flex flex-col justify-center p-2 bg-realce-seccondary-background rounded-lg mr-5 ml-5", font.className)}>
                 {filteredServices?.map((service, index) => (
@@ -95,13 +105,6 @@ const ServicesList = () => {
                         </div>
                     </div>
                 ))}
-                {role === "ADMIN" && (
-                    <Link href="/create-service" passHref>
-                        <Button variant="default" className="mt-4 w-full">
-                            Registrar Conserto
-                        </Button>
-                    </Link>
-                )}
             </div>
         </div >
     );
