@@ -6,6 +6,7 @@ import { Montserrat } from 'next/font/google';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import BuildIcon from '@mui/icons-material/Build';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import InfoCard from '@/components/dashboard/info-card';
 
 const font = Montserrat({
     subsets: ['latin'],
@@ -44,8 +45,9 @@ const HomePage: React.FC = () => {
                         </span>
                     </div>
                 </Link>
-                <div className='flex items-center justify-between pb-4 pt-4'>
+                <div className='flex flex-col justify-between pb-4 pt-4'>
                     <h1>Dados de Faturamento</h1>
+                    <InfoCard />
                 </div>
             </div>
         </div>
