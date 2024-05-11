@@ -15,6 +15,10 @@ import { FormError } from "@/components/form-error";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
+import { useRouter } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import {
     Form,
     FormControl,
@@ -31,6 +35,7 @@ export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof ServiceSchema>>({
         resolver: zodResolver(ServiceSchema),
@@ -79,14 +84,20 @@ export const CreateServiceForm = () => {
 
                         createService(formValues).then(result => {
                             if (result.success) {
+                                toast.success("Serviço criado com sucesso!")
                                 setSuccess(result.success);
+                                setTimeout(() => {
+                                    router.push("/services");
+                                }, 4000);
                             } else {
                                 setError(result.error);
+                                toast.error('Erro ao criar o serviço: ' + result.error);
                             }
 
                         }).catch(error => {
                             console.error("Erro ao criar serviço", error);
                             setError("Erro ao criar serviço.")
+                            toast.error('Erro ao criar o serviço: ' + error);
                         })
                     })
                 })
@@ -97,6 +108,7 @@ export const CreateServiceForm = () => {
 
     return (
         <div className="flex items-center align-center justify-center m-2">
+            <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <RoleGate allowedRole="ADMIN">
                 <CardWrapper headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/services">
                     <Form {...form}>

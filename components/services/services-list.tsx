@@ -58,6 +58,11 @@ const ServicesList = () => {
     function getMaxtimeClass(maxTime: Date): string {
         const now = new Date();
         const deadline = new Date(maxTime);
+
+        if (deadline < now) {
+            return 'text-red-500';
+        }
+
         const diffTime = Math.abs(deadline.getTime() - now.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -78,21 +83,21 @@ const ServicesList = () => {
                 <Button onClick={() => setStatusFilter('DELIVERED')} className={statusFilter === 'DELIVERED' ? "secondary" : "ghost"}>Entregues</Button>
             </div>
             {role === "ADMIN" && (
-                <div className="flex justify-center">
+                <div className="flex mt-4 items-center align-center justify-between bg-slate-800 p-2 m-4 rounded-xl text-white">
+                    <h1 className={cn('font-bold', font.className)}>{statusTexts[statusFilter]}</h1>
                     <Link href="/create-service" passHref >
-                        <button className="bg-[#15803D] text-white p-2 rounded-lg mt-4 font-bold">
-                            Registrar Novo Conserto
+                        <button className="bg-[#15803D] text-white p-1 rounded-lg font-bold">
+                            Novo Conserto
                         </button>
                     </Link>
                 </div>
 
             )}
-            <h1 className={cn('font-bold ml-5 mb-1 mt-4', font.className)}>{statusTexts[statusFilter]}</h1>
             <div className={cn("flex flex-col justify-center p-2 bg-realce-seccondary-background rounded-lg mr-5 ml-5", font.className)}>
                 {filteredServices?.map((service, index) => (
                     <div key={service.id} className={`flex items-center border-b-2 ${index === filteredServices.length - 1 ? 'border-none' : ''}`}>
                         <div className="relative w-32 h-20 flex-shrink-0">
-                            <img src={service.photo_url ?? '/placeholder.png'} alt="Foto do Serviço" className="absolute h-full w-full object-cover rounded-l-lg" />
+                            <img src={service.photo_url ?? '@/public/placeholder.png'} alt="Foto do Serviço" className="absolute h-full w-full object-cover rounded-l-lg" />
                         </div>
                         <div className='flex flex-1 justify-between items-center pl-4'>
                             <div>

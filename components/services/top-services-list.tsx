@@ -22,7 +22,7 @@ const TopServicesList: React.FC = () => {
             const allServices = await getAllServices();
             if (allServices) {
                 let filteredServices = allServices.filter(service =>
-                    service.status === "PENDING" || service.status === "READY"
+                    (service.status === "PENDING" || service.status === "READY") && new Date(service.max_time) > new Date()
                 );
 
                 if (role === 'USER') {
@@ -31,7 +31,7 @@ const TopServicesList: React.FC = () => {
                     );
                 }
 
-                filteredServices.sort((a, b) => new Date(a.max_time).getTime() - new Date(b.max_time).getTime()).slice(0, 4);
+                filteredServices = filteredServices.sort((a, b) => new Date(a.max_time).getTime() - new Date(b.max_time).getTime()).slice(0, 4);
                 setServices(filteredServices);
             }
         };
@@ -51,6 +51,11 @@ const TopServicesList: React.FC = () => {
     function getMaxtimeClass(maxTime: Date): string {
         const now = new Date();
         const deadline = new Date(maxTime);
+
+        if (deadline < now) {
+            return 'text-red-500';
+        }
+
         const diffTime = Math.abs(deadline.getTime() - now.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 

@@ -71,7 +71,7 @@ const ReportsPage: React.FC = () => {
     return (
         <div className='p-4'>
             <RoleGate allowedRole={UserRole.ADMIN}>
-                <h1 className='w-full bg-realce-seccondary-background p-2 rounded-lg text-center font-bold shadow-md mb-4'>Relatório de Serviços</h1>
+                <h1 className='w-full bg-slate-800 text-white p-2 rounded-lg text-center font-bold shadow-md mb-4'>Relatório de Serviços</h1>
                 <div className='w-full bg-realce-seccondary-background rounded-lg'>
                     {monthlyData.map(({ month, totalRevenue, count, openCount, revenuePending, revenueByPaymentMethod }) => (
                         <div key={month} className='p-2'>
@@ -84,7 +84,7 @@ const ReportsPage: React.FC = () => {
                                 <p>Serviços Abertos:</p>
                                 <p>{openCount}</p>
                                 <p>Valores A Receber:</p>
-                                <p>{`$${revenuePending.toFixed(2)}`}</p>
+                                <p>{`R$${revenuePending.toFixed(2)}`}</p>
                                 <p>Vendas no Pix:</p>
                                 <p>{revenueByPaymentMethod.PIX}</p>
                                 <p>Vendas no Crédito</p>
