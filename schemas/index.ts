@@ -70,5 +70,5 @@ export const SettingsSchema = z.object({
     })
 
 export const ChangeStatusSchema = z.object({
-    newStatus: z.enum(["PENDING", "READY", "DELIVERED"]),
+    status: z.enum(["PENDING", "READY", "DELIVERED"]),
 });

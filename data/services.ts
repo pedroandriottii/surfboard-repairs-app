@@ -1,5 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
+import { Prisma, ServiceStatus } from "@prisma/client";
 
 export const getServicesByEmail = async (email: string) => {
     try {
@@ -40,4 +41,12 @@ export const getServiceById = async (id: string) => {
         console.error("Erro ao buscar serviço pelo id", error);
         return null;
     }
+}
+
+export const updateServiceStatus = async (serviceId: string, newStatus: ServiceStatus): Promise<Prisma.ServiceUncheckedUpdateInput> => {
+    const updatedService = await db.service.update({
+        where: { id: serviceId },
+        data: { status: newStatus },
+    });
+    return updatedService;
 }
