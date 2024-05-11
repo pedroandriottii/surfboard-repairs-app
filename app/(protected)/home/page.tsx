@@ -20,45 +20,50 @@ const HomePage: React.FC = () => {
     const role = useCurrentRole();
     const user = useCurrentUser();
     return (
-        <div className={cn('flex flex-col items-center gap-10 p-10', font.className)}>
-            <h1>Olá {user?.name}</h1>
-            <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
-                <Link href="/services" passHref>
-                    <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
-                        <span className='flex items-center gap-2 text-white'>
-                            <BuildIcon fontSize='medium' />
-                            <h1 className=' text-white font-bold rounded-lg text-center'>Meus Serviços</h1>
-                        </span>
-                        <span className='bg-white rounded-full flex p-1 text-lg'>
-                            <ChevronRightIcon fontSize='medium' />
-                        </span>
-                    </div>
-                </Link>
-                <div className='flex items-center justify-between pb-4 pt-4'>
-                    <h1>Prazos Próximos</h1>
-                </div>
-                <TopServicesList />
-            </div>
-            {role === "ADMIN" && (
+        <div className={cn('flex flex-col items-center', font.className)}>
+            <p className='p-5'>
+                Bem vindo, {user?.name}
+            </p>
+            <div className='flex flex-col items-center gap-10'>
                 <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
-                    <Link href="/dashboard" passHref>
+                    <Link href="/services" passHref>
                         <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
-                            <span className='flex gap-2 text-white'>
-                                <AssessmentIcon fontSize='medium' />
-                                <h1 className='font-bold rounded-lg text-center'>Relatórios</h1>
+                            <span className='flex items-center gap-2 text-white'>
+                                <BuildIcon fontSize='medium' />
+                                <h1 className=' text-white font-bold rounded-lg text-center'>Meus Serviços</h1>
                             </span>
-                            <span className='bg-white rounded-full flex p-1 text-lg'>
+                            <span className='rounded-full flex p-1 text-lg text-white'>
                                 <ChevronRightIcon fontSize='medium' />
                             </span>
                         </div>
                     </Link>
-                    <div className='flex flex-col justify-between pb-4 pt-4'>
-                        <h1>Dados de Faturamento</h1>
-                        <InfoCard />
+                    <div className='flex items-center justify-between pb-4 pt-4'>
+                        <h1>Prazos Próximos</h1>
                     </div>
+                    <TopServicesList />
                 </div>
-            )}
+                {role === "ADMIN" && (
+                    <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
+                        <Link href="/dashboard" passHref>
+                            <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
+                                <span className='flex gap-2 text-white'>
+                                    <AssessmentIcon fontSize='medium' />
+                                    <h1 className='font-bold rounded-lg text-center'>Relatórios</h1>
+                                </span>
+                                <span className='text-white rounded-full flex p-1 text-lg'>
+                                    <ChevronRightIcon fontSize='medium' />
+                                </span>
+                            </div>
+                        </Link>
+                        <div className='flex flex-col justify-between pb-4 pt-4'>
+                            <h1>Dados de Faturamento</h1>
+                            <InfoCard />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
+
     )
 };
 

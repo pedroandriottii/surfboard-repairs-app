@@ -138,6 +138,7 @@ const ServiceId = () => {
                                                         <div className='flex flex-col items-center text-center'>
                                                             <label className='p-1'>Atualizar Status</label>
                                                             <select {...field} name="status" className='input-class-name flex flex-col border-input px-3 py-2 border-slate-800 border-2 rounded-lg bg-slate-200 w-full'>
+                                                                <option value="PENDING">Pendente</option>
                                                                 <option value="READY">Pronto</option>
                                                                 <option value="DELIVERED">Entregue</option>
                                                             </select>
@@ -146,12 +147,12 @@ const ServiceId = () => {
                                                 </FormLabel>
                                             </FormItem>
                                         )} />
-                                        <Button type="submit">
+                                        <Button type="submit" className='mt-4'>
                                             Confirmar
                                         </Button>
                                     </form>
                                 </Form>
-                                <div className='flex items-center align-center justify-center'>
+                                <div className='flex items-center align-center justify-center mt-4'>
                                     {service ? (
                                         <div>
                                             {whatsappLink && (
