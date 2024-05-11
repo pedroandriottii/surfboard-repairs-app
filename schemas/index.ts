@@ -1,3 +1,4 @@
+import { newPassword } from "@/actions/new-password";
 import * as z from "zod";
 
 export const LoginSchema = z.object({
@@ -44,7 +45,29 @@ export const ServiceSchema = z.object({
 
 export const SettingsSchema = z.object({
     name: z.optional(z.string().min(1, { message: "Insira o Nome!" })),
+    email: z.optional(z.string().email(
+        { message: "Email inválido" }
+    )),
+    password: z.optional(z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres!" })),
+    newPassword: z.optional(z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres!" })),
+}).refine((data) => {
+    if (data.password && !data.newPassword) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Insira a senha antiga e a nova senha!",
+    path: ["newPassword"]
 })
+    .refine((data) => {
+        if (data.newPassword && !data.password) {
+            return false;
+        }
+        return true;
+    }, {
+        message: "Insira a senha antiga e a nova senha!",
+        path: ["password"]
+    })
 
 export const ChangeStatusSchema = z.object({
     newStatus: z.enum(["PENDING", "READY", "DELIVERED"]),

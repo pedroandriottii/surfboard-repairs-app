@@ -17,7 +17,6 @@ import {
     FormControl,
     FormItem,
     FormLabel,
-    FormDescription,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -37,7 +36,10 @@ const SettingsPage = () => {
     const form = useForm<z.infer<typeof SettingsSchema>>({
         resolver: zodResolver(SettingsSchema),
         defaultValues: {
+            password: undefined,
+            newPassword: undefined,
             name: user?.name || undefined,
+            email: user?.email || undefined,
         }
     })
 
@@ -71,10 +73,48 @@ const SettingsPage = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="John Doe" disabled={isPending} />
-
                                     </FormControl>
+                                    <FormMessage />
                                 </FormItem>
                             )} />
+                            {user?.isOAuth === false && (
+                                <>
+                                    <FormField control={form.control} name="email" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Email
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="john.doe@example.com" type="email" disabled={isPending} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="password" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Senha
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="newPassword" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Nova Senha
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </>
+                            )}
+
                         </div>
                         <FormError message={error as string} />
                         <FormSuccess message={success as string} />
