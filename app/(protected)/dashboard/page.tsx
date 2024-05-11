@@ -78,7 +78,7 @@ const ReportsPage: React.FC = () => {
                             <h1 className='bg-slate-800 text-white p-2  rounded-2xl text-center'>{month}</h1>
                             <div className='flex flex-col align-center text-center font-bold p-2'>
                                 <p>Faturamento Total:</p>
-                                <p>{`$${totalRevenue.toFixed(2)}`}</p>
+                                <p>{`R$${totalRevenue.toFixed(2)}`}</p>
                                 <p>Consertos entregues:</p>
                                 <p>{count}</p>
                                 <p>Serviços Abertos:</p>

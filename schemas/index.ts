@@ -41,3 +41,11 @@ export const ServiceSchema = z.object({
     photo_url: z.union([z.string().url(), z.literal(""), z.null()]),
 
 });
+
+export const SettingsSchema = z.object({
+    name: z.optional(z.string().min(1, { message: "Insira o Nome!" })),
+})
+
+export const ChangeStatusSchema = z.object({
+    newStatus: z.enum(["PENDING", "READY", "DELIVERED"]),
+});

@@ -9,6 +9,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import InfoCard from '@/components/dashboard/info-card';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 const font = Montserrat({
     subsets: ['latin'],
@@ -17,8 +18,10 @@ const font = Montserrat({
 
 const HomePage: React.FC = () => {
     const role = useCurrentRole();
+    const user = useCurrentUser();
     return (
         <div className={cn('flex flex-col items-center gap-10 p-10', font.className)}>
+            <h1>Olá {user?.name}</h1>
             <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
                 <Link href="/services" passHref>
                     <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
