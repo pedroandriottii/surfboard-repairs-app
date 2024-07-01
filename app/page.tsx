@@ -1,33 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
-import { cn } from "@/lib/utils";
-import { Navbar } from "@/components/base/navbar";
-import { Montserrat } from "next/font/google";
-
-const font = Montserrat({
-  subsets: ['latin'],
-  weight: ["600"]
-});
+import Image from 'next/image';
 
 export default function Home() {
 
   return (
     <div>
-      <Navbar />
-
-      <div className="flex overflow-y-hidden items-center" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: 'url("/image.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="text-center p-5 bg-slate-200 m-10 rounded-2xl translate-y-[-50px]">
-          <h1 className={cn("text-md sm:text-xl md:text-2xl pb-4 bg-opacity-50 rounded px-3", font.className)}>
-            Entre agora e acompanhe o andamento do conserto de sua prancha!
-          </h1>
-          <LoginButton mode="modal" asChild>
-            <Button
-              size="lg"
-              className="w-full sm:w-auto text-lg sm:text-xl md:text-2xl px-6 py-3 md:px-10 md:py-4 transition-all duration-300 ease-in-out"
-            >
-              Login
+      <div className="overflow-y-hidden flex flex-col justify-between" style={{ minHeight: '100vh', display: 'flex', backgroundImage: 'url("/realce_home.png")', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="flex items-center justify-between w-full h-full p-4">
+          <div>
+            <Image
+              src={'/realce_logo.png'}
+              alt="Realce Nordeste"
+              width={50}
+              height={50}
+            />
+          </div>
+          <div className="flex gap-4">
+            <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
+              <p>Cadastre-se</p>
             </Button>
-          </LoginButton>
+            <LoginButton mode="modal" asChild>
+              <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
+                <p>Login</p>
+              </Button>
+            </LoginButton>
+          </div>
+        </div>
+        <div className="flex flex-col p-6 gap-8 justify-end w-full">
+          <h1 className="text-realce text-5xl font-bold max-w-80">Bem vindo à uma área exclusiva para clientes!</h1>
+          <p className="text-white text-xl">
+            Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
+          </p>
+          <button className="rounded-full bg-realce px-4 font-bold justify-center w-2/3 self-center"><a href="https://www.realcenordeste.com.br/">Confira nosso catálogo!</a></button>
+
+        </div>
+        <div className="flex flex-col bg-black self-end w-full h-full items-center gap-4 p-4">
+          <p className="text-realce font-bold">Visite nossa loja!</p>
+          <p className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</p>
+          <div className="flex items-center gap-4">
+            <a href="">
+              <Image
+                src={'/whats_footer.svg'}
+                alt="Whatsapp Realce Nordeste"
+                width={30}
+                height={30}
+              />
+            </a>
+            <a href="">
+              <Image
+                src={'/insta_footer.svg'}
+                alt="Instagram Realce Nordeste"
+                width={30}
+                height={30}
+              />
+            </a>
+          </div>
+
         </div>
       </div>
     </div>

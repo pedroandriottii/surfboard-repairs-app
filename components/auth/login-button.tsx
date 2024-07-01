@@ -25,14 +25,14 @@ export const LoginButton = ({
         router.push("/auth/login")
     }
 
-    if(mode === "modal") {
+    if (mode === "modal") {
         return (
             <Dialog>
                 <DialogTrigger asChild={asChild}>
                     {children}
                 </DialogTrigger>
-                <DialogContent className="p-0 w-auto bg-transparent">
-                    <LoginForm/>
+                <DialogContent className="p-0 w-auto bg-black rounded-lg border-none">
+                    <LoginForm />
                 </DialogContent>
             </Dialog>
         )

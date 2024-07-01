@@ -7,14 +7,13 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const Social = () => {
     const onClick = (provider: "google") => {
-        signIn(provider, {callbackUrl: DEFAULT_LOGIN_REDIRECT});
+        signIn(provider, { callbackUrl: DEFAULT_LOGIN_REDIRECT });
     }
-
     return (
         <div className="flex items-center w-full gap-x-2">
-            <Button size="lg" className="w-full gap-2" variant="outline" onClick={()=> onClick("google")}>
-                <FcGoogle size="20px"/>
-                <p>Entre com Google</p>
+            <Button size="lg" className="w-full gap-2 bg-black border-realce rounded-xl" variant="outline" onClick={() => onClick("google")}>
+                <FcGoogle size="20px" />
+                <p className="text-white">Entrar com Google</p>
             </Button>
         </div>
     )

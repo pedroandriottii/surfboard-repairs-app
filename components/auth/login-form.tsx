@@ -63,7 +63,7 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-[#D9D9D9]" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -72,9 +72,9 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-[#D9D9D9]" />
                                 </FormControl>
-                                <Button size="sm" variant="link" asChild className="px-0 font-normal">
+                                <Button size="sm" variant="link" asChild className="px-0 font-normal text-white underline">
                                     <Link href="/auth/reset">
                                         Esqueceu a senha?
                                     </Link>
@@ -85,7 +85,7 @@ export const LoginForm = () => {
                     </div>
                     <FormError message={error || urlError} />
                     <FormSuccess message={success} />
-                    <Button type="submit" className="w-full" disabled={isPending}>
+                    <Button type="submit" className="w-full bg-realce text-black font-bold rounded-xl" disabled={isPending}>
                         Entrar
                     </Button>
                 </form>

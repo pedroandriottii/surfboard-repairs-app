@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        'realce': '#EAF825',
         'realce-background': '#D0D5DD',
         'realce-seccondary-background': '#F9FAFB',
         border: "hsl(var(--border))",
