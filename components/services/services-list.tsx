@@ -59,21 +59,39 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
 
     return (
         <div>
-            {role === "ADMIN" && (
-                <div className="flex mt-4 items-center align-center justify-between bg-slate-800 p-2 m-4 rounded-xl text-white">
-                    <h1 className='font-bold'>{statusTexts[statusFilter]}</h1>
-                    <Link href="/create-service" passHref >
-                        <button className="bg-[#15803D] text-white p-1 rounded-lg font-bold">
-                            Novo Conserto
-                        </button>
-                    </Link>
-                </div>
-            )}
             <div>
-                <Carousel>
-                    <CarouselContent>
+                {exibitionMode === ExibitionMode.LIST ? (
+                    <Carousel>
+                        <CarouselContent>
+                            {filteredServices?.map((service, index) => (
+                                <CarouselItem key={service.id} className="basis-1/2 p-2 flex flex-col items-center md:basis-1/6">
+                                    <Link href={`/services/${service.id}`} className="w-full">
+                                        <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                            <Image
+                                                src={service.photo_url ?? '/placeholder.png'}
+                                                alt="Foto do Serviço"
+                                                layout="fill"
+                                                className="rounded-t-lg object-cover"
+                                            />
+                                        </div>
+                                        <div className="w-full flex justify-between items-center bg-realce text-black p-1 pl-4">
+                                            <p>{formatDate(service.max_time)}</p>
+                                            <ChevronRightIcon style={{ width: '24px', height: '24px' }} />
+                                        </div>
+                                        <div className='bg-white text-black font-bold p-1 pl-4 rounded-b-lg'>
+                                            <p className='truncate'>{service.client_name}</p>
+                                        </div>
+                                    </Link>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
+                ) : (
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-2">
                         {filteredServices?.map((service, index) => (
-                            <CarouselItem key={service.id} className="basis-1/2 p-2 flex flex-col items-center">
+                            <div key={service.id} className="flex flex-col items-center">
                                 <Link href={`/services/${service.id}`} className="w-full">
                                     <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                         <Image
@@ -91,12 +109,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                                         <p className='truncate'>{service.client_name}</p>
                                     </div>
                                 </Link>
-                            </CarouselItem>
+                            </div>
                         ))}
-                    </CarouselContent>
-                </Carousel>
+                    </div>
+                )}
             </div>
-        </div >
+        </div>
     );
 };
 
