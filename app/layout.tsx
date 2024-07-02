@@ -22,6 +22,9 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session} >
       <html lang="pt-br">
+        <head>
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon32.png" />
+        </head>
         <body className={inter.className}>
           {children}
         </body>
