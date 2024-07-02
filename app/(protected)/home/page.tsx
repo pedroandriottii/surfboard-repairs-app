@@ -1,69 +1,94 @@
 "use client";
 import React from 'react';
-import Link from 'next/link';
-import TopServicesList from '@/components/services/top-services-list';
-import { cn } from '@/lib/utils';
-import { Montserrat } from 'next/font/google';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import BuildIcon from '@mui/icons-material/Build';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import InfoCard from '@/components/dashboard/info-card';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
-
-const font = Montserrat({
-    subsets: ['latin'],
-    weight: ["600"]
-});
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
+import { UserButton } from '@/components/auth/user-button';
+import TopServicesList from '@/components/services/top-services-list';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ServicesList from '@/components/services/services-list';
 
 const HomePage: React.FC = () => {
     const role = useCurrentRole();
     const user = useCurrentUser();
+    const pathname = usePathname();
     return (
-        <div className={cn('flex flex-col items-center', font.className)}>
-            <p className='p-5'>
-                Bem vindo, {user?.name}
-            </p>
-            <div className='flex flex-col items-center gap-10'>
-                <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
-                    <Link href="/services" passHref>
-                        <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
-                            <span className='flex items-center gap-2 text-white'>
-                                <BuildIcon fontSize='medium' />
-                                <h1 className=' text-white font-bold rounded-lg text-center'>Meus Serviços</h1>
-                            </span>
-                            <span className='rounded-full flex p-1 text-lg text-white'>
-                                <ChevronRightIcon fontSize='medium' />
-                            </span>
-                        </div>
-                    </Link>
-                    <div className='flex items-center justify-between pb-4 pt-4'>
-                        <h1>Prazos Próximos</h1>
+        <div className="h-screen relative justify-center overflow-x-hidden">
+            <div className="md:hidden relative h-full w-full">
+                <Image
+                    src={'/splash.png'}
+                    alt="Background"
+                    layout="fill"
+                    className="z-0 object-cover h-full"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85 z-10"></div>
+            </div>
+            <div className="absolute inset-0 flex flex-col items-center z-20">
+                <div className='flex justify-between w-full p-4'>
+                    <Image
+                        src={'/realce_logo.png'}
+                        alt="Realce Nordeste"
+                        width={50}
+                        height={50}
+                    />
+                    <div className='flex gap-6 items-center'>
+                        <Button className='bg-realce text-black hover:bg-white max-h-8 px-10 rounded-xl'>
+                            Serviços
+                        </Button>
+                        {role == 'ADMIN' && (
+                            <Button>
+                                Finanças
+                            </Button>
+                        )}
+                        <UserButton />
                     </div>
-                    <TopServicesList />
                 </div>
-                {role === "ADMIN" && (
-                    <div className='bg-realce-seccondary-background p-4 rounded-lg w-full shadow-md'>
-                        <Link href="/dashboard" passHref>
-                            <div className='flex items-center justify-between bg-slate-800 p-2 rounded-lg'>
-                                <span className='flex gap-2 text-white'>
-                                    <AssessmentIcon fontSize='medium' />
-                                    <h1 className='font-bold rounded-lg text-center'>Relatórios</h1>
-                                </span>
-                                <span className='text-white rounded-full flex p-1 text-lg'>
-                                    <ChevronRightIcon fontSize='medium' />
-                                </span>
-                            </div>
-                        </Link>
-                        <div className='flex flex-col justify-between pb-4 pt-4'>
-                            <h1>Dados de Faturamento</h1>
-                            <InfoCard />
+                <div className='text-white flex flex-col items-start w-full p-6 gap-2'>
+                    <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}</h2>
+                    <div className='flex flex-col gap-2'>
+                        <div className='flex items-center'>
+                            <p>Prazos Próximos</p>
+                            <ChevronRightIcon />
+                        </div>
+                        <div>
+                            <TopServicesList />
                         </div>
                     </div>
-                )}
+                </div>
+                <div className='text-white flex flex-col items-start w-full p-6 gap-2'>
+                    <div className='flex items-center w-full'>
+                        <p>Prontos</p>
+                        <ChevronRightIcon />
+                        <hr className='flex-grow border-t-2 border-white ml-2' />
+                    </div>
+                    <div>
+                        <ServicesList initialStatus='READY' exibitionMode='LIST' />
+                    </div>
+                </div>
+                <div className='text-white flex flex-col items-start w-full p-6 gap-2'>
+                    <div className='flex items-center w-full'>
+                        <p>Pendentes</p>
+                        <ChevronRightIcon />
+                        <hr className='flex-grow border-t-2 border-white ml-2' />
+                    </div>
+                    <div>
+                        <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
+                    </div>
+                </div>
+                <div className='text-white flex flex-col items-start w-full p-6 gap-2'>
+                    <div className='flex items-center w-full'>
+                        <p>Entregues</p>
+                        <ChevronRightIcon />
+                        <hr className='flex-grow border-t-2 border-white ml-2' />
+                    </div>
+                    <div>
+                        <ServicesList initialStatus='DELIVERED' exibitionMode='LIST' />
+                    </div>
+                </div>
             </div>
         </div>
-
     )
 };
 

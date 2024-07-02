@@ -42,7 +42,6 @@ export default function Home() {
                 <p>Cadastre-se</p>
               </Button>
             </Link>
-
             <LoginButton mode="modal" asChild>
               <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
                 <p>Login</p>
@@ -50,7 +49,7 @@ export default function Home() {
             </LoginButton>
           </div>
         </div>
-        <div className="flex flex-col p-6 gap-8 justify-end w-full md:mx-20 md:justify-center">
+        <div className="flex flex-col p-6 gap-8 justify-end w-full md:mx-20 md:justify-center pl-[10vw]">
           <h1 className="text-realce text-5xl font-bold max-w-80 md:text-7xl md:max-w-[80vw]">Bem vindo à uma área exclusiva para clientes!</h1>
           <p className="text-white text-xl md:text-2xl md:max-w-[80vw]">
             Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
@@ -79,7 +78,6 @@ export default function Home() {
               />
             </a>
           </div>
-
         </div>
       </div>
     </div>

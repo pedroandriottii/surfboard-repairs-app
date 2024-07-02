@@ -63,7 +63,7 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color" />
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -72,7 +72,7 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color" />
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <Button size="sm" variant="link" asChild className="px-0 font-normal text-white underline">
                                     <Link href="/auth/reset">

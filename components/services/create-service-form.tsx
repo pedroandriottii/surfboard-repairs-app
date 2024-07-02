@@ -110,7 +110,7 @@ export const CreateServiceForm = () => {
         <div className="flex items-center align-center justify-center m-2">
             <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <RoleGate allowedRole="ADMIN">
-                <CardWrapper headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/services">
+                <CardWrapper headerTitle="Cadastrar Serviço" headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/services">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
                             <div className="space-y-4">

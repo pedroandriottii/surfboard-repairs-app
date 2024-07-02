@@ -1,10 +1,3 @@
-import { Montserrat } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const font = Montserrat({
-    subsets: ['latin'],
-    weight: ["600"]
-});
 
 interface HeaderProps {
     label: string,
@@ -13,8 +6,8 @@ interface HeaderProps {
 
 export const Header = ({ label, title }: HeaderProps) => {
     return (
-        <div className={cn(font, "w-full flex flex-col gap-y-4 items-center justify-center")}>
-            <h1 className={cn("text-3xl font-semibold", font.className)}>
+        <div className={"w-full flex flex-col gap-y-4 items-center justify-center"}>
+            <h1 className="text-3xl font-semibold">
                 {title}
             </h1>
             <p className="text-muted-foreground text-sm text-white">
