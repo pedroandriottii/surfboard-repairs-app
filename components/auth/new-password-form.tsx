@@ -28,9 +28,9 @@ import { FormSuccess } from "../form-success";
 export const NewPasswordForm = () => {
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
-    
-    const [error, setError] = useState<string | undefined >("");
-    const [success, setSuccess] = useState<string | undefined >("");
+
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof NewPasswordSchema>>({
@@ -53,7 +53,7 @@ export const NewPasswordForm = () => {
     }
 
     return (
-        <CardWrapper headerLabel="Cadastrar uma nova senha" backButtonLabel="Volar para login" backButtonHref="/auth/login">
+        <CardWrapper headerTitle="Cadastrar Nova Senha" headerLabel="Cadastrar uma nova senha" backButtonLabel="Volar para login" backButtonHref="/auth/login">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
@@ -61,14 +61,14 @@ export const NewPasswordForm = () => {
                             <FormItem>
                                 <FormLabel>Nova senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending}/>
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                     </div>
-                    <FormError message={error}/>
-                    <FormSuccess message={success}/>
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
                     <Button type="submit" className="w-full" disabled={isPending}>
                         Confirmar
                     </Button>

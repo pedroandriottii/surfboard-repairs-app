@@ -25,8 +25,8 @@ import {
 import { FormSuccess } from "../form-success";
 
 export const ResetForm = () => {
-    const [error, setError] = useState<string | undefined >("");
-    const [success, setSuccess] = useState<string | undefined >("");
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof ResetSchema>>({
@@ -49,7 +49,7 @@ export const ResetForm = () => {
     }
 
     return (
-        <CardWrapper headerLabel="Esqueceu sua senha?" backButtonLabel="Volar para login" backButtonHref="/auth/login">
+        <CardWrapper headerTitle="Redefinir Senha" headerLabel="Esqueceu sua senha?" backButtonLabel="Volar para login" backButtonHref="/auth/login">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
@@ -57,19 +57,19 @@ export const ResetForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending}/>
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}/>
+                        )} />
                     </div>
-                    <FormError message={error}/>
-                    <FormSuccess message={success}/>
-                    <Button type="submit" className="w-full" disabled={isPending}>
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
+                    <Button type="submit" className="w-full bg-realce hover:bg-white text-black font-bold" disabled={isPending}>
                         Enviar email
                     </Button>
                 </form>
             </Form>
-        </CardWrapper>
+        </CardWrapper >
     )
 }

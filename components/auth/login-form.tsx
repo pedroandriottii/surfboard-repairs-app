@@ -55,7 +55,7 @@ export const LoginForm = () => {
     }
 
     return (
-        <CardWrapper headerLabel="Entre na sua conta e acompanhe o andamento do seu conserto!" backButtonLabel="Não tem uma conta? Cadastre-se" backButtonHref="/auth/register" showSocial>
+        <CardWrapper headerTitle="Login" headerLabel="Entre na sua conta e acompanhe o andamento do seu conserto!" backButtonLabel="Não tem uma conta? Cadastre-se" backButtonHref="/auth/register" showSocial>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
@@ -63,7 +63,7 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-[#D9D9D9]" />
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -72,7 +72,7 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-[#D9D9D9]" />
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color" />
                                 </FormControl>
                                 <Button size="sm" variant="link" asChild className="px-0 font-normal text-white underline">
                                     <Link href="/auth/reset">
@@ -85,7 +85,7 @@ export const LoginForm = () => {
                     </div>
                     <FormError message={error || urlError} />
                     <FormSuccess message={success} />
-                    <Button type="submit" className="w-full bg-realce text-black font-bold rounded-xl" disabled={isPending}>
+                    <Button type="submit" className="w-full bg-realce text-black hover:bg-white font-bold rounded-xl" disabled={isPending}>
                         Entrar
                     </Button>
                 </form>

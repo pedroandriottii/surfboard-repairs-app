@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        'input-color': '#D9D9D9',
         'realce': '#EAF825',
         'realce-background': '#D0D5DD',
         'realce-seccondary-background': '#F9FAFB',

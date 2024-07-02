@@ -11,6 +11,7 @@ interface CardWrapperProps {
     backButtonLabel: string,
     backButtonHref: string,
     showSocial?: boolean,
+    headerTitle: string,
 };
 
 export const CardWrapper = ({
@@ -19,11 +20,12 @@ export const CardWrapper = ({
     backButtonLabel,
     backButtonHref,
     showSocial,
+    headerTitle,
 }: CardWrapperProps) => {
     return (
         <Card className="p-4 bg-black">
             <CardHeader className="text-center text-realce">
-                <Header label={headerLabel} />
+                <Header label={headerLabel} title={headerTitle} />
             </CardHeader>
             <CardContent className="text-white">
                 {children}

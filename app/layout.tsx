@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import "./globals.css";
-import { fontGrid } from "@mui/material/styles/cssUtils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,15 +19,15 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <SessionProvider session={session} >
-      <html lang="pt-br">
-        <head>
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon32.png" />
-        </head>
-        <body className={inter.className}>
+    <html lang="pt-br">
+      <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon32.png" />
+      </head>
+      <SessionProvider session={session} >
+        <body className={`${inter.className} h-screen w-screen`}>
           {children}
         </body>
-      </html>
-    </SessionProvider >
+      </SessionProvider >
+    </html >
   );
 }

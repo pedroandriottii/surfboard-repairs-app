@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
 import Image from 'next/image';
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -36,9 +37,12 @@ export default function Home() {
             />
           </div>
           <div className="flex gap-4">
-            <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
-              <p>Cadastre-se</p>
-            </Button>
+            <Link href={'/auth/register'}>
+              <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
+                <p>Cadastre-se</p>
+              </Button>
+            </Link>
+
             <LoginButton mode="modal" asChild>
               <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
                 <p>Login</p>

@@ -14,8 +14,6 @@ import { FormError } from "@/components/form-error";
 
 import { register } from "@/actions/register"
 
-import InputMask from "react-input-mask";
-
 import {
     Form,
     FormControl,
@@ -53,7 +51,7 @@ export const RegisterForm = () => {
     }
 
     return (
-        <CardWrapper headerLabel="Crie sua conta!" backButtonLabel="Já tem uma conta?" backButtonHref="/auth/login" showSocial>
+        <CardWrapper headerTitle="Cadastre-se" headerLabel="Crie sua conta!" backButtonLabel="Já tem uma conta?" backButtonHref="/auth/login" showSocial>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
@@ -61,7 +59,7 @@ export const RegisterForm = () => {
                             <FormItem>
                                 <FormLabel>Nome</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="João Silva" type="name" disabled={isPending} />
+                                    <Input {...field} placeholder="João Silva" type="name" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -70,26 +68,25 @@ export const RegisterForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
+                                    <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
-                            // TODO: COLOCAR INPUTMASK
-                        <FormItem>
-                            <FormLabel>Telefone</FormLabel>
+                            <FormItem>
+                                <FormLabel>Telefone</FormLabel>
                                 <FormControl>
-                                <Input {...field} placeholder="(81) 98765-4321" type="text" pattern="\d*" disabled={isPending} />
+                                    <Input {...field} placeholder="(99) 99999-9999" type="text" pattern="\d*" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
-                            <FormMessage />
-                        </FormItem>
+                                <FormMessage />
+                            </FormItem>
                         )} />
                         <FormField control={form.control} name="password" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending} />
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -97,7 +94,7 @@ export const RegisterForm = () => {
                     </div>
                     <FormError message={error} />
                     <FormSuccess message={success} />
-                    <Button type="submit" className="w-full" disabled={isPending}>
+                    <Button type="submit" className="w-full bg-realce text-black font-bold" disabled={isPending}>
                         Cadastrar
                     </Button>
                 </form>
