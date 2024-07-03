@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
+                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none'>
                                     Serviços
                                 </Button>
                             </Link>
@@ -110,9 +110,9 @@ const HomePage: React.FC = () => {
             </div>
             <div className="bg-black w-full flex flex-col items-center gap-4 p-4">
                 <p className="text-realce font-bold">Visite nossa loja!</p>
-                <p className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</p>
+                <a href="https://maps.app.goo.gl/ZCcjUhyGsoxS9TUA6" target='__blank' className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</a>
                 <div className="flex items-center gap-4">
-                    <a href="">
+                    <a href="https://api.whatsapp.com/send?phone=5581988145906" target='__blank'>
                         <Image
                             src={'/whats_footer.svg'}
                             alt="Whatsapp Realce Nordeste"
@@ -120,7 +120,7 @@ const HomePage: React.FC = () => {
                             height={30}
                         />
                     </a>
-                    <a href="">
+                    <a href="https://www.instagram.com/realce.nordeste/" target='__blank'>
                         <Image
                             src={'/insta_footer.svg'}
                             alt="Instagram Realce Nordeste"

@@ -71,7 +71,7 @@ const GridPage: React.FC = () => {
                 <p className="text-realce font-bold">Visite nossa loja!</p>
                 <p className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</p>
                 <div className="flex items-center gap-4">
-                    <a href="">
+                    <a href="https://api.whatsapp.com/send?phone=5581988145906" target='__blank'>
                         <Image
                             src={'/whats_footer.svg'}
                             alt="Whatsapp Realce Nordeste"
@@ -79,7 +79,7 @@ const GridPage: React.FC = () => {
                             height={30}
                         />
                     </a>
-                    <a href="">
+                    <a href="https://www.instagram.com/realce.nordeste/" target='__blank'>
                         <Image
                             src={'/insta_footer.svg'}
                             alt="Instagram Realce Nordeste"

@@ -59,9 +59,9 @@ export default function Home() {
         </div>
         <div className="flex flex-col bg-black self-end w-full h-full items-center gap-4 p-4 lg:bg-transparent">
           <p className="text-realce font-bold">Visite nossa loja!</p>
-          <p className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</p>
+          <a href="https://maps.app.goo.gl/ZCcjUhyGsoxS9TUA6" target='__blank' className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</a>
           <div className="flex items-center gap-4">
-            <a href="">
+            <a href="https://api.whatsapp.com/send?phone=5581988145906" target='__blank'>
               <Image
                 src={'/whats_footer.svg'}
                 alt="Whatsapp Realce Nordeste"
@@ -69,7 +69,7 @@ export default function Home() {
                 height={30}
               />
             </a>
-            <a href="">
+            <a href="https://www.instagram.com/realce.nordeste/" target='__blank'>
               <Image
                 src={'/insta_footer.svg'}
                 alt="Instagram Realce Nordeste"
