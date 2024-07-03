@@ -61,8 +61,8 @@ const GridPage: React.FC = () => {
                         <div className='flex items-center w-full'>
                             <p className='bg-realce px-6 text-black font-bold rounded-r-full text-xl'>Entregues</p>
                         </div>
+                        <ServicesList initialStatus='DELIVERED' exibitionMode='GRID' />
                         <div className='p-4'>
-                            <ServicesList initialStatus='DELIVERED' exibitionMode='GRID' />
                         </div>
                     </div>
                 </div>

@@ -24,7 +24,7 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon32.png" />
       </head>
       <SessionProvider session={session} >
-        <body className={`${inter.className} h-screen w-screen`}>
+        <body className={`${inter.className} h-screen w-screen overflow-x-hidden`}>
           {children}
         </body>
       </SessionProvider >
