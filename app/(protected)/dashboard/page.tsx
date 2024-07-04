@@ -99,7 +99,7 @@ const ReportsPage: React.FC = () => {
                     />
                     <div className='flex gap-4 items-center'>
                         <Link href={'/home'}>
-                            <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
+                            <Button className='bg-transparent border-realce border-2 text-white hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none' >
                                 Serviços
                             </Button>
                         </Link>
@@ -107,7 +107,7 @@ const ReportsPage: React.FC = () => {
                         {role == 'ADMIN' && (
                             <div className='flex items-center gap-4'>
                                 <Link href={'/dashboard'}>
-                                    <Button className='bg-transparent border-realce border-2 text-white hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none'>
+                                    <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl' >
                                         Finanças
                                     </Button>
                                 </Link>

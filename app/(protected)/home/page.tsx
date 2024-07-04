@@ -34,8 +34,8 @@ const HomePage: React.FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
                 </div>
-                <div className="relative z-20 flex flex-col items-center p-4 w-full">
-                    <div className='flex justify-between w-full md:pr-4'>
+                <div className="relative z-20 flex flex-col items-center w-full">
+                    <div className='flex justify-between w-full md:pr-4 p-4'>
                         <Image
                             src={'/realce_logo.png'}
                             alt="Realce Nordeste"
@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none'>
+                                <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
                                     Serviços
                                 </Button>
                             </Link>
@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
                             {role == 'ADMIN' && (
                                 <div className='flex items-center gap-4'>
                                     <Link href={'/dashboard'}>
-                                        <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
+                                        <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                             Finanças
                                         </Button>
                                     </Link>
@@ -62,8 +62,8 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     <div className='text-white flex flex-col w-full gap-4'>
-                        <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}</h2>
-                        <div className='flex flex-col gap-4'>
+                        <div className='flex flex-col gap-4 p-4'>
+                            <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}</h2>
                             <div className='flex items-center'>
                                 <p>Prazos Próximos</p>
                                 <ChevronRightIcon />
@@ -72,34 +72,31 @@ const HomePage: React.FC = () => {
                                 <TopServicesList />
                             </div>
                         </div>
-                        <div className='flex items-center'>
-                            <Link href='/home/ready'>
-                                <p>Prontos</p>
-                            </Link>
-                            <ChevronRightIcon />
-                            <hr className='flex-grow border-t-2 border-white ml-2' />
-                        </div>
-                        <div>
+                        <Link href='/home/ready'>
+                            <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                                <p className='ml-4'>Prontos</p>
+                                <ChevronRightIcon />
+                            </div>
+                        </Link>
+                        <div className='p-4'>
                             <ServicesList initialStatus='READY' exibitionMode='LIST' />
                         </div>
-                        <div className='flex items-center'>
-                            <Link href='/home/pending'>
-                                <p>Pendente</p>
-                            </Link>
-                            <ChevronRightIcon />
-                            <hr className='flex-grow border-t-2 border-white ml-2' />
-                        </div>
-                        <div>
+                        <Link href='/home/pending'>
+                            <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                                <p className='ml-4'>Pendentes</p>
+                                <ChevronRightIcon />
+                            </div>
+                        </Link>
+                        <div className='p-4'>
                             <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
                         </div>
-                        <div className='flex items-center'>
-                            <Link href='/home/delivered'>
-                                <p>Entregues</p>
-                            </Link>
-                            <ChevronRightIcon />
-                            <hr className='flex-grow border-t-2 border-white ml-2' />
-                        </div>
-                        <div>
+                        <Link href='/home/delivered'>
+                            <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                                <p className='ml-4'>Entregues</p>
+                                <ChevronRightIcon />
+                            </div>
+                        </Link>
+                        <div className='p-4'>
                             <ServicesList initialStatus='DELIVERED' exibitionMode='LIST' />
                         </div>
                     </div>
