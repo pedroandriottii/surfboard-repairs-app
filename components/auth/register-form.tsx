@@ -11,6 +11,7 @@ import { RegisterSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
+import InputMask from 'react-input-mask';
 
 import { register } from "@/actions/register"
 
@@ -74,10 +75,10 @@ export const RegisterForm = () => {
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex flex-col">
                                 <FormLabel>Telefone</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="(99) 99999-9999" type="text" pattern="\d*" disabled={isPending} className="bg-input-color text-black" />
+                                    <InputMask mask="+5\5 (99) 99999-9999" {...field} placeholder="(99) 99999-9999" required disabled={isPending} className="bg-input-color py-2 rounded-md text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

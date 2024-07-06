@@ -2,7 +2,7 @@ import { CreateServiceForm } from "@/components/services/create-service-form";
 
 const CreateService = () => {
     return (
-        <div>
+        <div className="h-full w-full">
             <CreateServiceForm />
         </div>
     )

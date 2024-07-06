@@ -34,7 +34,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
 
     useEffect(() => {
         const fetchServices = async () => {
-            if (role === "ADMIN") {
+            if (role === "ADMIN" || role === "MASTER") {
                 const services = await getAllServices();
                 setServices(services);
             } else if (role === "USER") {

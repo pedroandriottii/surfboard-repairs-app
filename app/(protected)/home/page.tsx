@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
                                 </Button>
                             </Link>
 
-                            {role == 'ADMIN' && (
+                            {role == 'MASTER' && (
                                 <div className='flex items-center gap-4'>
                                     <Link href={'/dashboard'}>
                                         <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
@@ -100,9 +100,11 @@ const HomePage: React.FC = () => {
                             <ServicesList initialStatus='DELIVERED' exibitionMode='LIST' />
                         </div>
                     </div>
-                    <Link href={'/create-service'} className='flex w-full items-center justify-center p-6'>
-                        <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl font-bold'>Cadastrar Novo Conserto</Button>
-                    </Link>
+                    {(role == 'MASTER' || role == 'ADMIN') && (
+                        <Link href={'/create-service'} className='flex w-full items-center justify-center p-6'>
+                            <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl font-bold'>Cadastrar Novo Conserto</Button>
+                        </Link>
+                    )}
                 </div>
             </div>
             <div className="bg-black w-full flex flex-col items-center gap-4 p-4">

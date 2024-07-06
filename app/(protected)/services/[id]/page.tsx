@@ -167,7 +167,7 @@ const ServiceId = () => {
                                     <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.description}</p>
                                 </div>
 
-                                {role === 'ADMIN' && (
+                                {(role == 'ADMIN' || role == 'MASTER') && (
                                     <div className='flex flex-col gap-4'>
                                         <div>
                                             <p className='text-realce'>Email</p>
@@ -183,7 +183,7 @@ const ServiceId = () => {
                                         </div>
                                     </div>
                                 )}
-                                {(service?.status === 'READY' || service?.status === 'PENDING') && role === "ADMIN" && (
+                                {(service?.status === 'READY' || service?.status === 'PENDING') && (role === "ADMIN" || role === "MASTER") && (
                                     <div>
                                         <Form {...form}>
                                             <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-2 mr-4'>

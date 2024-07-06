@@ -3,9 +3,12 @@
 import * as z from "zod";
 
 import { useState, useTransition } from "react";
-import { CardWrapper } from "@/components/auth/card-wrapper"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import Image from "next/image";
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { UserButton } from "../auth/user-button";
 
 import { ServiceSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
@@ -18,6 +21,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import InputMask from 'react-input-mask';
 
 import {
     Form,
@@ -36,6 +40,7 @@ export const CreateServiceForm = () => {
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
+    const role = useCurrentRole();
 
     const form = useForm<z.infer<typeof ServiceSchema>>({
         resolver: zodResolver(ServiceSchema),
@@ -87,7 +92,7 @@ export const CreateServiceForm = () => {
                                 toast.success("Serviço criado com sucesso!")
                                 setSuccess(result.success);
                                 setTimeout(() => {
-                                    router.push("/services");
+                                    router.push("/home");
                                 }, 4000);
                             } else {
                                 setError(result.error);
@@ -107,105 +112,130 @@ export const CreateServiceForm = () => {
     };
 
     return (
-        <div className="flex items-center align-center justify-center m-2">
+        <div className="flex flex-col w-full h-full bg-black p-4">
+            <div className='flex justify-between w-full'>
+                <Image
+                    src={'/realce_logo.png'}
+                    alt="Realce Nordeste"
+                    width={50}
+                    height={50}
+                />
+                <div className='flex gap-4 items-center'>
+                    <Link href={'/home'}>
+                        <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
+                            Serviços
+                        </Button>
+                    </Link>
+
+                    {role == 'MASTER' && (
+                        <div className='flex items-center gap-4'>
+                            <Link href={'/dashboard'}>
+                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                    Finanças
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
+                    <UserButton />
+                </div>
+            </div>
+            <h1 className="text-realce text-xl font-bold py-2 text-center">Cadastrar Serviço</h1>
             <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-            <RoleGate allowedRole="ADMIN">
-                <CardWrapper headerTitle="Cadastrar Serviço" headerLabel="Registrar Conserto" backButtonLabel="Voltar" backButtonHref="/services">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
-                            <div className="space-y-4">
-                                <FormField control={form.control} name="photo_url" render={({ field }) => {
-                                    const { value, ...inputProps } = field;
-                                    return (
-                                        <FormItem>
-                                            <FormLabel>Foto</FormLabel>
-                                            <FormControl>
-                                                <Input {...inputProps} type="file" disabled={isPending} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    );
-                                }} />
-                                <FormField control={form.control} name="client_name" render={({ field }) => (
+            <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-black">
+                        <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-4">
+                            <FormField control={form.control} name="photo_url" render={({ field }) => {
+                                const { value, ...inputProps } = field;
+                                return (
                                     <FormItem>
-                                        <FormLabel>Nome do Ciente</FormLabel>
+                                        <FormLabel className="text-realce">Foto da Prancha</FormLabel>
                                         <FormControl>
-                                            <Input {...field} placeholder="João Silva" type="name" disabled={isPending} />
+                                            <Input {...inputProps} type="file" disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
-                                )} />
-                                <FormField control={form.control} name="user_mail" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email do Cliente</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="phone" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Telefone do Cliente</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="(81) 98765-4321" type="text" pattern="\d*" disabled={isPending} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="value" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Valor do serviço</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
-                                                <span className="mr-2">R$</span>
-                                                <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="max_time" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Prazo</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} type="date" disabled={isPending} onChange={(e) => { const selectedDate = new Date(e.target.value); form.setValue("max_time", selectedDate); }} value={field.value ? field.value.toISOString().substring(0, 10) : ''} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
-                                <FormField control={form.control} name="description" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Descrição do serviço</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="Descrição" type="text" disabled={isPending} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="payment_method" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Método de Pagamento</FormLabel>
-                                        <FormControl>
-                                            <select {...field} disabled={isPending} className="input-class-name flex flex-col border w-full rounded-md h-10 border-input px-3 py-2">
-                                                {Object.entries(paymentMethodOptions).map(([value, name]) => (
-                                                    <option key={value} value={value}>{name}</option>
-                                                ))}
-                                            </select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                            </div>
-                            <FormError message={error} />
-                            <FormSuccess message={success} />
-                            <Button type="submit" className="w-full" disabled={isPending}>
-                                Confirmar
-                            </Button>
-                        </form>
-                    </Form>
-                </CardWrapper>
+                                );
+                            }} />
+                            <FormField control={form.control} name="client_name" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Nome do Ciente</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="João Silva" type="name" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="user_mail" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Email do Cliente</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="phone" render={({ field }) => (
+                                <FormItem className="flex flex-col gap-2">
+                                    <FormLabel className="text-realce">Telefone do Cliente</FormLabel>
+                                    <FormControl>
+                                        <InputMask mask="+5\5 (99) 99999-9999" {...field} className="border rounded-md p-2 w-full" placeholder='+55 (99) 99999-9999' required disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="value" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Valor do serviço</FormLabel>
+                                    <FormControl>
+                                        <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
+                                            <span className="mr-2 text-white">R$</span>
+                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="max_time" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Prazo</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="date" disabled={isPending} onChange={(e) => { const selectedDate = new Date(e.target.value); form.setValue("max_time", selectedDate); }} value={field.value ? field.value.toISOString().substring(0, 10) : ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                            <FormField control={form.control} name="description" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Descrição do serviço</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Descrição" type="text" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="payment_method" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Método de Pagamento</FormLabel>
+                                    <FormControl>
+                                        <select {...field} disabled={isPending} className="input-class-name flex flex-col border w-full rounded-md h-10 border-input px-3 py-2">
+                                            {Object.entries(paymentMethodOptions).map(([value, name]) => (
+                                                <option key={value} value={value}>{name}</option>
+                                            ))}
+                                        </select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                        <FormError message={error} />
+                        <FormSuccess message={success} />
+                        <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={isPending}>
+                            Confirmar
+                        </Button>
+                    </form>
+                </Form>
             </RoleGate>
         </div>
 

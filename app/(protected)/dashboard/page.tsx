@@ -89,7 +89,7 @@ const ReportsPage: React.FC = () => {
 
     return (
         <div className='p-4 bg-black w-full h-full'>
-            <RoleGate allowedRole={UserRole.ADMIN}>
+            <RoleGate allowedRoles={[UserRole.MASTER]}>
                 <div className='flex justify-between w-full md:pr-4'>
                     <Image
                         src={'/realce_logo.png'}
@@ -104,7 +104,7 @@ const ReportsPage: React.FC = () => {
                             </Button>
                         </Link>
 
-                        {role == 'ADMIN' && (
+                        {role == 'MASTER' && (
                             <div className='flex items-center gap-4'>
                                 <Link href={'/dashboard'}>
                                     <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl' >

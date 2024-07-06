@@ -41,14 +41,14 @@ const GridPage: React.FC = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-realce text-black hover:bg-white max-h-8 px-6 rounded-xl'>
+                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                                     Serviços
                                 </Button>
                             </Link>
 
-                            {role == 'ADMIN' && (
+                            {role == 'MASTER' && (
                                 <Link href={'/dashboard'}>
-                                    <Button className='bg-realce text-black hover:bg-white max-h-8 px-6 rounded-xl' >
+                                    <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                         Finanças
                                     </Button>
                                 </Link>
