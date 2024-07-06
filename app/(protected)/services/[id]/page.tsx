@@ -23,7 +23,6 @@ const ServiceId = () => {
     const [error, setError] = useState<string | null>(null);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
-    const router = useRouter();
     const pathName = usePathname();
     const role = useCurrentRole();
 
@@ -130,12 +129,12 @@ const ServiceId = () => {
                         </div>
                     </div>
                     <div className='w-full h-full flex flex-col gap-4'>
-                        <Link href={'/home'} className='bg-realce rounded-r-full flex w-1/4 font-bold'>
+                        <Link href={'/home'} className='bg-realce rounded-r-full flex w-1/4 font-bold md:w-1/12'>
                             <ChevronLeftIcon />
                             <p className='text-black pl-4 justify-self-start'>Voltar</p>
                         </Link>
-                        <div className='flex flex-col text-white w-full h-full items-center'>
-                            <div className="relative w-2/3 items-center" style={{ aspectRatio: '1/1' }}>
+                        <div className='flex flex-col text-white w-full h-full items-center md:flex-row md:p-8'>
+                            <div className="relative w-2/3 items-center md:w-1/2" style={{ aspectRatio: '1/1' }}>
                                 <Image
                                     src={service?.photo_url ?? '/placeholder.png'}
                                     alt='Foto da Prancha'
@@ -144,26 +143,30 @@ const ServiceId = () => {
                                 />
                             </div>
                             <div className='flex flex-col justify-self-start w-full p-4 gap-4'>
-                                <div>
-                                    <p className='text-realce'>Prancha</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
-                                </div>
-                                <div>
-                                    <p className='text-realce'>Valor</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
-                                </div>
-                                <div>
-                                    <p className='text-realce'>Prazo</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.max_time && new Date(service.max_time).toLocaleDateString()}</p>
+                                <h1 className='text-realce font-bold md:text-2xl text-center'>Detalhes do Serviço</h1>
+                                <div className='md:flex-row w-full h-full flex flex-col gap-4'>
+                                    <div className='md:w-1/4'>
+                                        <p className='text-realce'>Prancha</p>
+                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
+                                    </div>
+                                    <div className='md:w-1/4'>
+                                        <p className='text-realce'>Valor</p>
+                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
+                                    </div>
+                                    <div className='md:w-1/4'>
+                                        <p className='text-realce'>Prazo</p>
+                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.max_time && new Date(service.max_time).toLocaleDateString()}</p>
+                                    </div>
+                                    <div className='md:w-1/4'>
+                                        <p className='text-realce'>Status</p>
+                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.status && statusTranslate[service.status]}</p>
+                                    </div>
                                 </div>
                                 <div>
                                     <p className='text-realce'>Descrição</p>
                                     <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.description}</p>
                                 </div>
-                                <div>
-                                    <p className='text-realce'>Status</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.status}</p>
-                                </div>
+
                                 {role === 'ADMIN' && (
                                     <div className='flex flex-col gap-4'>
                                         <div>
