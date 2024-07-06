@@ -46,13 +46,18 @@ export const LoginForm = () => {
         setError("");
         setSuccess("");
 
+        const transformedValues = {
+            ...values,
+            email: values.email.toLowerCase(),
+        };
+
         startTransition(() => {
-            login(values).then((data) => {
+            login(transformedValues).then((data) => {
                 setError(data?.error);
                 setSuccess(data?.success);
-            })
+            });
         });
-    }
+    };
 
     return (
         <CardWrapper headerTitle="Login" headerLabel="Entre na sua conta e acompanhe o andamento do seu conserto!" backButtonLabel="Não tem uma conta? Cadastre-se" backButtonHref="/auth/register" showSocial>

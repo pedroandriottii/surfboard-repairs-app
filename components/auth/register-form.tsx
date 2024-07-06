@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 
-import { useState, useTransition, InputHTMLAttributes } from "react";
+import { useState, useTransition } from "react";
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,20 +36,26 @@ export const RegisterForm = () => {
             email: "",
             password: "",
             name: "",
+            phone: "",
         }
-    })
+    });
 
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
         setError("");
         setSuccess("");
 
+        const transformedValues = {
+            ...values,
+            email: values.email.toLowerCase(),
+        };
+
         startTransition(() => {
-            register(values).then((data) => {
+            register(transformedValues).then((data) => {
                 setError(data.error);
                 setSuccess(data.success);
-            })
+            });
         });
-    }
+    };
 
     return (
         <CardWrapper headerTitle="Cadastre-se" headerLabel="Crie sua conta!" backButtonLabel="Já tem uma conta?" backButtonHref="/auth/login" showSocial>
@@ -60,7 +66,7 @@ export const RegisterForm = () => {
                             <FormItem>
                                 <FormLabel>Nome</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="João Silva" type="name" disabled={isPending} className="bg-input-color text-black" />
+                                    <Input {...field} placeholder="João Silva" type="text" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -101,5 +107,5 @@ export const RegisterForm = () => {
                 </form>
             </Form>
         </CardWrapper>
-    )
-}
+    );
+};
