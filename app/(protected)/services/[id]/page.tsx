@@ -58,10 +58,15 @@ const ServiceId = () => {
     }, [id])
 
     const generateWhatsAppLink = (phone?: string, status?: string) => {
+        if (!phone) return null;
+
+        const cleanedPhone = phone.replace(/\D/g, '');
+
         const baseMessage = 'Olá! Sua prancha ';
         const statusMessage = status === 'DELIVERED' ? 'foi entregue!' : 'está pronta para ser retirada!';
-        return `https://api.whatsapp.com/send?phone=55${phone}&text=${baseMessage}${statusMessage}`;
+        return `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
     };
+
 
     const onSubmit = async (values: z.infer<typeof ChangeStatusSchema>) => {
         const formValues = { ...values };
