@@ -1,7 +1,6 @@
 "use server";
 
 import * as z from "zod";
-
 import { db } from "@/lib/db";
 import { ChangeStatusSchema } from "@/schemas";
 
@@ -15,13 +14,21 @@ export const updateStatus = async (serviceId: string, values: z.infer<typeof Cha
 
     try {
         const { status } = validatedFields.data;
+        const currentDate = new Date();
+
+        const dataToUpdate: any = { status };
+
+        if (status === 'READY') {
+            dataToUpdate.ready_time = currentDate;
+        } else if (status === 'DELIVERED') {
+            dataToUpdate.delivered_time = currentDate;
+        }
 
         const service = await db.service.update({
             where: { id: serviceId },
-            data: {
-                status,
-            }
+            data: dataToUpdate,
         });
+
         return { success: "Status Alterado Com Sucesso!" };
     } catch (error) {
         console.error("Erro ao Alterar Status:", error);

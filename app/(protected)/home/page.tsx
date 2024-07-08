@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
                             {role == 'MASTER' && (
                                 <div className='flex items-center gap-4'>
                                     <Link href={'/dashboard'}>
-                                        <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                             Finanças
                                         </Button>
                                     </Link>
@@ -68,9 +68,7 @@ const HomePage: React.FC = () => {
                                 <p>Prazos Próximos</p>
                                 <ChevronRightIcon />
                             </div>
-                            <div>
-                                <TopServicesList />
-                            </div>
+                            <TopServicesList />
                         </div>
                         <Link href='/home/ready'>
                             <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>

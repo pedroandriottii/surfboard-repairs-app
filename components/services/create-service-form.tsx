@@ -122,7 +122,7 @@ export const CreateServiceForm = () => {
                 />
                 <div className='flex gap-4 items-center'>
                     <Link href={'/home'}>
-                        <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
+                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                             Serviços
                         </Button>
                     </Link>
@@ -130,7 +130,7 @@ export const CreateServiceForm = () => {
                     {role == 'MASTER' && (
                         <div className='flex items-center gap-4'>
                             <Link href={'/dashboard'}>
-                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                     Finanças
                                 </Button>
                             </Link>

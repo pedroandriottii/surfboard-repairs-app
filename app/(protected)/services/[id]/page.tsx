@@ -70,20 +70,30 @@ const ServiceId = () => {
 
     const onSubmit = async (values: z.infer<typeof ChangeStatusSchema>) => {
         const formValues = { ...values };
-        updateStatus(id, formValues).then(result => {
+        const currentDate = new Date();
+
+        if (values.status === 'READY') {
+            formValues.ready_time = currentDate;
+        } else if (values.status === 'DELIVERED') {
+            formValues.delivered_time = currentDate;
+        }
+
+        try {
+            const result = await updateStatus(id, formValues);
             if (result.success) {
                 toast.success("Status Atualizado com sucesso");
                 const link = generateWhatsAppLink(service?.phone, values.status);
                 setWhatsappLink(link);
                 setShowAlert(true);
             } else {
-                toast.error('Erro ao mudar o Status: ' + error);
+                toast.error('Erro ao mudar o Status: ' + result.error);
             }
-        }).catch(error => {
+        } catch (error) {
             setError("Erro ao mudar o Status: " + error);
             toast.error('Erro ao mudar o Status');
-        })
+        }
     };
+
 
     return (
         <div className="relative w-full flex-grow h-full min-h-screen" >
@@ -116,15 +126,15 @@ const ServiceId = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
+                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                                     Serviços
                                 </Button>
                             </Link>
 
-                            {role == 'ADMIN' && (
+                            {role == 'MASTER' && (
                                 <div className='flex items-center gap-4'>
                                     <Link href={'/dashboard'}>
-                                        <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl' >
+                                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                             Finanças
                                         </Button>
                                     </Link>
@@ -163,6 +173,22 @@ const ServiceId = () => {
                                         <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.max_time && new Date(service.max_time).toLocaleDateString()}</p>
                                     </div>
                                     <div className='md:w-1/4'>
+                                        <p className='text-realce'>Data de Entrada</p>
+                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.now_time && new Date(service.now_time).toLocaleDateString()}</p>
+                                    </div>
+                                    {service?.ready_time && (
+                                        <div className='md:w-1/4'>
+                                            <p className='text-realce'>Data Pronto</p>
+                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.ready_time && new Date(service.ready_time).toLocaleDateString()}</p>
+                                        </div>
+                                    )}
+                                    {service?.delivered_time && (
+                                        <div className='md:w-1/4'>
+                                            <p className='text-realce'>Data de Saída</p>
+                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.delivered_time && new Date(service.delivered_time).toLocaleDateString()}</p>
+                                        </div>
+                                    )}
+                                    <div className='md:w-1/4'>
                                         <p className='text-realce'>Status</p>
                                         <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.status && statusTranslate[service.status]}</p>
                                     </div>
@@ -199,6 +225,7 @@ const ServiceId = () => {
                                                                 <div className='flex flex-col items-center text-center'>
                                                                     <p className='p-1 text-realce text-md'>Atualizar Status</p>
                                                                     <select {...field} name="status" className='input-class-name flex flex-col border-input px-3 text-black py-2 border-slate-800 border-2 rounded-lg bg-slate-200 w-full'>
+                                                                        <option value="PENDING">Selecione o Status</option>
                                                                         <option value="READY">Pronto</option>
                                                                         <option value="DELIVERED">Entregue</option>
                                                                     </select>

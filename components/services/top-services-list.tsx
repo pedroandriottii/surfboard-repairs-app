@@ -48,13 +48,13 @@ const TopServicesList: React.FC = () => {
     }
 
     return (
-        <div className='overflow-x-hidden w-full h-full'>
+        <div className='w-full'>
             {services.map((service) => (
-                <div key={service.id} className='grid grid-cols-2 md:grid-cols-6'>
+                <div key={service.id} className='flex w-full h-full '>
                     <Link href={`/services/${service.id}`} passHref>
-                        <div className='bg-white rounded-xl w-full'>
-                            <p className='bg-realce px-10 w-full text-left text-black rounded-t-xl'>{formatDate(new Date(service.max_time))}</p>
-                            <p className='text-black font-bold p-2 w-[40vw]'>{service.client_name}</p>
+                        <div className='bg-white rounded-xl'>
+                            <p className='bg-realce px-10 text-left text-black rounded-t-xl'>{formatDate(new Date(service.max_time))}</p>
+                            <p className='text-black font-bold p-2'>{service.client_name}</p>
                         </div>
                     </Link>
                 </div>

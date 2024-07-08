@@ -71,4 +71,6 @@ export const SettingsSchema = z.object({
 
 export const ChangeStatusSchema = z.object({
     status: z.enum(["PENDING", "READY", "DELIVERED"]),
+    ready_time: z.date().optional(),
+    delivered_time: z.date().optional(),
 });

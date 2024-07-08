@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { UserButton } from '@/components/auth/user-button';
 import Link from 'next/link';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const GridPage: React.FC = () => {
     const role = useCurrentRole();
@@ -40,14 +41,14 @@ const GridPage: React.FC = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
+                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                                     Serviços
                                 </Button>
                             </Link>
 
                             {role == 'MASTER' && (
                                 <Link href={'/dashboard'}>
-                                    <Button className='bg-transparent border-2 border-realce text-white  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                    <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                         Finanças
                                     </Button>
                                 </Link>
@@ -56,8 +57,25 @@ const GridPage: React.FC = () => {
                         </div>
                     </div>
                     <div className='text-white flex flex-col w-full gap-4 h-full'>
-                        <div className='flex items-center w-full'>
-                            <p className='bg-realce px-6 text-black font-bold rounded-r-full text-xl'>Entregues</p>
+                        <div className='flex items-center w-full justify-between'>
+                            <Link href={'/home'}>
+                                <Button className='bg-realce max-h-8 text-black font-bold rounded-l-none rounded-r-xl text-xl hover:bg-white hover:text-black'>
+                                    <ChevronLeftIcon />
+                                    <p className='md:hidden'>Entregues</p>
+                                    <p className='hidden md:block'>Voltar</p>
+                                </Button>
+                            </Link>
+                            <div className='flex gap-4 mr-4'>
+                                <Link href={'/home/ready'}>
+                                    <Button className='bg-transparent border-2 border-realce text-realce rounded-xl max-h-8 hover:bg-white hover:text-black'>Prontos</Button>
+                                </Link>
+                                <Link href={'/home/pending'}>
+                                    <Button className='bg-transparent border-2 border-realce text-realce rounded-xl max-h-8 hover:bg-white hover:text-black'>Pendentes</Button>
+                                </Link>
+                                <Link href={'/home/delivered'}>
+                                    <Button className='bg-realce text-black rounded-xl max-h-8 hover:bg-white hover:text-black hidden md:block'>Entregues</Button>
+                                </Link>
+                            </div>
                         </div>
                         <ServicesList initialStatus='DELIVERED' exibitionMode='GRID' />
                         <div className='p-4'>

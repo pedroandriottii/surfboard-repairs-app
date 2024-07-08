@@ -85,6 +85,8 @@ model Service {
   value          Float
   max_time       DateTime
   now_time       DateTime
+  ready_time     DateTime?
+  delivered_time DateTime?
   description    String
   payment_method PaymentMethod
   status         ServiceStatus
