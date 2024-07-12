@@ -70,15 +70,6 @@ const HomePage: React.FC = () => {
                             </div>
                             <TopServicesList />
                         </div>
-                        <Link href='/home/ready'>
-                            <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
-                                <p className='ml-4'>Prontos</p>
-                                <ChevronRightIcon />
-                            </div>
-                        </Link>
-                        <div className='p-4'>
-                            <ServicesList initialStatus='READY' exibitionMode='LIST' />
-                        </div>
                         <Link href='/home/pending'>
                             <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
                                 <p className='ml-4'>Pendentes</p>
@@ -87,6 +78,15 @@ const HomePage: React.FC = () => {
                         </Link>
                         <div className='p-4'>
                             <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
+                        </div>
+                        <Link href='/home/ready'>
+                            <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                                <p className='ml-4'>Prontos</p>
+                                <ChevronRightIcon />
+                            </div>
+                        </Link>
+                        <div className='p-4'>
+                            <ServicesList initialStatus='READY' exibitionMode='LIST' />
                         </div>
                         <Link href='/home/delivered'>
                             <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>

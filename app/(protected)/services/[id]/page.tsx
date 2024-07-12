@@ -1,7 +1,7 @@
 'use client';
 import { getServiceById } from '@/data/services';
-import { Service, UserRole } from '@prisma/client';
-import { usePathname, useRouter } from 'next/navigation';
+import { Service } from '@prisma/client';
+import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
@@ -17,6 +17,7 @@ import { updateStatus } from '@/actions/update-status';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
+import Timeline from '@/components/services/timeline';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
@@ -28,7 +29,7 @@ const ServiceId = () => {
 
     const form = useForm<z.infer<typeof ChangeStatusSchema>>({
         resolver: zodResolver(ChangeStatusSchema),
-    })
+    });
 
     const id = pathName.replace('/services/', '');
 
@@ -36,7 +37,7 @@ const ServiceId = () => {
         PENDING: 'Pendente',
         READY: 'Pronto',
         DELIVERED: 'Entregue',
-    }
+    };
 
     const paymentMethodTranslate = {
         CREDIT_CARD: 'Cartão de Crédito',
@@ -44,18 +45,17 @@ const ServiceId = () => {
         CASH: 'Dinheiro',
         PIX: 'PIX',
         FREE: 'Grátis',
-    }
+    };
 
     useEffect(() => {
         if (typeof id === 'string') {
             const fetchService = async () => {
                 const fetchedService = await getServiceById(id);
                 setService(fetchedService);
-            }
+            };
             fetchService();
         }
-
-    }, [id])
+    }, [id]);
 
     const generateWhatsAppLink = (phone?: string, status?: string) => {
         if (!phone) return null;
@@ -66,7 +66,6 @@ const ServiceId = () => {
         const statusMessage = status === 'DELIVERED' ? 'foi entregue!' : 'está pronta para ser retirada!';
         return `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
     };
-
 
     const onSubmit = async (values: z.infer<typeof ChangeStatusSchema>) => {
         const formValues = { ...values };
@@ -94,9 +93,8 @@ const ServiceId = () => {
         }
     };
 
-
     return (
-        <div className="relative w-full flex-grow h-full min-h-screen" >
+        <div className="relative w-full flex-grow h-full min-h-screen">
             <div className="relative w-full flex-grow">
                 <div className="absolute inset-0 md:hidden">
                     <Image
@@ -126,7 +124,7 @@ const ServiceId = () => {
                         />
                         <div className='flex gap-4 items-center'>
                             <Link href={'/home'}>
-                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
+                                <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                                     Serviços
                                 </Button>
                             </Link>
@@ -134,7 +132,7 @@ const ServiceId = () => {
                             {role == 'MASTER' && (
                                 <div className='flex items-center gap-4'>
                                     <Link href={'/dashboard'}>
-                                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                        <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                                             Finanças
                                         </Button>
                                     </Link>
@@ -160,37 +158,13 @@ const ServiceId = () => {
                             <div className='flex flex-col justify-self-start w-full p-4 gap-4'>
                                 <h1 className='text-realce font-bold md:text-2xl text-center'>Detalhes do Serviço</h1>
                                 <div className='md:flex-row w-full h-full flex flex-col gap-4'>
-                                    <div className='md:w-1/4'>
+                                    <div className='md:w-1/2'>
                                         <p className='text-realce'>Prancha</p>
                                         <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
                                     </div>
-                                    <div className='md:w-1/4'>
+                                    <div className='md:w-1/2'>
                                         <p className='text-realce'>Valor</p>
                                         <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
-                                    </div>
-                                    <div className='md:w-1/4'>
-                                        <p className='text-realce'>Prazo</p>
-                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.max_time && new Date(service.max_time).toLocaleDateString()}</p>
-                                    </div>
-                                    <div className='md:w-1/4'>
-                                        <p className='text-realce'>Data de Entrada</p>
-                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.now_time && new Date(service.now_time).toLocaleDateString()}</p>
-                                    </div>
-                                    {service?.ready_time && (
-                                        <div className='md:w-1/4'>
-                                            <p className='text-realce'>Data Pronto</p>
-                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.ready_time && new Date(service.ready_time).toLocaleDateString()}</p>
-                                        </div>
-                                    )}
-                                    {service?.delivered_time && (
-                                        <div className='md:w-1/4'>
-                                            <p className='text-realce'>Data de Saída</p>
-                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.delivered_time && new Date(service.delivered_time).toLocaleDateString()}</p>
-                                        </div>
-                                    )}
-                                    <div className='md:w-1/4'>
-                                        <p className='text-realce'>Status</p>
-                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.status && statusTranslate[service.status]}</p>
                                     </div>
                                 </div>
                                 <div>
@@ -253,6 +227,14 @@ const ServiceId = () => {
                                         </AlertDialog>
                                     </div>
                                 )}
+
+                                <Timeline
+                                    nowTime={service?.now_time || undefined}
+                                    readyTime={service?.ready_time || undefined}
+                                    deliveredTime={service?.delivered_time || undefined}
+                                    maxTime={service?.max_time || undefined}
+                                />
+
                             </div>
                         </div>
 
