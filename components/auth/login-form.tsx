@@ -26,6 +26,9 @@ import {
 } from "@/components/ui/form";
 import { FormSuccess } from "../form-success";
 
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+
 export const LoginForm = () => {
     const searchParamns = useSearchParams();
     const urlError = searchParamns.get("error") === "OAuthAccountNotLinked" ? "Email já em uso!" : "";
@@ -33,6 +36,7 @@ export const LoginForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+    const [showPassword, setShowPassword] = useState(false);
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -77,7 +81,16 @@ export const LoginForm = () => {
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
+                                    <div className="relative">
+                                        <Input {...field} placeholder="******" type={showPassword ? "text" : "password"} disabled={isPending} className="bg-input-color text-black pr-10" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 flex items-center px-2 focus:outline-none"
+                                        >
+                                            {showPassword ? <VisibilityOffIcon className="w-5 h-5 text-gray-500" /> : <VisibilityIcon className="w-5 h-5 text-gray-500" />}
+                                        </button>
+                                    </div>
                                 </FormControl>
                                 <Button size="sm" variant="link" asChild className="px-0 font-normal text-white underline">
                                     <Link href="/auth/reset">

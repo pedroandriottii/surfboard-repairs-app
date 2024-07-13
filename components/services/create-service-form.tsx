@@ -91,9 +91,7 @@ export const CreateServiceForm = () => {
                             if (result.success) {
                                 toast.success("Serviço criado com sucesso!")
                                 setSuccess(result.success);
-                                setTimeout(() => {
-                                    router.push("/home");
-                                }, 4000);
+                                router.push('/home')
                             } else {
                                 setError(result.error);
                                 toast.error('Erro ao criar o serviço: ' + result.error);
