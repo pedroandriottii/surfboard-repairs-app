@@ -35,7 +35,7 @@ export const ServiceSchema = z.object({
         { message: "Email inválido" }
     ),
     phone: z.string().min(1, { message: "Insira o Telefone!" }),
-    value: z.number().min(1, { message: "Insira o Valor!" }),
+    value: z.number().min(0, { message: "Insira o Valor!" }),
     max_time: z.date(),
     description: z.string(),
     payment_method: z.enum(["CASH", "CREDIT_CARD", "DEBIT_CARD", "PIX", "FREE"]),

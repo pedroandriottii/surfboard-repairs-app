@@ -1,34 +1,44 @@
 'use client';
 import { getServiceById } from '@/data/services';
 import { Service } from '@prisma/client';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { toast } from 'react-toastify';
-import { ChangeStatusSchema } from '@/schemas';
+import { ChangeStatusSchema, ServiceSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { UserButton } from '@/components/auth/user-button';
 import * as z from 'zod';
 import { updateStatus } from '@/actions/update-status';
+import { deleteService } from '@/actions/delete-service';
+import { editService } from '@/actions/edit-service';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
+import { Input } from '@/components/ui/input';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const pathName = usePathname();
     const role = useCurrentRole();
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof ChangeStatusSchema>>({
         resolver: zodResolver(ChangeStatusSchema),
+    });
+
+    const editForm = useForm<z.infer<typeof ServiceSchema>>({
+        resolver: zodResolver(ServiceSchema),
+        defaultValues: service || {},
     });
 
     const id = pathName.replace('/services/', '');
@@ -52,6 +62,16 @@ const ServiceId = () => {
             const fetchService = async () => {
                 const fetchedService = await getServiceById(id);
                 setService(fetchedService);
+                editForm.reset({
+                    photo_url: fetchedService?.photo_url || null,
+                    client_name: fetchedService?.client_name || '',
+                    user_mail: fetchedService?.user_mail || '',
+                    phone: fetchedService?.phone || '',
+                    value: fetchedService?.value || 0,
+                    max_time: fetchedService?.max_time || new Date(),
+                    description: fetchedService?.description || '',
+                    payment_method: fetchedService?.payment_method || 'CASH',
+                });
             };
             fetchService();
         }
@@ -90,6 +110,36 @@ const ServiceId = () => {
         } catch (error) {
             setError("Erro ao mudar o Status: " + error);
             toast.error('Erro ao mudar o Status');
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            const result = await deleteService(id);
+            if (result.success) {
+                toast.success("Serviço deletado com sucesso");
+                router.push('/home');
+            } else {
+                toast.error('Erro ao deletar serviço: ' + result.error);
+            }
+        } catch (error) {
+            setError("Erro ao deletar serviço: " + error);
+            toast.error('Erro ao deletar serviço');
+        }
+    };
+
+    const handleEdit = async (values: z.infer<typeof ServiceSchema>) => {
+        try {
+            const result = await editService(id, values);
+            if (result.success) {
+                toast.success("Serviço editado com sucesso");
+                setService(result.service);
+            } else {
+                toast.error('Erro ao editar serviço: ' + result.error);
+            }
+        } catch (error) {
+            setError("Erro ao editar serviço: " + error);
+            toast.error('Erro ao editar serviço');
         }
     };
 
@@ -234,6 +284,68 @@ const ServiceId = () => {
                                     deliveredTime={service?.delivered_time || undefined}
                                     maxTime={service?.max_time || undefined}
                                 />
+
+                                <div className='flex w-full items-center flex-col gap-4'>
+                                    {role === 'MASTER' && (
+                                        <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full'>
+                                            Deletar Serviço
+                                        </Button>
+                                    )}
+                                    {/* <Button onClick={() => editForm.handleSubmit(handleEdit)()} className='bg-blue-600 text-white'>
+                                        Editar
+                                    </Button> */}
+                                </div>
+                                <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <h2>Confirmar Exclusão de Serviço</h2>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction className='bg-red-600 text-white' onClick={handleDelete}>Deletar</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                {/* <Form {...editForm}>
+                                    <form onSubmit={editForm.handleSubmit(handleEdit)} className='flex flex-col gap-2'>
+                                        <FormField control={editForm.control} name="client_name" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Cliente</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} value={field.value ?? ''} />
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={editForm.control} name="value" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Valor</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={editForm.control} name="description" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Descrição</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={editForm.control} name="photo_url" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>URL da Foto</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} value={field.value ?? ''} />
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <Button type="submit" className='mt-4 bg-blue-600 text-white'>
+                                            Salvar
+                                        </Button>
+                                    </form>
+                                </Form> */}
 
                             </div>
                         </div>

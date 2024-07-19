@@ -1,23 +1,19 @@
 "use client";
 
 import * as z from "zod";
-
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserButton } from "../auth/user-button";
-
 import { ServiceSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
-
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -53,7 +49,7 @@ export const CreateServiceForm = () => {
             payment_method: "CASH",
             photo_url: "",
         }
-    })
+    });
 
     const paymentMethodOptions = {
         CASH: "Dinheiro",
@@ -61,15 +57,24 @@ export const CreateServiceForm = () => {
         DEBIT_CARD: "Cartão de Débito",
         PIX: "PIX",
         FREE: "Grátis",
-    }
+    };
 
     const [imgURL, setImgURL] = useState("");
     const [progress, setProgress] = useState(0);
 
-    const onSubmit = async (values: z.infer<typeof ServiceSchema>) => {
+    useEffect(() => {
+        if (form.watch("payment_method") === "FREE") {
+            form.setValue("value", 0);
+        }
+    }, [form.watch("payment_method")]);
 
+    const onSubmit = async (values: z.infer<typeof ServiceSchema>) => {
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         const file = fileInput?.files ? fileInput.files[0] : null;
+
+        if (values.payment_method === 'FREE') {
+            values.value = 0;
+        }
 
         if (file) {
             const storageRef = ref(storage, `images/${file.name}`);
@@ -91,7 +96,7 @@ export const CreateServiceForm = () => {
                             if (result.success) {
                                 toast.success("Serviço criado com sucesso!")
                                 setSuccess(result.success);
-                                router.push('/home')
+                                router.push('/home');
                             } else {
                                 setError(result.error);
                                 toast.error('Erro ao criar o serviço: ' + result.error);
@@ -120,7 +125,7 @@ export const CreateServiceForm = () => {
                 />
                 <div className='flex gap-4 items-center'>
                     <Link href={'/home'}>
-                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
+                        <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
                             Serviços
                         </Button>
                     </Link>
@@ -128,7 +133,7 @@ export const CreateServiceForm = () => {
                     {role == 'MASTER' && (
                         <div className='flex items-center gap-4'>
                             <Link href={'/dashboard'}>
-                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
+                                <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
                                     Finanças
                                 </Button>
                             </Link>
@@ -182,14 +187,11 @@ export const CreateServiceForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                            <FormField control={form.control} name="value" render={({ field }) => (
+                            <FormField control={form.control} name="description" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-realce">Valor do serviço</FormLabel>
+                                    <FormLabel className="text-realce">Descrição do serviço</FormLabel>
                                     <FormControl>
-                                        <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
-                                            <span className="mr-2 text-white">R$</span>
-                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
-                                        </div>
+                                        <Input {...field} placeholder="Descrição" type="text" disabled={isPending} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -204,15 +206,6 @@ export const CreateServiceForm = () => {
                                 </FormItem>
                             )}
                             />
-                            <FormField control={form.control} name="description" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-realce">Descrição do serviço</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="Descrição" type="text" disabled={isPending} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
                             <FormField control={form.control} name="payment_method" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-realce">Método de Pagamento</FormLabel>
@@ -222,6 +215,18 @@ export const CreateServiceForm = () => {
                                                 <option key={value} value={value}>{name}</option>
                                             ))}
                                         </select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="value" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-realce">Valor do serviço</FormLabel>
+                                    <FormControl>
+                                        <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
+                                            <span className="mr-2 text-white">R$</span>
+                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={form.watch("payment_method") === "FREE" || isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -236,6 +241,5 @@ export const CreateServiceForm = () => {
                 </Form>
             </RoleGate>
         </div>
-
-    )
-}
+    );
+};

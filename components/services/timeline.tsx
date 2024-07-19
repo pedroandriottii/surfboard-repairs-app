@@ -9,7 +9,7 @@ interface TimelineProps {
 
 const Timeline: React.FC<TimelineProps> = ({ nowTime, readyTime, deliveredTime, maxTime }) => {
     return (
-        <div className="relative flex flex-col md:flex-row items-start p-4 md:items-center md:gap-24 md:text-center">
+        <div className="relative flex flex-col md:flex-row items-start p-4 md:items-center md:gap-24 md:text-center md:justify-center">
             <div className="flex items-center mb-4 md:mb-0 md:flex-col md:items-center md:relative">
                 <div className="w-6 h-6 rounded-full bg-realce mr-4 md:mr-0 md:mb-2 relative z-10"></div>
                 <div>
@@ -42,7 +42,7 @@ const Timeline: React.FC<TimelineProps> = ({ nowTime, readyTime, deliveredTime, 
             <div className="flex items-center mb-4 md:mb-0 md:flex-col md:items-center md:relative">
                 <div className={`w-6 h-6 rounded-full mr-4 md:mr-0 md:mb-2 relative z-10 ${deliveredTime ? 'bg-green-600' : 'bg-white'}`}></div>
                 <div>
-                    <h3 className={`text-lg font-bold text-realce ${deliveredTime ? 'text-green-400' : 'text-green-400'}`}>Prazo Máximo</h3>
+                    <h3 className={`text-lg font-bold text-white ${deliveredTime ? 'text-green-400' : 'text-green-400'}`}>Prazo Máximo</h3>
                     <p className="text-sm text-white">{maxTime ? new Date(maxTime).toLocaleDateString() : 'N/A'}</p>
                 </div>
             </div>
