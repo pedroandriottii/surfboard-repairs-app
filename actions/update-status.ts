@@ -22,6 +22,7 @@ export const updateStatus = async (serviceId: string, values: z.infer<typeof Cha
             dataToUpdate.ready_time = currentDate;
         } else if (status === 'DELIVERED') {
             dataToUpdate.delivered_time = currentDate;
+            dataToUpdate.payment_method = values.payment_method;
         }
 
         const service = await db.service.update({

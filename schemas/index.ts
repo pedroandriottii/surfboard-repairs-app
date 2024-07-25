@@ -38,7 +38,6 @@ export const ServiceSchema = z.object({
     value: z.number().min(0, { message: "Insira o Valor!" }),
     max_time: z.date(),
     description: z.string(),
-    payment_method: z.enum(["CASH", "CREDIT_CARD", "DEBIT_CARD", "PIX", "FREE"]),
     photo_url: z.union([z.string().url(), z.literal(""), z.null()]),
 
 });
@@ -70,9 +69,18 @@ export const SettingsSchema = z.object({
     })
 
 export const ChangeStatusSchema = z.object({
-    status: z.enum(["PENDING", "READY", "DELIVERED"]),
+    status: z.enum(['PENDING', 'READY', 'DELIVERED']),
     ready_time: z.date().optional(),
     delivered_time: z.date().optional(),
     payment_method: z.enum(['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'FREE']).optional(),
+}).refine((data) => {
+    if (data.status === 'DELIVERED' && !data.payment_method) {
+        return false;
+    }
+    return true;
+}, {
+    message: 'Método de pagamento é obrigatório ao entregar',
+    path: ['payment_method'],
 });
+
 

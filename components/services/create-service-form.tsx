@@ -47,7 +47,7 @@ export const CreateServiceForm = () => {
             value: 0,
             description: "",
             photo_url: "",
-            max_time: new Date(), // Default value for max_time
+            max_time: new Date(),
         }
     });
 

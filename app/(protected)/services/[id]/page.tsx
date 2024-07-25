@@ -19,7 +19,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
-import { Input } from '@/components/ui/input';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
@@ -27,13 +26,10 @@ const ServiceId = () => {
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' | undefined>(undefined);
     const pathName = usePathname();
     const role = useCurrentRole();
     const router = useRouter();
-
-    const form = useForm<z.infer<typeof ChangeStatusSchema>>({
-        resolver: zodResolver(ChangeStatusSchema),
-    });
 
     const id = pathName.replace('/services/', '');
 
@@ -71,21 +67,27 @@ const ServiceId = () => {
         return `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
     };
 
-    const onSubmit = async (values: z.infer<typeof ChangeStatusSchema>) => {
-        const formValues = { ...values };
+    const updateStatusHandler = async (newStatus: 'READY' | 'DELIVERED') => {
+        const formValues: { status: 'READY' | 'DELIVERED'; ready_time?: Date; delivered_time?: Date; payment_method?: 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' } = { status: newStatus };
         const currentDate = new Date();
 
-        if (values.status === 'READY') {
+        if (newStatus === 'READY') {
             formValues.ready_time = currentDate;
-        } else if (values.status === 'DELIVERED') {
+        } else if (newStatus === 'DELIVERED') {
             formValues.delivered_time = currentDate;
+            formValues.payment_method = paymentMethod;
+            if (!paymentMethod) {
+                setError("Método de pagamento é obrigatório ao entregar");
+                toast.error("Método de pagamento é obrigatório ao entregar");
+                return;
+            }
         }
 
         try {
             const result = await updateStatus(id, formValues);
             if (result.success) {
                 toast.success("Status Atualizado com sucesso");
-                const link = generateWhatsAppLink(service?.phone, values.status);
+                const link = generateWhatsAppLink(service?.phone, newStatus);
                 setWhatsappLink(link);
                 setShowAlert(true);
             } else {
@@ -96,6 +98,7 @@ const ServiceId = () => {
             toast.error('Erro ao mudar o Status');
         }
     };
+
 
     const handleDelete = async () => {
         try {
@@ -209,45 +212,46 @@ const ServiceId = () => {
                                         )}
                                     </div>
                                 )}
-                                {(service?.status === 'READY' || service?.status === 'PENDING') && (role === "ADMIN" || role === "MASTER") && (
+                                {(service?.status === 'PENDING' && (role === "ADMIN" || role === "MASTER")) && (
+                                    <Button onClick={() => updateStatusHandler('READY')} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
+                                        Mudar para Pronto
+                                    </Button>
+                                )}
+                                {(service?.status === 'READY' && (role === "ADMIN" || role === "MASTER")) && (
                                     <div>
-                                        <Form {...form}>
-                                            <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-2 mr-4'>
-                                                <FormField control={form.control} name="status" render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>
-                                                            <FormControl>
-                                                                <div className='flex flex-col items-center text-center'>
-                                                                    <p className='p-1 text-realce text-md'>Atualizar Status</p>
-                                                                    <select {...field} name="status" className='input-class-name flex flex-col border-input px-3 text-black py-2 border-slate-800 border-2 rounded-lg bg-slate-200 w-full'>
-                                                                        <option value="PENDING">Selecione o Status</option>
-                                                                        <option value="READY">Pronto</option>
-                                                                        <option value="DELIVERED">Entregue</option>
-                                                                    </select>
-                                                                </div>
-                                                            </FormControl>
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                )} />
-                                                <Button type="submit" className='mt-4 bg-realce text-black font-bold hover:bg-white'>
-                                                    Confirmar
-                                                </Button>
-                                            </form>
-                                        </Form>
-                                        <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <h2>Confirmar Atualização de Status</h2>
-                                                </AlertDialogHeader>
-                                                <AlertDialogAction className='bg-green-600' onClick={() => whatsappLink && window.open(whatsappLink, '_blank')}>Enviar WhatsApp</AlertDialogAction>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                    <AlertDialogAction className='bg-realce text-black' onClick={() => setShowAlert(false)}>Confirmar</AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
+                                        <div className='flex flex-col items-center text-center'>
+                                            <p className='p-1 text-realce text-md'>Método de Pagamento</p>
+                                            <select
+                                                value={paymentMethod}
+                                                onChange={(e) => setPaymentMethod(e.target.value as 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE')}
+                                                className='input-class-name flex flex-col border-input px-3 text-black py-2 border-slate-800 border-2 rounded-lg bg-slate-200 w-full'
+                                            >
+                                                <option value="">Selecione o Método de Pagamento</option>
+                                                <option value="CREDIT_CARD">Cartão de Crédito</option>
+                                                <option value="DEBIT_CARD">Cartão de Débito</option>
+                                                <option value="CASH">Dinheiro</option>
+                                                <option value="PIX">PIX</option>
+                                                <option value="FREE">Grátis</option>
+                                            </select>
+                                        </div>
+                                        <Button onClick={() => updateStatusHandler('DELIVERED')} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
+                                            Mudar para Entregue
+                                        </Button>
                                     </div>
                                 )}
+
+                                <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <h2>Confirmar Atualização de Status</h2>
+                                        </AlertDialogHeader>
+                                        <AlertDialogAction className='bg-green-600' onClick={() => whatsappLink && window.open(whatsappLink, '_blank')}>Enviar WhatsApp</AlertDialogAction>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction className='bg-realce text-black' onClick={() => setShowAlert(false)}>Confirmar</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
 
                                 <Timeline
                                     nowTime={service?.now_time || undefined}
