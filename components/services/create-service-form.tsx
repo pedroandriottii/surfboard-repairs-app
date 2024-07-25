@@ -46,35 +46,17 @@ export const CreateServiceForm = () => {
             phone: "",
             value: 0,
             description: "",
-            payment_method: "CASH",
             photo_url: "",
+            max_time: new Date(), // Default value for max_time
         }
     });
-
-    const paymentMethodOptions = {
-        CASH: "Dinheiro",
-        CREDIT_CARD: "Cartão de Crédito",
-        DEBIT_CARD: "Cartão de Débito",
-        PIX: "PIX",
-        FREE: "Grátis",
-    };
 
     const [imgURL, setImgURL] = useState("");
     const [progress, setProgress] = useState(0);
 
-    useEffect(() => {
-        if (form.watch("payment_method") === "FREE") {
-            form.setValue("value", 0);
-        }
-    }, [form.watch("payment_method")]);
-
     const onSubmit = async (values: z.infer<typeof ServiceSchema>) => {
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         const file = fileInput?.files ? fileInput.files[0] : null;
-
-        if (values.payment_method === 'FREE') {
-            values.value = 0;
-        }
 
         if (file) {
             const storageRef = ref(storage, `images/${file.name}`);
@@ -162,7 +144,7 @@ export const CreateServiceForm = () => {
                             }} />
                             <FormField control={form.control} name="client_name" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-realce">Nome do Ciente</FormLabel>
+                                    <FormLabel className="text-realce">Nome do Cliente</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="João Silva" type="name" disabled={isPending} />
                                     </FormControl>
@@ -206,26 +188,13 @@ export const CreateServiceForm = () => {
                                 </FormItem>
                             )}
                             />
-                            <FormField control={form.control} name="payment_method" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-realce">Método de Pagamento</FormLabel>
-                                    <FormControl>
-                                        <select {...field} disabled={isPending} className="input-class-name flex flex-col border w-full rounded-md h-10 border-input px-3 py-2">
-                                            {Object.entries(paymentMethodOptions).map(([value, name]) => (
-                                                <option key={value} value={value}>{name}</option>
-                                            ))}
-                                        </select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
                             <FormField control={form.control} name="value" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-realce">Valor do serviço</FormLabel>
                                     <FormControl>
                                         <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
                                             <span className="mr-2 text-white">R$</span>
-                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={form.watch("payment_method") === "FREE" || isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
+                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
                                         </div>
                                     </FormControl>
                                     <FormMessage />

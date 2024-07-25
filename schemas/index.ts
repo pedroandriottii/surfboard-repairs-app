@@ -73,4 +73,6 @@ export const ChangeStatusSchema = z.object({
     status: z.enum(["PENDING", "READY", "DELIVERED"]),
     ready_time: z.date().optional(),
     delivered_time: z.date().optional(),
+    payment_method: z.enum(['CREDIT_CARD', 'DEBIT_CARD', 'CASH', 'PIX', 'FREE']).optional(),
 });
+

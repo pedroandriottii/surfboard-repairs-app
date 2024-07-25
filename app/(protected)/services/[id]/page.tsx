@@ -7,7 +7,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { toast } from 'react-toastify';
-import { ChangeStatusSchema, ServiceSchema } from '@/schemas';
+import { ChangeStatusSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
@@ -15,7 +15,6 @@ import { UserButton } from '@/components/auth/user-button';
 import * as z from 'zod';
 import { updateStatus } from '@/actions/update-status';
 import { deleteService } from '@/actions/delete-service';
-import { editService } from '@/actions/edit-service';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
@@ -34,11 +33,6 @@ const ServiceId = () => {
 
     const form = useForm<z.infer<typeof ChangeStatusSchema>>({
         resolver: zodResolver(ChangeStatusSchema),
-    });
-
-    const editForm = useForm<z.infer<typeof ServiceSchema>>({
-        resolver: zodResolver(ServiceSchema),
-        defaultValues: service || {},
     });
 
     const id = pathName.replace('/services/', '');
@@ -62,16 +56,6 @@ const ServiceId = () => {
             const fetchService = async () => {
                 const fetchedService = await getServiceById(id);
                 setService(fetchedService);
-                editForm.reset({
-                    photo_url: fetchedService?.photo_url || null,
-                    client_name: fetchedService?.client_name || '',
-                    user_mail: fetchedService?.user_mail || '',
-                    phone: fetchedService?.phone || '',
-                    value: fetchedService?.value || 0,
-                    max_time: fetchedService?.max_time || new Date(),
-                    description: fetchedService?.description || '',
-                    payment_method: fetchedService?.payment_method || 'CASH',
-                });
             };
             fetchService();
         }
@@ -125,21 +109,6 @@ const ServiceId = () => {
         } catch (error) {
             setError("Erro ao deletar serviço: " + error);
             toast.error('Erro ao deletar serviço');
-        }
-    };
-
-    const handleEdit = async (values: z.infer<typeof ServiceSchema>) => {
-        try {
-            const result = await editService(id, values);
-            if (result.success) {
-                toast.success("Serviço editado com sucesso");
-                setService(result.service);
-            } else {
-                toast.error('Erro ao editar serviço: ' + result.error);
-            }
-        } catch (error) {
-            setError("Erro ao editar serviço: " + error);
-            toast.error('Erro ao editar serviço');
         }
     };
 
@@ -232,10 +201,12 @@ const ServiceId = () => {
                                             <p className='text-realce'>Telefone</p>
                                             <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.phone}</p>
                                         </div>
-                                        <div>
-                                            <p className='text-realce'>Método de Pagamento</p>
-                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.payment_method && paymentMethodTranslate[service.payment_method]}</p>
-                                        </div>
+                                        {service?.payment_method && (
+                                            <div>
+                                                <p className='text-realce'>Método de Pagamento</p>
+                                                <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.payment_method && paymentMethodTranslate[service.payment_method]}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 {(service?.status === 'READY' || service?.status === 'PENDING') && (role === "ADMIN" || role === "MASTER") && (
@@ -291,9 +262,6 @@ const ServiceId = () => {
                                             Deletar Serviço
                                         </Button>
                                     )}
-                                    {/* <Button onClick={() => editForm.handleSubmit(handleEdit)()} className='bg-blue-600 text-white'>
-                                        Editar
-                                    </Button> */}
                                 </div>
                                 <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
                                     <AlertDialogContent>
@@ -306,47 +274,6 @@ const ServiceId = () => {
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
-
-                                {/* <Form {...editForm}>
-                                    <form onSubmit={editForm.handleSubmit(handleEdit)} className='flex flex-col gap-2'>
-                                        <FormField control={editForm.control} name="client_name" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Cliente</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} value={field.value ?? ''} />
-                                                </FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={editForm.control} name="value" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Valor</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} />
-                                                </FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={editForm.control} name="description" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Descrição</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} />
-                                                </FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={editForm.control} name="photo_url" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>URL da Foto</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} value={field.value ?? ''} />
-                                                </FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <Button type="submit" className='mt-4 bg-blue-600 text-white'>
-                                            Salvar
-                                        </Button>
-                                    </form>
-                                </Form> */}
-
                             </div>
                         </div>
 

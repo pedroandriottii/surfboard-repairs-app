@@ -69,7 +69,7 @@ const ReportsPage: React.FC = () => {
                     }
                 };
             }
-            data[monthYear].revenueByPaymentMethod[service.payment_method] += service.value;
+            if (service.payment_method && !data[monthYear].revenueByPaymentMethod[service.payment_method]) { }
             if (service.status === 'DELIVERED') {
                 data[monthYear].totalRevenue += service.value;
                 data[monthYear].count++;

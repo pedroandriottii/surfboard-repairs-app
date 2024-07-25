@@ -5,6 +5,14 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { useCurrentRole } from '@/hooks/use-current-role';
 import Link from 'next/link';
 
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+
 interface User {
     email: string;
 }
@@ -48,18 +56,21 @@ const TopServicesList: React.FC = () => {
     }
 
     return (
-        <div className='w-full'>
-            {services.map((service) => (
-                <div key={service.id} className='flex w-full h-full '>
-                    <Link href={`/services/${service.id}`} passHref>
-                        <div className='bg-white rounded-xl'>
-                            <p className='bg-realce px-10 text-left text-black rounded-t-xl'>{formatDate(new Date(service.max_time))}</p>
-                            <p className='text-black font-bold p-2'>{service.client_name}</p>
-                        </div>
-                    </Link>
-                </div>
-            ))}
-        </div>
+        <Carousel className='w-full'>
+            <CarouselContent>
+                {services.map((service) => (
+                    <CarouselItem key={service.id} className='flex w-full h-full basis-1/3 mx-2 md:basis-1/6 lg:basis-1/12'>
+                        < Link href={`/services/${service.id}`
+                        } passHref>
+                            <div className='bg-white rounded-xl'>
+                                <p className='bg-realce px-10 text-left text-black rounded-t-xl'>{formatDate(new Date(service.max_time))}</p>
+                                <p className='text-black font-bold p-2'>{service.client_name}</p>
+                            </div>
+                        </Link >
+                    </CarouselItem >
+                ))}
+            </CarouselContent>
+        </Carousel >
     );
 };
 
