@@ -9,6 +9,7 @@ import TopServicesList from '@/components/services/top-services-list';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ServicesList from '@/components/services/services-list';
 import Link from 'next/link';
+import AddIcon from '@mui/icons-material/Add';
 
 const HomePage: React.FC = () => {
     const role = useCurrentRole();
@@ -99,8 +100,8 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     {(role == 'MASTER' || role == 'ADMIN') && (
-                        <Link href={'/create-service'} className='flex w-full items-center justify-center p-6'>
-                            <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl font-bold'>Cadastrar Novo Conserto</Button>
+                        <Link href={'/create-service'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
+                            <AddIcon className='text-black font-bold' fontSize='large' />
                         </Link>
                     )}
                 </div>
