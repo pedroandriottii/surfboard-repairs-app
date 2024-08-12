@@ -45,7 +45,7 @@ export const CreateServiceForm = () => {
             user_mail: "",
             client_name: "",
             phone: "",
-            value: 0,
+            value: undefined,
             description: "",
             photo_url: "",
             max_time: new Date(),
@@ -195,7 +195,7 @@ export const CreateServiceForm = () => {
                                     <FormControl>
                                         <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
                                             <span className="mr-2 text-white">R$</span>
-                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
+                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} value={field.value || ''} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
                                         </div>
                                     </FormControl>
                                     <FormMessage />

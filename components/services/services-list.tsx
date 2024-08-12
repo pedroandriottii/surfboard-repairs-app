@@ -67,7 +67,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                                 <Link href={`/services/${service.id}`} className="w-full">
                                     <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                         <Image
-                                            src={service.photo_url ?? '/placeholder.png'}
+                                            src={service.photo_url ?? '/placeholder.jpg'}
                                             alt="Foto da Prancha"
                                             layout="fill"
                                             className="rounded-t-lg object-cover"
@@ -92,7 +92,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                             <Link href={`/services/${service.id}`} className="w-full">
                                 <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                     <Image
-                                        src={service.photo_url ?? '/placeholder.png'}
+                                        src={service.photo_url ?? '/placeholder.jpg'}
                                         alt="Foto da Prancha"
                                         layout="fill"
                                         className="rounded-t-lg object-cover"

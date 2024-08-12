@@ -171,7 +171,7 @@ const ServiceId = () => {
                         <div className='flex flex-col text-white w-full h-full items-center md:flex-row md:p-8'>
                             <div className="relative w-2/3 items-center md:w-1/2" style={{ aspectRatio: '1/1' }}>
                                 <Image
-                                    src={service?.photo_url ?? '/placeholder.png'}
+                                    src={service?.photo_url ?? '/placeholder.jpg'}
                                     alt='Foto da Prancha'
                                     layout='fill'
                                     className="rounded-lg object-cover"
