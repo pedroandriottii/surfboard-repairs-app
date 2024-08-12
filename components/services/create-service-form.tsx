@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InputMask from 'react-input-mask';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
     Form,
@@ -59,7 +60,8 @@ export const CreateServiceForm = () => {
         const file = fileInput?.files ? fileInput.files[0] : null;
 
         if (file) {
-            const storageRef = ref(storage, `images/${file.name}`);
+            const uniqueFileName = `${uuidv4()}_${file.name}`;
+            const storageRef = ref(storage, `images/${uniqueFileName}`);
             const uploadTask = uploadBytesResumable(storageRef, file);
 
             uploadTask.on('state_changed', (snapshot) => {
@@ -68,7 +70,7 @@ export const CreateServiceForm = () => {
             },
                 (error) => {
                     console.error(error);
-                    setError("Falha no upload da imagem.")
+                    setError("Falha no upload da imagem.");
                 },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
@@ -76,23 +78,22 @@ export const CreateServiceForm = () => {
 
                         createService(formValues).then(result => {
                             if (result.success) {
-                                toast.success("Serviço criado com sucesso!")
+                                toast.success("Serviço criado com sucesso!");
                                 setSuccess(result.success);
                                 router.push('/home');
                             } else {
                                 setError(result.error);
                                 toast.error('Erro ao criar o serviço: ' + result.error);
                             }
-
                         }).catch(error => {
                             console.error("Erro ao criar serviço", error);
-                            setError("Erro ao criar serviço.")
+                            setError("Erro ao criar serviço.");
                             toast.error('Erro ao criar o serviço: ' + error);
-                        })
-                    })
-                })
+                        });
+                    });
+                });
         } else {
-            setError("Selecione uma imagem para o serviço.")
+            setError("Selecione uma imagem para o serviço.");
         }
     };
 
