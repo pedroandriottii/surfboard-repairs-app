@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import { useState, useEffect, useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -35,7 +35,7 @@ import { RoleGate } from "../auth/role-gate";
 export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
-    const [isPending, startTransition] = useTransition();
+    const [isPending, setIsPending] = useState<boolean>(false);
     const router = useRouter();
     const role = useCurrentRole();
 
@@ -52,49 +52,57 @@ export const CreateServiceForm = () => {
         }
     });
 
-    const [imgURL, setImgURL] = useState("");
-    const [progress, setProgress] = useState(0);
+    const handleError = (message: string) => {
+        setError(message);
+        toast.error(message);
+        setIsPending(false);
+    };
 
     const onSubmit = async (values: z.infer<typeof ServiceSchema>) => {
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         const file = fileInput?.files ? fileInput.files[0] : null;
 
-        if (file) {
-            const uniqueFileName = `${uuidv4()}_${file.name}`;
-            const storageRef = ref(storage, `images/${uniqueFileName}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
+        if (!file) {
+            handleError("Selecione uma imagem para o serviço.");
+            return;
+        }
 
-            uploadTask.on('state_changed', (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setProgress(progress);
+        if (!file.type.startsWith('image')) {
+            handleError("O arquivo selecionado não é uma imagem.");
+            return;
+        }
+
+        setIsPending(true);
+
+        const uniqueFileName = `${uuidv4()}_${file.name}`;
+        const storageRef = ref(storage, `images/${uniqueFileName}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed', (snapshot) => {
+        },
+            (error) => {
+                console.error(error);
+                handleError("Falha no upload da imagem.");
             },
-                (error) => {
-                    console.error(error);
-                    setError("Falha no upload da imagem.");
-                },
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-                        const formValues = { ...values, photo_url: downloadURL };
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+                    const formValues = { ...values, photo_url: downloadURL };
 
-                        createService(formValues).then(result => {
-                            if (result.success) {
-                                toast.success("Serviço criado com sucesso!");
-                                setSuccess(result.success);
-                                router.push('/home');
-                            } else {
-                                setError(result.error);
-                                toast.error('Erro ao criar o serviço: ' + result.error);
-                            }
-                        }).catch(error => {
-                            console.error("Erro ao criar serviço", error);
-                            setError("Erro ao criar serviço.");
-                            toast.error('Erro ao criar o serviço: ' + error);
-                        });
+                    createService(formValues).then(result => {
+                        if (result.success) {
+                            toast.success("Serviço criado com sucesso!");
+                            setSuccess(result.success);
+                            router.push('/home');
+                        } else {
+                            handleError(result.error || "Erro desconhecido");
+                        }
+                    }).catch(error => {
+                        console.error("Erro ao criar serviço", error);
+                        handleError("Erro ao criar serviço.");
                     });
                 });
-        } else {
-            setError("Selecione uma imagem para o serviço.");
-        }
+            });
+
     };
 
     return (

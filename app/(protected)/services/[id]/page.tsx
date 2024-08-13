@@ -7,22 +7,16 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { toast } from 'react-toastify';
-import { ChangeStatusSchema } from '@/schemas';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { UserButton } from '@/components/auth/user-button';
-import * as z from 'zod';
 import { updateStatus } from '@/actions/update-status';
 import { deleteService } from '@/actions/delete-service';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -30,14 +24,7 @@ const ServiceId = () => {
     const pathName = usePathname();
     const role = useCurrentRole();
     const router = useRouter();
-
     const id = pathName.replace('/services/', '');
-
-    const statusTranslate = {
-        PENDING: 'Pendente',
-        READY: 'Pronto',
-        DELIVERED: 'Entregue',
-    };
 
     const paymentMethodTranslate = {
         CREDIT_CARD: 'Cartão de Crédito',
@@ -77,7 +64,6 @@ const ServiceId = () => {
             formValues.delivered_time = currentDate;
             formValues.payment_method = paymentMethod;
             if (!paymentMethod) {
-                setError("Método de pagamento é obrigatório ao entregar");
                 toast.error("Método de pagamento é obrigatório ao entregar");
                 return;
             }
@@ -94,7 +80,6 @@ const ServiceId = () => {
                 toast.error('Erro ao mudar o Status: ' + result.error);
             }
         } catch (error) {
-            setError("Erro ao mudar o Status: " + error);
             toast.error('Erro ao mudar o Status');
         }
     };
@@ -110,7 +95,6 @@ const ServiceId = () => {
                 toast.error('Erro ao deletar serviço: ' + result.error);
             }
         } catch (error) {
-            setError("Erro ao deletar serviço: " + error);
             toast.error('Erro ao deletar serviço');
         }
     };
@@ -259,11 +243,17 @@ const ServiceId = () => {
                                     deliveredTime={service?.delivered_time || undefined}
                                     maxTime={service?.max_time || undefined}
                                 />
-
                                 <div className='flex w-full items-center flex-col gap-4'>
                                     {role === 'MASTER' && (
                                         <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full'>
                                             Deletar Serviço
+                                        </Button>
+                                    )}
+                                </div>
+                                <div className='flex w-full items-center flex-col gap-4'>
+                                    {role === 'MASTER' && (
+                                        <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full'>
+                                            Editar Serviço
                                         </Button>
                                     )}
                                 </div>
