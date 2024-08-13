@@ -10,9 +10,9 @@ import { getServiceById } from '@/data/services';
 import { Service } from '@prisma/client';
 import { editService } from '@/actions/edit-service';
 import * as z from 'zod';
-import Image from 'next/image';
 import Navbar from '@/components/base/navbar';
 import { useCurrentRole } from '@/hooks/use-current-role';
+import BackgroundImage from '@/components/base/backgroundImage';
 
 type FormValues = z.infer<typeof ServiceSchema>;
 
@@ -68,25 +68,9 @@ const EditService = () => {
 
     return (
         <div className='relative w-full flex-grow h-full min-h-screen'>
-            <div className="relative w-full flex-grow">
-                <div className="absolute inset-0 md:hidden">
-                    <Image
-                        src={'/splash.png'}
-                        alt="Background"
-                        layout="fill"
-                        className="object-cover h-full w-full"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
-                </div>
-                <div className="hidden md:block absolute inset-0">
-                    <Image
-                        src={'/splash_desk.png'}
-                        alt="Background"
-                        layout="fill"
-                        className="object-cover h-full w-full"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
-                </div>
+            <BackgroundImage src="/splash.png" alt="Background" />
+            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <div className="relative z-20 flex flex-col items-center w-full">
                 <div className='flex justify-between w-full md:pr-4'>
                     <Navbar role={role} />
                 </div>
@@ -98,7 +82,7 @@ const EditService = () => {
                             name="user_mail"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email do Usuário</FormLabel>
+                                    <FormLabel className='text-white'>Email do Usuário</FormLabel>
                                     <FormControl>
                                         <input type="email" {...field} />
                                     </FormControl>
@@ -110,7 +94,7 @@ const EditService = () => {
                             name="client_name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Nome do Cliente</FormLabel>
+                                    <FormLabel className='text-white'>Nome do Cliente</FormLabel>
                                     <FormControl>
                                         <input {...field} />
                                     </FormControl>
@@ -122,7 +106,7 @@ const EditService = () => {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Telefone</FormLabel>
+                                    <FormLabel className='text-white'>Telefone</FormLabel>
                                     <FormControl>
                                         <input type="tel" {...field} />
                                     </FormControl>
@@ -134,7 +118,7 @@ const EditService = () => {
                             name="value"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Valor</FormLabel>
+                                    <FormLabel className='text-white'>Valor</FormLabel>
                                     <FormControl>
                                         <input
                                             type="number"
@@ -150,7 +134,7 @@ const EditService = () => {
                             name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Descrição</FormLabel>
+                                    <FormLabel className='text-white'>Descrição</FormLabel>
                                     <FormControl>
                                         <textarea {...field} />
                                     </FormControl>
@@ -174,7 +158,7 @@ const EditService = () => {
                             name="max_time"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Data e Hora Máxima</FormLabel>
+                                    <FormLabel className='text-white'>Data e Hora Máxima</FormLabel>
                                     <FormControl>
                                         <input
                                             type="datetime-local"
