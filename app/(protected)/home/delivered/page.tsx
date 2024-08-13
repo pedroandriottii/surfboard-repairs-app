@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { UserButton } from '@/components/auth/user-button';
 import Link from 'next/link';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Navbar from '@/components/base/navbar';
 
 const GridPage: React.FC = () => {
     const role = useCurrentRole();
@@ -32,29 +33,8 @@ const GridPage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
                 </div>
                 <div className="relative z-20 flex flex-col items-center">
-                    <div className='flex justify-between w-full p-4'>
-                        <Image
-                            src={'/realce_logo.png'}
-                            alt="Realce Nordeste"
-                            width={50}
-                            height={50}
-                        />
-                        <div className='flex gap-4 items-center'>
-                            <Link href={'/home'}>
-                                <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
-                                    Serviços
-                                </Button>
-                            </Link>
-
-                            {role == 'MASTER' && (
-                                <Link href={'/dashboard'}>
-                                    <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
-                                        Finanças
-                                    </Button>
-                                </Link>
-                            )}
-                            <UserButton />
-                        </div>
+                    <div className='flex justify-between w-full'>
+                        <Navbar role={role} />
                     </div>
                     <div className='text-white flex flex-col w-full gap-4 h-full'>
                         <div className='flex items-center w-full justify-between'>

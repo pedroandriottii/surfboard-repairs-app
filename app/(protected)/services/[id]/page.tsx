@@ -14,6 +14,7 @@ import { deleteService } from '@/actions/delete-service';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
+import Navbar from '@/components/base/navbar';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
@@ -121,31 +122,8 @@ const ServiceId = () => {
                     <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
                 </div>
                 <div className="relative z-20 flex flex-col items-center w-full">
-                    <div className='flex justify-between w-full md:pr-4 p-4'>
-                        <Image
-                            src={'/realce_logo.png'}
-                            alt="Realce Nordeste"
-                            width={50}
-                            height={50}
-                        />
-                        <div className='flex gap-4 items-center'>
-                            <Link href={'/home'}>
-                                <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
-                                    Serviços
-                                </Button>
-                            </Link>
-
-                            {role == 'MASTER' && (
-                                <div className='flex items-center gap-4'>
-                                    <Link href={'/dashboard'}>
-                                        <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
-                                            Finanças
-                                        </Button>
-                                    </Link>
-                                </div>
-                            )}
-                            <UserButton />
-                        </div>
+                    <div className='flex justify-between w-full md:pr-4'>
+                        <Navbar role={role} />
                     </div>
                     <div className='w-full h-full flex flex-col gap-4'>
                         <Link href={'/home'} className='bg-realce rounded-r-full flex w-1/4 font-bold md:w-1/12'>

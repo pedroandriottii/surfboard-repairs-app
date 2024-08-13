@@ -10,6 +10,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ServicesList from '@/components/services/services-list';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
+import Navbar from '@/components/base/navbar';
 
 const HomePage: React.FC = () => {
     const role = useCurrentRole();
@@ -36,31 +37,8 @@ const HomePage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
                 </div>
                 <div className="relative z-20 flex flex-col items-center w-full">
-                    <div className='flex justify-between w-full md:pr-4 p-4'>
-                        <Image
-                            src={'/realce_logo.png'}
-                            alt="Realce Nordeste"
-                            width={50}
-                            height={50}
-                        />
-                        <div className='flex gap-4 items-center'>
-                            <Link href={'/home'}>
-                                <Button className='bg-realce text-black hover:bg-white max-h-8 rounded-xl'>
-                                    Serviços
-                                </Button>
-                            </Link>
-
-                            {role == 'MASTER' && (
-                                <div className='flex items-center gap-4'>
-                                    <Link href={'/dashboard'}>
-                                        <Button className='bg-transparent border-2 border-realce text-realce  hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
-                                            Finanças
-                                        </Button>
-                                    </Link>
-                                </div>
-                            )}
-                            <UserButton />
-                        </div>
+                    <div className='flex justify-between w-full md:pr-4'>
+                        <Navbar role={role} />
                     </div>
                     <div className='text-white flex flex-col w-full gap-4'>
                         <div className='flex flex-col gap-4 p-4'>

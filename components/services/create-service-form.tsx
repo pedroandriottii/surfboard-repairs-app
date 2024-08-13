@@ -31,6 +31,7 @@ import {
 import { FormSuccess } from "../form-success";
 import { createService } from "@/actions/create-service";
 import { RoleGate } from "../auth/role-gate";
+import Navbar from "../base/navbar";
 
 export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
@@ -106,38 +107,15 @@ export const CreateServiceForm = () => {
     };
 
     return (
-        <div className="flex flex-col w-full h-full bg-black p-4">
+        <div className="flex flex-col w-full h-full bg-black">
             <div className='flex justify-between w-full'>
-                <Image
-                    src={'/realce_logo.png'}
-                    alt="Realce Nordeste"
-                    width={50}
-                    height={50}
-                />
-                <div className='flex gap-4 items-center'>
-                    <Link href={'/home'}>
-                        <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all'>
-                            Serviços
-                        </Button>
-                    </Link>
-
-                    {role == 'MASTER' && (
-                        <div className='flex items-center gap-4'>
-                            <Link href={'/dashboard'}>
-                                <Button className='bg-transparent border-2 border-realce text-realce hover:bg-white max-h-8 rounded-xl hover:text-black hover:border-none hover:transition-all' >
-                                    Finanças
-                                </Button>
-                            </Link>
-                        </div>
-                    )}
-                    <UserButton />
-                </div>
+                <Navbar role={role} />
             </div>
             <h1 className="text-realce text-xl font-bold py-2 text-center">Cadastrar Serviço</h1>
             <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-black">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-black p-4">
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-4">
                             <FormField control={form.control} name="photo_url" render={({ field }) => {
                                 const { value, ...inputProps } = field;

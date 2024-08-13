@@ -1,3 +1,5 @@
+export type UserRole = 'MASTER' | 'USER' | 'ADMIN';
+
 export interface Service {
     id: string;
     value: number;
@@ -10,4 +12,11 @@ export interface MonthlySummary {
     month: number;
     totalValue: number;
     count: number;
+}
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
 }

@@ -10,6 +10,9 @@ import { getServiceById } from '@/data/services';
 import { Service } from '@prisma/client';
 import { editService } from '@/actions/edit-service';
 import * as z from 'zod';
+import Image from 'next/image';
+import Navbar from '@/components/base/navbar';
+import { useCurrentRole } from '@/hooks/use-current-role';
 
 type FormValues = z.infer<typeof ServiceSchema>;
 
@@ -18,6 +21,7 @@ const EditService = () => {
     const pathName = usePathname();
     const id = pathName.replace('/services/edit/', '');
     const [service, setService] = useState<Service | null>(null);
+    const role = useCurrentRole();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(ServiceSchema),
@@ -63,75 +67,97 @@ const EditService = () => {
     }
 
     return (
-        <div className='bg-gray-700 w-full h-full'>
-            <h1>Editar Serviço</h1>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <FormField
-                        control={form.control}
-                        name="user_mail"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email do Usuário</FormLabel>
-                                <FormControl>
-                                    <input type="email" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
+        <div className='relative w-full flex-grow h-full min-h-screen'>
+            <div className="relative w-full flex-grow">
+                <div className="absolute inset-0 md:hidden">
+                    <Image
+                        src={'/splash.png'}
+                        alt="Background"
+                        layout="fill"
+                        className="object-cover h-full w-full"
                     />
-                    <FormField
-                        control={form.control}
-                        name="client_name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nome do Cliente</FormLabel>
-                                <FormControl>
-                                    <input {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
+                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
+                </div>
+                <div className="hidden md:block absolute inset-0">
+                    <Image
+                        src={'/splash_desk.png'}
+                        alt="Background"
+                        layout="fill"
+                        className="object-cover h-full w-full"
                     />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Telefone</FormLabel>
-                                <FormControl>
-                                    <input type="tel" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="value"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Valor</FormLabel>
-                                <FormControl>
-                                    <input
-                                        type="number"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Descrição</FormLabel>
-                                <FormControl>
-                                    <textarea {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    {/* <FormField
+                    <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
+                </div>
+                <div className='flex justify-between w-full md:pr-4'>
+                    <Navbar role={role} />
+                </div>
+                <h1>Editar Serviço</h1>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <FormField
+                            control={form.control}
+                            name="user_mail"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email do Usuário</FormLabel>
+                                    <FormControl>
+                                        <input type="email" {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="client_name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nome do Cliente</FormLabel>
+                                    <FormControl>
+                                        <input {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Telefone</FormLabel>
+                                    <FormControl>
+                                        <input type="tel" {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="value"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Valor</FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="number"
+                                            {...field}
+                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Descrição</FormLabel>
+                                    <FormControl>
+                                        <textarea {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        {/* <FormField
                         control={form.control}
                         name="photo_url"
                         render={({ field }) => (
@@ -143,27 +169,28 @@ const EditService = () => {
                             </FormItem>
                         )}
                     /> */}
-                    <FormField
-                        control={form.control}
-                        name="max_time"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Data e Hora Máxima</FormLabel>
-                                <FormControl>
-                                    <input
-                                        type="datetime-local"
-                                        {...field}
-                                        value={field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
-                                        onChange={(e) => field.onChange(new Date(e.target.value))}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit">Salvar</Button>
-                </form>
-            </Form>
-        </div>
+                        <FormField
+                            control={form.control}
+                            name="max_time"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Data e Hora Máxima</FormLabel>
+                                    <FormControl>
+                                        <input
+                                            type="datetime-local"
+                                            {...field}
+                                            value={field.value instanceof Date ? field.value.toISOString().slice(0, 16) : ''}
+                                            onChange={(e) => field.onChange(new Date(e.target.value))}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit">Salvar</Button>
+                    </form>
+                </Form>
+            </div>
+        </div >
     );
 };
 
