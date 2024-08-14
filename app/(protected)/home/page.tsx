@@ -24,7 +24,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <div className='text-white flex flex-col w-full gap-4 flex-grow'>
                     <div className='flex flex-col gap-4 p-4'>
-                        <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}</h2>
+                        <h2 className='font-bold text-xl'>Bem Vindo, <span className='text-realce'>{user?.name}</span></h2>
                         <div className='flex items-center'>
                             <p>Prazos Próximos</p>
                             <ChevronRightIcon />

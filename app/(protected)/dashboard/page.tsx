@@ -3,11 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllServices } from '@/data/services';
 import { Service, UserRole } from '@prisma/client';
 import { RoleGate } from '@/components/auth/role-gate';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import { UserButton } from '@/components/auth/user-button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Accordion,
