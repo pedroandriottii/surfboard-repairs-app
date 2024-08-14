@@ -1,5 +1,4 @@
 "use client";
-
 import * as z from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,10 +11,9 @@ import { FormError } from "@/components/form-error";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import InputMask from 'react-input-mask';
 import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "../ui/use-toast";
 
 import {
     Form,
@@ -38,6 +36,7 @@ export const CreateServiceForm = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const router = useRouter();
     const role = useCurrentRole();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof ServiceSchema>>({
         resolver: zodResolver(ServiceSchema),
@@ -54,7 +53,11 @@ export const CreateServiceForm = () => {
 
     const handleError = (message: string) => {
         setError(message);
-        toast.error(message);
+        toast({
+            title: "Erro!",
+            description: message,
+            variant: "destructive",
+        });
         setIsPending(false);
     };
 
@@ -90,7 +93,11 @@ export const CreateServiceForm = () => {
 
                     createService(formValues).then(result => {
                         if (result.success) {
-                            toast.success("Serviço criado com sucesso!");
+                            toast({
+                                title: "Sucesso!",
+                                description: "O serviço foi criado com sucesso.",
+                                variant: "success",
+                            })
                             setSuccess(result.success);
                             router.push('/home');
                         } else {
