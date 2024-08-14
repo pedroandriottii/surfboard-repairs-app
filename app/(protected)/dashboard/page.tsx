@@ -12,21 +12,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import Navbar from '@/components/base/navbar';
-
-interface MonthlyData {
-    month: string;
-    totalRevenue: number;
-    count: number;
-    openCount: number;
-    revenuePending: number;
-    revenueByPaymentMethod: {
-        PIX: number;
-        FREE: number;
-        CREDIT_CARD: number;
-        DEBIT_CARD: number;
-        CASH: number;
-    };
-}
+import { MonthlyData } from '@/lib/types';
 
 const ReportsPage: React.FC = () => {
     const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);

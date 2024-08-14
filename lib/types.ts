@@ -20,3 +20,21 @@ export interface User {
     email: string;
     role: UserRole;
 }
+export interface ProtectedLayoutProps {
+    children: React.ReactNode;
+}
+
+export interface MonthlyData {
+    month: string;
+    totalRevenue: number;
+    count: number;
+    openCount: number;
+    revenuePending: number;
+    revenueByPaymentMethod: {
+        PIX: number;
+        FREE: number;
+        CREDIT_CARD: number;
+        DEBIT_CARD: number;
+        CASH: number;
+    };
+}

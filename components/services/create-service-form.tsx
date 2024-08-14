@@ -29,6 +29,8 @@ import { FormSuccess } from "../form-success";
 import { createService } from "@/actions/create-service";
 import { RoleGate } from "../auth/role-gate";
 import Navbar from "../base/navbar";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
 
 export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
@@ -100,7 +102,6 @@ export const CreateServiceForm = () => {
                     });
                 });
             });
-
     };
 
     return (
@@ -153,11 +154,14 @@ export const CreateServiceForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                            <FormField control={form.control} name="description" render={({ field }) => (
+                            <FormField control={form.control} name="value" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-realce">Descrição do serviço</FormLabel>
+                                    <FormLabel className="text-realce">Valor do serviço</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Descrição" type="text" disabled={isPending} />
+                                        <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
+                                            <span className="mr-2 text-white">R$</span>
+                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} value={field.value || ''} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -172,19 +176,18 @@ export const CreateServiceForm = () => {
                                 </FormItem>
                             )}
                             />
-                            <FormField control={form.control} name="value" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-realce">Valor do serviço</FormLabel>
-                                    <FormControl>
-                                        <div className="flex items-center border w-full rounded-md h-10 border-input pl-3">
-                                            <span className="mr-2 text-white">R$</span>
-                                            <Input {...field} placeholder="Valor" type="number" className="flex-1" disabled={isPending} value={field.value || ''} onChange={e => form.setValue('value', e.target.valueAsNumber)} />
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
                         </div>
+                        <FormField control={form.control} name="description" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-realce">Descrição do serviço</FormLabel>
+                                <FormControl>
+                                    <div className="grid w-full gap-1.5">
+                                        <Textarea className="bg-background" {...field} placeholder="Descrição" id="message" disabled={isPending} />
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                         <FormError message={error} />
                         <FormSuccess message={success} />
                         <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={isPending}>

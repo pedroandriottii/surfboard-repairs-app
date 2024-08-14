@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen overflow-y-hidden">
+    <div className="flex flex-col min-h-screen h-full overflow-y-hidden overflow-x-hidden">
       <div className="absolute inset-0">
         <div className="md:hidden bg-black">
           <Image

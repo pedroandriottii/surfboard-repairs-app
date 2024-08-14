@@ -1,10 +1,7 @@
 import { Inter } from "next/font/google";
 import { FaWhatsapp } from 'react-icons/fa';
 import { cn } from "@/lib/utils";
-
-interface ProtectedLayoutProps {
-    children: React.ReactNode;
-}
+import { ProtectedLayoutProps } from "@/lib/types";
 
 const font = Inter({
     subsets: ['latin'],
