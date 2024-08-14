@@ -42,13 +42,15 @@ const ServiceId = () => {
 
     useEffect(() => {
         if (typeof id === 'string') {
-            const fetchService = async () => {
-                const fetchedService = await getServiceById(id);
-                setService(fetchedService);
-            };
             fetchService();
         }
     }, [id]);
+
+    const fetchService = async () => {
+        const fetchedService = await getServiceById(id);
+        setService(fetchedService);
+    };
+
 
     const generateWhatsAppLink = (phone?: string, status?: string) => {
         if (!phone) return null;
@@ -89,10 +91,15 @@ const ServiceId = () => {
                     description: "Status atualizado com sucesso",
                     variant: "success",
                 });
+                fetchService();
                 const link = generateWhatsAppLink(service?.phone, pendingStatus);
                 setWhatsappLink(link);
                 setShowAlert(false);
                 setPendingStatus(null);
+
+                if (link) {
+                    window.open(link, '_blank');
+                }
             } else {
                 toast({
                     title: "Erro",
@@ -223,18 +230,12 @@ const ServiceId = () => {
                             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <h2>Confirmar Atualização de Status</h2>
+                                        <AlertDialogTitle>Confirmar Atualização de Status</AlertDialogTitle>
                                     </AlertDialogHeader>
-                                    <AlertDialogAction className='bg-green-600' onClick={() => {
-                                        if (whatsappLink) window.open(whatsappLink, '_blank');
-                                        updateStatusHandler();
-                                    }}>
-                                        Enviar WhatsApp e Confirmar
-                                    </AlertDialogAction>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                         <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
-                                            Confirmar
+                                            Enviar WhatsApp e Confirmar
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
