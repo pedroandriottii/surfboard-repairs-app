@@ -45,9 +45,9 @@ const GridPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <span className='inset-0 z-10'>
+            <div className='inset-0 z-10'>
                 <Footer />
-            </span>
+            </div>
         </div >
     )
 };

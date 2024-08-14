@@ -6,26 +6,31 @@ import React, { useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { updateStatus } from '@/actions/update-status';
 import { deleteService } from '@/actions/delete-service';
 import { Button } from '@/components/ui/button';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
 import Navbar from '@/components/base/navbar';
 import BackgroundImage from '@/components/base/backgroundImage';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import Footer from '@/components/base/footer';
+import { useToast } from '@/components/ui/use-toast';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [pendingStatus, setPendingStatus] = useState<'READY' | 'DELIVERED' | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' | undefined>(undefined);
     const pathName = usePathname();
     const role = useCurrentRole();
     const router = useRouter();
     const id = pathName.replace('/services/', '');
+    const { toast } = useToast();
 
     const paymentMethodTranslate = {
         CREDIT_CARD: 'Cartão de Crédito',
@@ -55,17 +60,23 @@ const ServiceId = () => {
         return `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
     };
 
-    const updateStatusHandler = async (newStatus: 'READY' | 'DELIVERED') => {
-        const formValues: { status: 'READY' | 'DELIVERED'; ready_time?: Date; delivered_time?: Date; payment_method?: 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' } = { status: newStatus };
+    const updateStatusHandler = async () => {
+        if (!pendingStatus) return;
+
+        const formValues: { status: 'READY' | 'DELIVERED'; ready_time?: Date; delivered_time?: Date; payment_method?: 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' } = { status: pendingStatus };
         const currentDate = new Date();
 
-        if (newStatus === 'READY') {
+        if (pendingStatus === 'READY') {
             formValues.ready_time = currentDate;
-        } else if (newStatus === 'DELIVERED') {
+        } else if (pendingStatus === 'DELIVERED') {
             formValues.delivered_time = currentDate;
             formValues.payment_method = paymentMethod;
             if (!paymentMethod) {
-                toast.error("Método de pagamento é obrigatório ao entregar");
+                toast({
+                    title: "Erro",
+                    description: "Método de pagamento é obrigatório ao entregar",
+                    variant: "destructive",
+                })
                 return;
             }
         }
@@ -73,30 +84,54 @@ const ServiceId = () => {
         try {
             const result = await updateStatus(id, formValues);
             if (result.success) {
-                toast.success("Status Atualizado com sucesso");
-                const link = generateWhatsAppLink(service?.phone, newStatus);
+                toast({
+                    title: "Sucesso",
+                    description: "Status atualizado com sucesso",
+                    variant: "success",
+                });
+                const link = generateWhatsAppLink(service?.phone, pendingStatus);
                 setWhatsappLink(link);
-                setShowAlert(true);
+                setShowAlert(false);
+                setPendingStatus(null);
             } else {
-                toast.error('Erro ao mudar o Status: ' + result.error);
+                toast({
+                    title: "Erro",
+                    description: `Erro ao mudar o Status: ${result.error}`,
+                    variant: "destructive",
+                });
             }
         } catch (error) {
-            toast.error('Erro ao mudar o Status');
+            toast({
+                title: "Erro",
+                description: "Erro ao mudar o Status",
+                variant: "destructive",
+            })
         }
     };
-
 
     const handleDelete = async () => {
         try {
             const result = await deleteService(id);
             if (result.success) {
-                toast.success("Serviço deletado com sucesso");
+                toast({
+                    title: "Sucesso",
+                    description: "Serviço deletado com sucesso",
+                    variant: "success",
+                })
                 router.push('/home');
             } else {
-                toast.error('Erro ao deletar serviço: ' + result.error);
+                toast({
+                    title: "Erro",
+                    description: `Erro ao deletar serviço: ${result.error}`,
+                    variant: "destructive",
+                })
             }
         } catch (error) {
-            toast.error('Erro ao deletar serviço');
+            toast({
+                title: "Erro",
+                description: "Erro ao deletar serviço",
+                variant: "destructive",
+            })
         }
     };
 
@@ -127,38 +162,38 @@ const ServiceId = () => {
                             <div className='md:flex-row w-full h-full flex flex-col gap-4'>
                                 <div className='md:w-1/2'>
                                     <p className='text-realce'>Prancha</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
+                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
                                 </div>
                                 <div className='md:w-1/2'>
                                     <p className='text-realce'>Valor</p>
-                                    <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
+                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
                                 </div>
                             </div>
                             <div>
                                 <p className='text-realce'>Descrição</p>
-                                <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.description}</p>
+                                <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
                             </div>
 
                             {(role == 'ADMIN' || role == 'MASTER') && (
                                 <div className='flex flex-col gap-4'>
                                     <div>
                                         <p className='text-realce'>Email</p>
-                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.user_mail}</p>
+                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.user_mail}</p>
                                     </div>
                                     <div>
                                         <p className='text-realce'>Telefone</p>
-                                        <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.phone}</p>
+                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.phone}</p>
                                     </div>
                                     {service?.payment_method && (
                                         <div>
                                             <p className='text-realce'>Método de Pagamento</p>
-                                            <p className='bg-input-color mr-4 py-1 rounded-md text-black pl-2'>{service?.payment_method && paymentMethodTranslate[service.payment_method]}</p>
+                                            <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.payment_method && paymentMethodTranslate[service.payment_method]}</p>
                                         </div>
                                     )}
                                 </div>
                             )}
                             {(service?.status === 'PENDING' && (role === "ADMIN" || role === "MASTER")) && (
-                                <Button onClick={() => updateStatusHandler('READY')} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
+                                <Button onClick={() => { setPendingStatus('READY'); setShowAlert(true); }} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
                                     Mudar para Pronto
                                 </Button>
                             )}
@@ -179,7 +214,7 @@ const ServiceId = () => {
                                             <option value="FREE">Grátis</option>
                                         </select>
                                     </div>
-                                    <Button onClick={() => updateStatusHandler('DELIVERED')} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
+                                    <Button onClick={() => { setPendingStatus('DELIVERED'); setShowAlert(true); }} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
                                         Mudar para Entregue
                                     </Button>
                                 </div>
@@ -190,10 +225,17 @@ const ServiceId = () => {
                                     <AlertDialogHeader>
                                         <h2>Confirmar Atualização de Status</h2>
                                     </AlertDialogHeader>
-                                    <AlertDialogAction className='bg-green-600' onClick={() => whatsappLink && window.open(whatsappLink, '_blank')}>Enviar WhatsApp</AlertDialogAction>
+                                    <AlertDialogAction className='bg-green-600' onClick={() => {
+                                        if (whatsappLink) window.open(whatsappLink, '_blank');
+                                        updateStatusHandler();
+                                    }}>
+                                        Enviar WhatsApp e Confirmar
+                                    </AlertDialogAction>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                        <AlertDialogAction className='bg-realce text-black' onClick={() => setShowAlert(false)}>Confirmar</AlertDialogAction>
+                                        <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
+                                            Confirmar
+                                        </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -204,24 +246,24 @@ const ServiceId = () => {
                                 deliveredTime={service?.delivered_time || undefined}
                                 maxTime={service?.max_time || undefined}
                             />
-                            <div className='flex w-full items-center flex-col gap-4'>
+                            <div className='flex w-full gap-4'>
                                 {role === 'MASTER' && (
-                                    <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full'>
-                                        Deletar Serviço
+                                    <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
+                                        <EditIcon />
+                                        Editar
                                     </Button>
                                 )}
-                            </div>
-                            <div className='flex w-full items-center flex-col gap-4'>
                                 {role === 'MASTER' && (
-                                    <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full'>
-                                        Editar Serviço
+                                    <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full gap-2'>
+                                        <DeleteIcon />
+                                        Deletar
                                     </Button>
                                 )}
                             </div>
                             <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <h2>Confirmar Exclusão de Serviço</h2>
+                                        <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
@@ -231,29 +273,7 @@ const ServiceId = () => {
                             </AlertDialog>
                         </div>
                     </div>
-
-                    <div className="bg-black w-full flex flex-col items-center gap-4 p-4">
-                        <p className="text-realce font-bold">Visite nossa loja!</p>
-                        <a href="https://maps.app.goo.gl/ZCcjUhyGsoxS9TUA6" target='__blank' className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</a>
-                        <div className="flex items-center gap-4">
-                            <a href="https://api.whatsapp.com/send?phone=5581988145906" target='__blank'>
-                                <Image
-                                    src={'/whats_footer.svg'}
-                                    alt="Whatsapp Realce Nordeste"
-                                    width={30}
-                                    height={30}
-                                />
-                            </a>
-                            <a href="https://www.instagram.com/realce.nordeste/" target='__blank'>
-                                <Image
-                                    src={'/insta_footer.svg'}
-                                    alt="Instagram Realce Nordeste"
-                                    width={30}
-                                    height={30}
-                                />
-                            </a>
-                        </div>
-                    </div>
+                    <Footer />
                 </div>
             </div>
         </div >

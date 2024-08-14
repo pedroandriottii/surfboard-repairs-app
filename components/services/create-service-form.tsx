@@ -1,5 +1,4 @@
 "use client";
-
 import * as z from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,10 +11,9 @@ import { FormError } from "@/components/form-error";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import InputMask from 'react-input-mask';
 import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "../ui/use-toast";
 
 import {
     Form,
@@ -30,7 +28,6 @@ import { createService } from "@/actions/create-service";
 import { RoleGate } from "../auth/role-gate";
 import Navbar from "../base/navbar";
 import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
 
 export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
@@ -38,6 +35,7 @@ export const CreateServiceForm = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const router = useRouter();
     const role = useCurrentRole();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof ServiceSchema>>({
         resolver: zodResolver(ServiceSchema),
@@ -54,7 +52,11 @@ export const CreateServiceForm = () => {
 
     const handleError = (message: string) => {
         setError(message);
-        toast.error(message);
+        toast({
+            title: "Erro!",
+            description: message,
+            variant: "destructive",
+        });
         setIsPending(false);
     };
 
@@ -90,7 +92,11 @@ export const CreateServiceForm = () => {
 
                     createService(formValues).then(result => {
                         if (result.success) {
-                            toast.success("Serviço criado com sucesso!");
+                            toast({
+                                title: "Sucesso!",
+                                description: "O serviço foi criado com sucesso.",
+                                variant: "success",
+                            })
                             setSuccess(result.success);
                             router.push('/home');
                         } else {
@@ -110,7 +116,6 @@ export const CreateServiceForm = () => {
                 <Navbar role={role} />
             </div>
             <h1 className="text-realce text-xl font-bold py-2 text-center">Cadastrar Serviço</h1>
-            <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-black p-4">
