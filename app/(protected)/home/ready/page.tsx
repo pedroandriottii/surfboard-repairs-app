@@ -2,9 +2,7 @@
 import React from 'react';
 import ServicesList from '@/components/services/services-list';
 import { useCurrentRole } from '@/hooks/use-current-role';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { UserButton } from '@/components/auth/user-button';
 import Link from 'next/link';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Navbar from '@/components/base/navbar';
