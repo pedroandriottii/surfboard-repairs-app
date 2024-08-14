@@ -5,17 +5,17 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen h-full overflow-y-hidden overflow-x-hidden">
-      <div className="absolute inset-0">
-        <div className="md:hidden bg-black">
+    <div className="flex flex-col min-h-screen">
+      <div className="absolute inset-0 bg-black">
+        <div className="md:hidden ">
           <Image
             src={'/realce_home.png'}
             alt="Background"
             layout="fill"
-            className="z-0 opacity-90"
+            className="z-0 opacity-70"
           />
         </div>
-        <div className="hidden md:flex md:w-full max-h-screen bg-black">
+        <div className="hidden md:flex md:w-screen max-h-screen ">
           <Image
             src={'/realce_home_desk.png'}
             alt="Background"
@@ -26,8 +26,8 @@ export default function Home() {
           <div className="bg-black w-1/2 h-screen"></div>
         </div>
       </div>
-      <div className="relative z-10 flex flex-col justify-between flex-grow">
-        <div className="flex items-center justify-between w-full p-4">
+      <div className="relative z-10 flex flex-col flex-grow justify-between">
+        <div className="flex items-center justify-between w-screen p-4">
           <div>
             <Image
               src={'/realce_logo.png'}
@@ -49,15 +49,19 @@ export default function Home() {
             </LoginButton>
           </div>
         </div>
-        <div className="flex flex-col p-6 gap-8 justify-end w-full md:mx-20 md:justify-center pl-[10vw]">
-          <h1 className="text-realce text-5xl font-bold max-w-80 md:text-7xl md:max-w-[80vw]">Bem vindo à uma área exclusiva para clientes!</h1>
-          <p className="text-white text-xl md:text-2xl md:max-w-[80vw]">
-            Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
-          </p>
-          <button className="rounded-full bg-realce px-4 font-bold justify-center w-2/3 md:p-2 md:w-1/4 md:text-center"><a href="https://www.realcenordeste.com.br/">Confira nosso catálogo!</a></button>
+        <div className="flex flex-col p-6 justify-center w-full md:justify-center items-center">
+          <div className="flex flex-col gap-8">
+            <h1 className="text-realce text-5xl font-bold max-w-80 md:text-7xl md:max-w-[80vw]">Bem vindo à uma área exclusiva para clientes!</h1>
+            <p className="text-white text-xl md:text-2xl md:max-w-[80vw]">
+              Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
+            </p>
+            <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
+              <a href="https://www.realcenordeste.com.br/">Confira nosso catálogo!</a>
+            </button>
+          </div>
 
         </div>
-        <div className="flex flex-col bg-black self-end w-full h-full items-center gap-4 p-4 lg:bg-transparent">
+        <div className="relative z-10 flex flex-col bg-transparent items-center gap-4 p-4">
           <p className="text-realce font-bold">Visite nossa loja!</p>
           <a href="https://maps.app.goo.gl/ZCcjUhyGsoxS9TUA6" target='__blank' className="underline text-white text-center">Av. Pres. Castelo Branco, 8159, Jaboatão dos Guararapes</a>
           <div className="flex items-center gap-4">
