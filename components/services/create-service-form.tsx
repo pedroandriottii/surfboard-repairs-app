@@ -119,7 +119,6 @@ export const CreateServiceForm = () => {
                 <div className='flex justify-between w-full'>
                     <Navbar role={role} />
                 </div>
-                <ToastContainer position="top-center" autoClose={9000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
                 <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-black p-4">
