@@ -1,4 +1,3 @@
-import { newPassword } from "@/actions/new-password";
 import * as z from "zod";
 
 export const LoginSchema = z.object({
@@ -84,3 +83,29 @@ export const ChangeStatusSchema = z.object({
 });
 
 
+// BRAND SCHEMA
+
+export const BrandSchema = z.object({
+    name: z.string().min(1, { message: "Insira o Nome!" }),
+});
+
+// SURFBOARD SCHEMA
+
+export const SurfboardSchema = z.object({
+    surfboardBrandingId: z.string(),
+    title: z.string().min(1, { message: "Insira o Título!" }),
+    size: z.string().min(1, { message: "Insira o Tamanho!" }),
+    price: z.number().min(0, { message: "Insira o Preço!" }),
+    volume: z.number().min(0, { message: "Insira o Volume!" }),
+    coverImage: z.union([z.string().url(), z.literal(""), z.null()]),
+    description: z.string().optional(),
+});
+
+
+// ACCESSORIES SCHEMA
+
+export const AccessorySchema = z.object({
+    title: z.string().min(1, { message: "Insira o Título!" }),
+    description: z.string().min(1, { message: "Insira a Descrição!" }).optional(),
+    price: z.number().min(0, { message: "Insira o Preço!" }),
+})

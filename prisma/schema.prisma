@@ -7,6 +7,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// USER MODELS //
+
 enum UserRole {
   ADMIN
   USER
@@ -19,12 +21,6 @@ enum PaymentMethod {
   DEBIT_CARD
   PIX
   FREE
-}
-
-enum ServiceStatus {
-  PENDING
-  READY
-  DELIVERED
 }
 
 model User {
@@ -76,6 +72,14 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
+// SERVICE MODELS //
+
+enum ServiceStatus {
+  PENDING
+  READY
+  DELIVERED
+}
+
 model Service {
   id             String         @id @default(cuid())
   photo_url      String?
@@ -90,4 +94,37 @@ model Service {
   description    String
   payment_method PaymentMethod?
   status         ServiceStatus
+}
+
+// SURFBOARDS MODELS //
+
+model SurfboardBranding {
+  id   String @id @default(cuid())
+  name String
+
+  Surfboards Surfboards[]
+}
+
+model Surfboards {
+  id                  String            @id @default(cuid())
+  title               String
+  description         String?
+  price               Float
+  image               String[]
+  branding            SurfboardBranding @relation(fields: [surfboardBrandingId], references: [id])
+  volume              Float
+  size                String
+  surfboardBrandingId String
+  coverImage          String
+  sold                DateTime?
+  registered          DateTime
+}
+
+model Accessories {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  price       Float
+  sold        DateTime?
+  registered  DateTime
 }
