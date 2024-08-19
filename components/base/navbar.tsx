@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { UserButton } from '@/components/auth/user-button';
 import { UserRole } from '@/lib/types';
 import { usePathname } from 'next/navigation';
-import { RoleGate } from '../auth/role-gate';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
@@ -55,9 +54,9 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                 <ListItem
                     button
                     onClick={toggleSubMenuServices}
-                    className={`flex justify-between items-center gap-4 transition-all duration-300`}
+                    className={`flex justify-between items-center gap-4 transition-all duration-300 text-realce`}
                 >
-                    <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-4 justify-between'>
                         <ConstructionIcon />
                         <ListItemText primary="Serviços" />
                     </div>
@@ -92,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         <ListItem
                             button
                             onClick={toggleSubMenuMarketplace}
-                            className={`flex justify-between items-center gap-4 transition-all duration-300`}
+                            className={`flex justify-between items-center gap-4 transition-all duration-300 text-realce`}
                         >
                             <div className='flex items-center gap-4'>
                                 <StorefrontIcon />
@@ -131,7 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         button
                         component={Link}
                         href="/dashboard"
-                        className='flex gap-4 transition-all duration-300'
+                        className='flex gap-4 transition-all duration-300 text-realce'
                     >
                         <PaymentsIcon />
                         <ListItemText primary="Finanças" />
@@ -180,13 +179,20 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                     <UserButton />
                 </div><Drawer open={drawerOpen} onClose={toggleDrawer(false)} sx={{
                     '& .MuiDrawer-paper': {
-                        backgroundColor: 'black',
-                        color: '#EAF825',
+                        backgroundColor: '#212121',
+                        color: 'white',
                     },
                 }}>
                         <div>
-                            <div className='flex justify-between p-4'>
-                                <h1 className='text-white'>Menu</h1>
+                            <div className='flex justify-between p-4 items-center'>
+                                <Link href={'/home'}>
+                                    <Image
+                                        src={'/realce_logo.png'}
+                                        alt="Realce Nordeste"
+                                        width={50}
+                                        height={50}
+                                    />
+                                </Link>
                                 <span className='text-white' onClick={toggleDrawer(false)}>
                                     <CloseIcon />
                                 </span>
