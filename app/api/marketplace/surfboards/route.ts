@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Imagem de capa inválida!" }, { status: 400 });
     }
 
-    const { title, description, price, surfboardBrandingId, volume, size } = validatedFields.data;
+    const { title, description, price, volume, size, model } = validatedFields.data;
     const coverImage = CoverImageSchema.parse(values.coverImage);
     const image = imageValidation.data;
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         description,
         price,
         image,
-        surfboardBrandingId,
+        model,
         coverImage,
         volume,
         size,
@@ -63,13 +63,6 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const surfboards = await db.surfboards.findMany({
-      include: {
-        branding: {
-          select: {
-            name: true,
-          },
-        },
-      },
     });
 
     return NextResponse.json(surfboards, { status: 200 });

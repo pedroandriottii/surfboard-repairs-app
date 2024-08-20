@@ -11,13 +11,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const surfboard = await db.surfboards.findUnique({
       where: { id },
-      include: {
-        branding: {
-          select: {
-            name: true,
-          },
-        },
-      },
     });
 
     if (!surfboard) {

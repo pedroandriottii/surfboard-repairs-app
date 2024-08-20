@@ -96,35 +96,16 @@ model Service {
   status         ServiceStatus
 }
 
-// SURFBOARDS MODELS //
-
-model SurfboardBranding {
-  id   String @id @default(cuid())
-  name String
-
-  Surfboards Surfboards[]
-}
-
 model Surfboards {
-  id                  String            @id @default(cuid())
-  title               String
-  description         String?
-  price               Float
-  image               String[]
-  branding            SurfboardBranding @relation(fields: [surfboardBrandingId], references: [id])
-  volume              Float
-  size                String
-  surfboardBrandingId String
-  coverImage          String
-  sold                DateTime?
-  registered          DateTime
-}
-
-model Accessories {
   id          String    @id @default(cuid())
   title       String
   description String?
   price       Float
+  image       String[]
+  model       String?
+  volume      Float?
+  size        String?
+  coverImage  String
   sold        DateTime?
   registered  DateTime
 }

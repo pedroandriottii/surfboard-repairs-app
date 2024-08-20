@@ -54,7 +54,6 @@ const SurfboardList: React.FC = () => {
             <CardDescription>{surfboard.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Marca: {surfboard.surfboardBrandingId}</p>
             <p>Tamanho: {surfboard.size}</p>
             <p>Volume: {surfboard.volume}L</p>
             <p>Preço: {formatPrice(surfboard.price)}</p>

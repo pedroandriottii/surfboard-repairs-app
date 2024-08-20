@@ -1,14 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from "@/components/ui/button";
-import { Plus } from 'lucide-react';
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog';
-import { SurfboardBranding } from '@prisma/client';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SurfboardSchema } from "@/schemas";
@@ -17,35 +13,13 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { FormMessage } from "./form-messages";
 import { Textarea } from '../ui/textarea';
-import { BrandForm } from './brand-form';
+import { useRouter } from 'next/navigation';
 
 const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
-    const [brands, setBrands] = useState<SurfboardBranding[]>([]);
     const [isPending, setIsPending] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
-
-
-    const fetchBrands = async () => {
-        try {
-            const response = await fetch('/api/marketplace/brands');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar marcas de pranchas');
-            }
-            const result = await response.json();
-            setBrands(result);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error(error.message);
-            } else {
-                console.error('Erro desconhecido:', error);
-            }
-        }
-    };
-
-    useEffect(() => {
-        fetchBrands();
-    }, []);
+    const router = useRouter()
 
     const {
         register,
@@ -130,6 +104,7 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
             } else {
                 setSuccess(result.success);
                 reset();
+                router.push('/home/marketplace')
             }
         } catch (error) {
             console.error("Erro ao criar a prancha:", error);
@@ -151,75 +126,34 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                 <CardContent className="space-y-2">
                     <div className="space-y-1">
                         <Label htmlFor="title">Título</Label>
-                        <Input id="title" {...register("title")} required />
+                        <Input id="title" {...register("title")} required placeholder='Prancha Realce' />
                         <FormMessage message={errors.title?.message as string} />
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="description">Descrição</Label>
-                        <Textarea id="description" {...register("description")} required />
-                        <FormMessage message={errors.description?.message as string} />
+                        <Label htmlFor="model">Modelo</Label>
+                        <Input id="model" {...register("model")} placeholder='Coringa' />
+                        <FormMessage message={errors.model?.message as string} />
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="surfboardBrandingId">Marca</Label>
-                        <div className="flex items-center gap-2">
-                            <Select
-                                onValueChange={(value) => setValue("surfboardBrandingId", value)}
-                            >
-                                <SelectTrigger id="surfboardBrandingId">
-                                    <SelectValue placeholder="Selecione uma marca" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {brands.map((brand) => (
-                                        <SelectItem key={brand.id} value={brand.id}>
-                                            {brand.name} - {brand.id}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="outline" className="ml-2 p-4 bg-realce">
-                                        <Plus className="w-4 h-4" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Adicionar Nova Marca</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Preencha o formulário abaixo para adicionar uma nova marca.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <BrandForm onSuccess={() => {
-                                        fetchBrands();
-                                        const alertDialogTriggerElement = document.querySelector('[data-state="open"]');
-                                        if (alertDialogTriggerElement) {
-                                            (alertDialogTriggerElement as HTMLElement).click();
-                                        }
-                                    }} />
-                                    <AlertDialogFooter>
-                                        <AlertDialogTrigger asChild>
-                                            <Button variant="outline">Fechar</Button>
-                                        </AlertDialogTrigger>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
+                        <Label htmlFor="description">Descrição</Label>
+                        <Textarea id="description" {...register("description")} placeholder='Triquílha' />
+                        <FormMessage message={errors.description?.message as string} />
                     </div>
                     <div className='flex gap-4'>
                         <div className="space-y-1">
                             <Label htmlFor="volume">Volume</Label>
-                            <Input id="volume" type="number" step="0.01" {...register("volume", { valueAsNumber: true })} required />
+                            <Input id="volume" type="number" step="0.01" {...register("volume", { valueAsNumber: true })} placeholder='32' />
                             <FormMessage message={errors.volume?.message as string} />
                         </div>
                         <div className="space-y-1">
                             <Label htmlFor="size">Tamanho</Label>
-                            <Input id="size" {...register("size")} required />
+                            <Input id="size" {...register("size")} placeholder={`5'10"`} />
                             <FormMessage message={errors.size?.message as string} />
                         </div>
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="price">Preço</Label>
-                        <Input id="price" type="number" step="0.01" {...register("price", { valueAsNumber: true })} required />
+                        <Input id="price" type="number" step="0.01" {...register("price", { valueAsNumber: true })} required placeholder='R$ 600' />
                         <FormMessage message={errors.price?.message as string} />
                     </div>
                     <div className="space-y-1">

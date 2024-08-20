@@ -9,12 +9,6 @@ import TuneIcon from '@mui/icons-material/Tune';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-interface SurfboardWithBranding extends Surfboards {
-  branding: {
-    name: string;
-  };
-}
-
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -23,7 +17,7 @@ function formatPrice(price: number): string {
 }
 
 const Page: React.FC = () => {
-  const [surfboards, setSurfboards] = useState<SurfboardWithBranding[]>([]);
+  const [surfboards, setSurfboards] = useState<Surfboards[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,10 +57,6 @@ const Page: React.FC = () => {
           <ArrowBackIcon />
           Voltar
         </Link>
-        <div className='flex flex-1 justify-center items-center gap-4 text-white'>
-          <p className='border-b-2 border-realce'>Pranchas</p>
-          <p>Acessórios</p>
-        </div>
       </div>
       <div className='flex text-white items-center p-4 justify-between'>
         <div className='flex items-center'>
@@ -80,8 +70,6 @@ const Page: React.FC = () => {
           Filtro
         </Badge>
       </div>
-
-      {/* PRANCHAS */}
       <div className='flex-grow'>
         {error ? (
           <p className='text-red-500'>{error}</p>
@@ -97,9 +85,15 @@ const Page: React.FC = () => {
               />
               <div className='flex flex-col justify-between'>
                 <h2 className='font-bold'>{surfboard.title}</h2>
-                <p className='text-sm'>Marca: {surfboard.branding.name}</p>
-                <p className='text-sm'>Tamanho: {surfboard.size}L</p>
-                <p className='text-sm'>Volume: {surfboard.volume}L</p>
+                {surfboard.model && (
+                  <p className='text-sm'>Modelo: {surfboard.model}</p>
+                )}
+                {surfboard.size && (
+                  <p className='text-sm'>Tamanho: {surfboard.size}</p>
+                )}
+                {surfboard.volume && (
+                  <p className='text-sm'>Volume: {surfboard.volume}L</p>
+                )}
                 <p className='text-xl text-realce'>{formatPrice(surfboard.price)}</p>
               </div>
             </Link>
@@ -108,8 +102,6 @@ const Page: React.FC = () => {
           <p className='text-white'>Nenhuma prancha encontrada.</p>
         )}
       </div>
-
-      {/* FOOTER */}
       <Footer />
     </div>
   );

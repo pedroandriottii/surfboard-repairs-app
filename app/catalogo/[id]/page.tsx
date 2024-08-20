@@ -19,9 +19,7 @@ interface Surfboard {
   volume: number;
   coverImage: string;
   image: string[];
-  branding: {
-    name: string;
-  };
+  model: string
 }
 
 const Page: React.FC = () => {
@@ -97,7 +95,7 @@ const Page: React.FC = () => {
       </div>
       <div className="flex-grow">
         <div className="py-2">
-          <Link href="/" className="bg-realce text-black py-1 px-6 rounded-r-2xl">
+          <Link href="/catalogo" className="bg-realce text-black py-1 px-6 rounded-r-2xl">
             <ArrowBackIcon />
             Voltar
           </Link>
@@ -155,12 +153,20 @@ const Page: React.FC = () => {
             </button>
           </div>
           <div className="flex flex-col p-4 gap-3">
-            <p className="text-white font-bold">Marca: {surfboard.branding.name}</p>
-            <p className="text-white font-bold">Tamanho: {surfboard.size}</p>
-            <p className="text-white font-bold">Volume: {surfboard.volume}L</p>
-            <p className="text-white text-justify">
-              <span className="font-bold">Descrição:</span> {surfboard.description}
-            </p>
+            {surfboard.model && (
+              <p className="text-white font-bold">Modelo: {surfboard.model}</p>
+            )}
+            {surfboard.size && (
+              <p className="text-white font-bold">Tamanho: {surfboard.size}</p>
+            )}
+            {surfboard.volume && (
+              <p className="text-white font-bold">Volume: {surfboard.volume}L</p>
+            )}
+            {surfboard.description && (
+              <p className="text-white text-justify">
+                <span className="font-bold">Descrição:</span> {surfboard.description}
+              </p>
+            )}
           </div>
         </div>
       </div>
