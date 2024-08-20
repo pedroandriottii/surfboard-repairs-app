@@ -52,3 +52,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Erro ao criar a prancha!" }, { status: 500 });
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    const surfboards = await db.surfboards.findMany({
+      include: {
+        branding: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(surfboards, { status: 200 });
+  } catch (error) {
+    console.error("Erro ao buscar as pranchas de surf:", error);
+    return NextResponse.json({ error: "Erro ao buscar as pranchas de surf!" }, { status: 500 });
+  }
+}

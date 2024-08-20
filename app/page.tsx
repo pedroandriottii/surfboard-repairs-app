@@ -56,7 +56,7 @@ export default function Home() {
               Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
             </p>
             <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
-              <a href="https://www.realcenordeste.com.br/">Confira nosso catálogo!</a>
+              <Link href="/catalogo">Confira nosso catálogo!</Link>
             </button>
           </div>
         </div>
