@@ -4,6 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Surfboards } from '@prisma/client';
 
+function formatPrice(price: number): string {
+  return price.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  });
+}
+
 const SurfboardList: React.FC = () => {
   const [surfboards, setSurfboards] = useState<Surfboards[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +57,7 @@ const SurfboardList: React.FC = () => {
             <p>Marca: {surfboard.surfboardBrandingId}</p>
             <p>Tamanho: {surfboard.size}</p>
             <p>Volume: {surfboard.volume}L</p>
-            <p>Preço: R$ {surfboard.price}</p>
+            <p>Preço: {formatPrice(surfboard.price)}</p>
           </CardContent>
         </Card>
       ))}

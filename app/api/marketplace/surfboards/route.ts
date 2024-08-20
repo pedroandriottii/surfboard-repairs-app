@@ -2,13 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 import { db } from "@/lib/db";
 import { SurfboardSchema } from "@/schemas";
+import { currentRole } from '@/lib/auth';
 
 const ImageSchema = z.array(z.string().url());
 const CoverImageSchema = z.string().url();
 
 export async function POST(request: NextRequest) {
   try {
+    const role = await currentRole();
+
     const values = await request.json();
+
+    if (role !== "ADMIN" && role !== "MASTER") {
+      return NextResponse.json({ error: "Você não tem permissão para criar uma prancha!" }, { status: 403 });
+    }
 
     const validatedFields = SurfboardSchema.safeParse(values);
     if (!validatedFields.success) {

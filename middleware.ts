@@ -3,13 +3,10 @@ import NextAuth from "next-auth";
 
 import {
     DEFAULT_LOGIN_REDIRECT,
-    adminRoutes,
     apiAuthPrefix,
     authRoutes,
-    masterRoutes,
     publicRoutes,
 } from "@/routes";
-import { currentRole } from "./lib/auth";
 
 const { auth } = NextAuth(authConfig);
 
@@ -19,10 +16,8 @@ export default auth(async (req) => {
     const isLoggedIn = !!req.auth;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+    const isPublicRoute = publicRoutes.includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/api/marketplace") || nextUrl.pathname.startsWith("/catalogo");
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-    const isMasterRoute = masterRoutes.includes(nextUrl.pathname);
-    const isAdminRoute = adminRoutes.includes(nextUrl.pathname);
 
     if (isApiAuthRoute) {
         return;
@@ -36,16 +31,6 @@ export default auth(async (req) => {
     }
 
     if (!isLoggedIn && !isPublicRoute) {
-        return Response.redirect(new URL("/", nextUrl));
-    }
-
-    const role = await currentRole();
-
-    if (isMasterRoute && role !== "MASTER") {
-        return Response.redirect(new URL("/", nextUrl));
-    }
-
-    if (isAdminRoute && role !== "ADMIN" && role !== "MASTER") {
         return Response.redirect(new URL("/", nextUrl));
     }
 

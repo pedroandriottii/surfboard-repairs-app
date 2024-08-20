@@ -14,6 +14,13 @@ interface SurfboardWithBranding extends Surfboards {
   };
 }
 
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(price);
+}
+
 const Page: React.FC = () => {
   const [surfboards, setSurfboards] = useState<SurfboardWithBranding[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -92,7 +99,7 @@ const Page: React.FC = () => {
                 <p className='text-sm'>Marca: {surfboard.branding.name}</p>
                 <p className='text-sm'>Tamanho: {surfboard.size}L</p>
                 <p className='text-sm'>Volume: {surfboard.volume}L</p>
-                <p className='text-xl text-realce'>R$ {surfboard.price}</p>
+                <p className='text-xl text-realce'>{formatPrice(surfboard.price)}</p>
               </div>
             </Link>
           ))
