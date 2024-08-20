@@ -9,11 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog';
 import { SurfboardBranding } from '@prisma/client';
-import { getAllSurfboardBrands } from '@/data/brands';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SurfboardSchema } from "@/schemas";
-import { createSurfboard } from "@/actions/create-surfboard";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
@@ -27,9 +25,22 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
 
+
     const fetchBrands = async () => {
-        const result = await getAllSurfboardBrands();
-        setBrands(result ?? []);
+        try {
+            const response = await fetch('/api/marketplace/brands');
+            if (!response.ok) {
+                throw new Error('Erro ao buscar marcas de pranchas');
+            }
+            const result = await response.json();
+            setBrands(result);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error('Erro desconhecido:', error);
+            }
+        }
     };
 
     useEffect(() => {
@@ -75,6 +86,7 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
     };
 
     const onSubmitForm = async (data: any) => {
+        console.log("Form submitted", data);
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
@@ -103,14 +115,20 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                 image: imageUrls,
             };
 
-            onSubmit(formData);
+            const response = await fetch('/api/marketplace/surfboards', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
-            const response = await createSurfboard(formData);
+            const result = await response.json();
 
-            if (response.error) {
-                setError(response.error);
+            if (!response.ok) {
+                setError(result.error || "Erro ao criar a prancha.");
             } else {
-                setSuccess(response.success);
+                setSuccess(result.success);
                 reset();
             }
         } catch (error) {
@@ -144,24 +162,20 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                     <div className="space-y-1">
                         <Label htmlFor="surfboardBrandingId">Marca</Label>
                         <div className="flex items-center gap-2">
-                            {brands.length > 0 ? (
-                                <Select
-                                    onValueChange={(value) => setValue("surfboardBrandingId", value)}
-                                >
-                                    <SelectTrigger id="surfboardBrandingId">
-                                        <SelectValue placeholder="Selecione uma marca" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {brands.map((brand) => (
-                                            <SelectItem key={brand.id} value={brand.id}>
-                                                {brand.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            ) : (
-                                <p>Carregando Marcas</p>
-                            )}
+                            <Select
+                                onValueChange={(value) => setValue("surfboardBrandingId", value)}
+                            >
+                                <SelectTrigger id="surfboardBrandingId">
+                                    <SelectValue placeholder="Selecione uma marca" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {brands.map((brand) => (
+                                        <SelectItem key={brand.id} value={brand.id}>
+                                            {brand.name} - {brand.id}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="outline" className="ml-2 p-4 bg-realce">
@@ -202,6 +216,11 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                             <Input id="size" {...register("size")} required />
                             <FormMessage message={errors.size?.message as string} />
                         </div>
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="price">Preço</Label>
+                        <Input id="price" type="number" step="0.01" {...register("price", { valueAsNumber: true })} required />
+                        <FormMessage message={errors.price?.message as string} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="coverImage">Imagem de Capa</Label>

@@ -28,44 +28,44 @@ const Page: React.FC = () => {
                 <Navbar role={role} />
                 <div className='p-4 flex flex-col gap-4'>
                     <h1 className='items-center flex w-full justify-center p-2 bg-realce rounded-md'>Área de Cadastro</h1>
-                    <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
-                        <Tabs defaultValue="surfboard">
-                            <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="surfboard">Pranchas</TabsTrigger>
-                                <TabsTrigger value="accessories">Acessórios</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="surfboard">
-                                <SurfboardForm onSubmit={handleSurfboardSubmit} />
-                            </TabsContent>
-                            <TabsContent value="accessories">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Acessórios</CardTitle>
-                                        <CardDescription>
-                                            Cadastre os acessórios que você tem disponíveis.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                                        <div className="space-y-1">
-                                            <Label htmlFor="accessory-name">Nome</Label>
-                                            <Input id="accessory-name" placeholder="Nome do acessório" required />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <Label htmlFor="accessory-description">Descrição</Label>
-                                            <Input id="accessory-description" placeholder="Descrição do acessório" required />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <Label htmlFor="accessory-price">Preço</Label>
-                                            <Input id="accessory-price" placeholder="0,00" type="number" step="0.01" required />
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter>
-                                        <Button type="submit">Cadastrar</Button>
-                                    </CardFooter>
-                                </Card>
-                            </TabsContent>
-                        </Tabs>
-                    </RoleGate>
+                    {/* <RoleGate allowedRoles={['ADMIN', 'MASTER']}> */}
+                    <Tabs defaultValue="surfboard">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="surfboard">Pranchas</TabsTrigger>
+                            <TabsTrigger value="accessories">Acessórios</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="surfboard">
+                            <SurfboardForm onSubmit={handleSurfboardSubmit} />
+                        </TabsContent>
+                        <TabsContent value="accessories">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Acessórios</CardTitle>
+                                    <CardDescription>
+                                        Cadastre os acessórios que você tem disponíveis.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <div className="space-y-1">
+                                        <Label htmlFor="accessory-name">Nome</Label>
+                                        <Input id="accessory-name" placeholder="Nome do acessório" required />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="accessory-description">Descrição</Label>
+                                        <Input id="accessory-description" placeholder="Descrição do acessório" required />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="accessory-price">Preço</Label>
+                                        <Input id="accessory-price" placeholder="0,00" type="number" step="0.01" required />
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button type="submit">Cadastrar</Button>
+                                </CardFooter>
+                            </Card>
+                        </TabsContent>
+                    </Tabs>
+                    {/* </RoleGate> */}
                 </div>
             </div>
         </div>

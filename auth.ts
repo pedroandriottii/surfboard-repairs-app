@@ -7,8 +7,6 @@ import { db } from "@/lib/db"
 import authConfig from "@/auth.config"
 import { getAccountByUserId } from "./data/account"
 
-
-
 export const {
   handlers: { GET, POST },
   auth,
