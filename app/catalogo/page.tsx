@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Surfboards } from '@prisma/client';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import Footer from '@/components/base/footer';
 import TuneIcon from '@mui/icons-material/Tune';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -47,7 +48,7 @@ const Page: React.FC = () => {
   }, []);
 
   return (
-    <div className='bg-black w-full h-full'>
+    <div className="flex flex-col min-h-screen bg-black">
       <div className='flex justify-between p-4 items-center'>
         <Image
           src={'/realce_logo.png'}
@@ -81,7 +82,7 @@ const Page: React.FC = () => {
       </div>
 
       {/* PRANCHAS */}
-      <div className=''>
+      <div className='flex-grow'>
         {error ? (
           <p className='text-red-500'>{error}</p>
         ) : surfboards.length > 0 ? (
@@ -108,6 +109,8 @@ const Page: React.FC = () => {
         )}
       </div>
 
+      {/* FOOTER */}
+      <Footer />
     </div>
   );
 };
