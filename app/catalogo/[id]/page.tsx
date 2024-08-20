@@ -85,7 +85,7 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      <div className="p-4">
+      <div className="p-2 flex justify-center">
         <Image
           src={'/realce_logo.png'}
           alt="Realce Surfboards"
