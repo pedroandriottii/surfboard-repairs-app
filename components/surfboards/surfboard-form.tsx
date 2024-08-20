@@ -67,7 +67,7 @@ export const SurfboardForm: React.FC = () => {
 
       const formData = {
         ...data,
-        image: imageUrls,  // Adiciona as URLs das imagens ao formData
+        image: imageUrls,
       };
 
       const response = await createSurfboard(formData);

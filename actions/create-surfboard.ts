@@ -5,8 +5,9 @@ import { db } from "@/lib/db";
 import { SurfboardSchema } from "@/schemas";
 
 const ImageSchema = z.array(z.string().url());
+const CoverImageSchema = z.string().url();
 
-export const createSurfboard = async (values: z.infer<typeof SurfboardSchema> & { image: string[] }) => {
+export const createSurfboard = async (values: z.infer<typeof SurfboardSchema> & { image: string[], coverImage: string }) => {
   console.log("Received values:", values);
 
   const validatedFields = SurfboardSchema.safeParse(values);
@@ -22,9 +23,15 @@ export const createSurfboard = async (values: z.infer<typeof SurfboardSchema> & 
     return { error: "Imagens inválidas!" };
   }
 
+  const coverImageValidation = CoverImageSchema.safeParse(values.coverImage);
+  if (!coverImageValidation.success) {
+    console.error("Erro de validação da imagem de capa:", coverImageValidation.error);
+    return { error: "Imagem de capa inválida!" };
+  }
+
   try {
     const { title, description, price, surfboardBrandingId, volume, size } = validatedFields.data;
-    const coverImage = validatedFields.data.coverImage || "";
+    const coverImage = CoverImageSchema.parse(values.coverImage);
     const image = imageValidation.data;
 
     const surfboard = await db.surfboards.create({

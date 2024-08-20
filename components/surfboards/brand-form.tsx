@@ -5,8 +5,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BrandSchema } from "@/schemas";
 import { createBrand } from "@/actions/create-brand";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
-export const BrandForm: React.FC = () => {
+interface BrandFormProps {
+  onSuccess: () => void;
+}
+
+export const BrandForm: React.FC<BrandFormProps> = ({ onSuccess }) => {
   const {
     register,
     handleSubmit,
@@ -19,21 +26,17 @@ export const BrandForm: React.FC = () => {
   const onSubmit = async (data: any) => {
     const response = await createBrand(data);
     if (response.error) {
-      alert(response.error);
     } else {
-      alert(response.success);
       reset();
+      onSuccess();
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto">
-      <div>
-        <label htmlFor="name">Nome da Marca</label>
-        <input id="name" {...register("name")} />
-      </div>
-
-      <button type="submit">Criar Marca</button>
+      <Label htmlFor="name">Nome da Marca</Label>
+      <Input id="name" {...register("name")} />
+      <Button type="button" className="w-full mt-4" onClick={handleSubmit(onSubmit)}>Criar Marca</Button>
     </form>
   );
 };

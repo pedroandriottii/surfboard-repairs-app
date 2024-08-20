@@ -97,7 +97,6 @@ export const SurfboardSchema = z.object({
     size: z.string().min(1, { message: "Insira o Tamanho!" }),
     price: z.number().min(0, { message: "Insira o Preço!" }),
     volume: z.number().min(0, { message: "Insira o Volume!" }),
-    coverImage: z.union([z.string().url(), z.literal(""), z.null()]),
     description: z.string().optional(),
 });
 

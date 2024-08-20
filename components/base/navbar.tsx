@@ -114,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                                 <ListItem
                                     button
                                     component={Link}
-                                    href="/home/marketplace/create/surfboard"
+                                    href="/home/marketplace/create"
                                     className='flex gap-4 transition-all duration-300'
                                 >
                                     <ListItemText primary="Cadastrar" />
