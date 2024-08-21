@@ -24,7 +24,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { FormSuccess } from "../form-success";
-import { createService } from "@/actions/create-service";
 import { RoleGate } from "../auth/role-gate";
 import Navbar from "../base/navbar";
 import { Textarea } from "../ui/textarea";
@@ -53,11 +52,6 @@ export const CreateServiceForm = () => {
 
     const handleError = (message: string) => {
         setError(message);
-        toast({
-            title: "Erro!",
-            description: message,
-            variant: "destructive",
-        });
         setIsPending(false);
     };
 
@@ -88,28 +82,39 @@ export const CreateServiceForm = () => {
                 handleError("Falha no upload da imagem.");
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-                    const formValues = { ...values, photo_url: downloadURL };
+                getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                    const formValues = { ...values, photo_url: downloadURL, max_time: new Date(values.max_time) };
 
-                    createService(formValues).then(result => {
-                        if (result.success) {
+                    try {
+                        const response = await fetch('/api/services', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formValues),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
                             toast({
                                 title: "Sucesso!",
                                 description: "O serviço foi criado com sucesso.",
                                 variant: "success",
-                            })
+                            });
                             setSuccess(result.success);
                             router.push('/home');
                         } else {
                             handleError(result.error || "Erro desconhecido");
                         }
-                    }).catch(error => {
+                    } catch (error) {
                         console.error("Erro ao criar serviço", error);
                         handleError("Erro ao criar serviço.");
-                    });
+                    }
                 });
             });
     };
+
 
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">

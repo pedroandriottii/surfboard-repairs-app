@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         <ListItem
                             button
                             component={Link}
-                            href="create-service"
+                            href="/create-service"
                             className='flex gap-4 transition-all duration-300'
                         >
                             <ListItemText primary="Cadastrar" />

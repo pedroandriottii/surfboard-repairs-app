@@ -35,7 +35,7 @@ export const ServiceSchema = z.object({
     ),
     phone: z.string().min(1, { message: "Insira o Telefone!" }),
     value: z.number().min(0, { message: "Insira o Valor!" }),
-    max_time: z.date(),
+    max_time: z.union([z.date(), z.string()]).transform((value) => new Date(value)),
     description: z.string(),
     photo_url: z.union([z.string().url(), z.literal(""), z.null()]),
 
