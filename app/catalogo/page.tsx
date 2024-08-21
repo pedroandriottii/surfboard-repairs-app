@@ -34,8 +34,11 @@ const Page: React.FC = () => {
           throw new Error('Erro ao buscar pranchas de surf');
         }
         const data = await response.json();
-        setSurfboards(data);
-        const maxPrice = Math.max(...data.map((surfboard: Surfboards) => surfboard.price));
+        // Filtra pranchas que não estão vendidas
+        const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null);
+
+        setSurfboards(availableSurfboards);
+        const maxPrice = Math.max(...availableSurfboards.map((surfboard: Surfboards) => surfboard.price));
         setMaxPrice(maxPrice);
         setSelectedPrice(maxPrice);
       } catch (error) {

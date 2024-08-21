@@ -9,18 +9,7 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
-interface Surfboard {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  size: string;
-  volume: number;
-  coverImage: string;
-  image: string[];
-  model: string
-}
+import { Surfboard } from '@/lib/types';
 
 const Page: React.FC = () => {
   const pathName = usePathname();

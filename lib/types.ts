@@ -38,3 +38,16 @@ export interface MonthlyData {
         CASH: number;
     };
 }
+
+export interface Surfboard {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    size: string;
+    volume: number;
+    coverImage: string;
+    image: string[];
+    model: string
+    sold: Date;
+}
