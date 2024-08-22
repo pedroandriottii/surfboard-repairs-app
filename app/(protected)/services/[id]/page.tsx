@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import Image from 'next/image';
 import { updateStatus } from '@/actions/update-status';
-import { deleteService } from '@/actions/delete-service';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';
@@ -118,27 +117,32 @@ const ServiceId = () => {
 
     const handleDelete = async () => {
         try {
-            const result = await deleteService(id);
-            if (result.success) {
+            const response = await fetch(`/api/services/${id}`, {
+                method: 'DELETE',
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
                 toast({
                     title: "Sucesso",
                     description: "Serviço deletado com sucesso",
                     variant: "success",
-                })
+                });
                 router.push('/home');
             } else {
                 toast({
                     title: "Erro",
-                    description: `Erro ao deletar serviço: ${result.error}`,
+                    description: `Erro ao deletar serviço: ${result.error || "Erro desconhecido"}`,
                     variant: "destructive",
-                })
+                });
             }
         } catch (error) {
             toast({
                 title: "Erro",
                 description: "Erro ao deletar serviço",
                 variant: "destructive",
-            })
+            });
         }
     };
 
