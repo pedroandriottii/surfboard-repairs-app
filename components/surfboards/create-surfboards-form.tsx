@@ -11,15 +11,17 @@ import { SurfboardSchema } from "@/schemas";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
-import { FormMessage } from "./form-messages";
+import { FormError } from '../form-error';
 import { Textarea } from '../ui/textarea';
 import { useRouter } from 'next/navigation';
+import { useToast } from "@/components/ui/use-toast";
 
 const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const router = useRouter()
+    const { toast } = useToast();
 
     const {
         register,
@@ -60,12 +62,16 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
     };
 
     const onSubmitForm = async (data: any) => {
-        console.log("Form submitted", data);
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
         if (!coverImageFile) {
             handleError("Selecione uma imagem de capa.");
+            toast({
+                title: "Erro",
+                description: "Selecione uma imagem de capa.",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -74,6 +80,11 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
 
         if (!files || files.length === 0) {
             handleError("Selecione pelo menos uma imagem.");
+            toast({
+                title: "Erro",
+                description: "Selecione pelo menos uma imagem.",
+                variant: "destructive",
+            });
             return;
         }
 
@@ -101,14 +112,29 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
 
             if (!response.ok) {
                 setError(result.error || "Erro ao criar a prancha.");
+                toast({
+                    title: "Erro",
+                    description: result.error || "Erro ao criar a prancha.",
+                    variant: "destructive",
+                });
             } else {
                 setSuccess(result.success);
+                toast({
+                    title: "Sucesso!",
+                    description: "A prancha foi cadastrada com sucesso.",
+                    variant: "success",
+                });
                 reset();
-                router.push('/home/marketplace')
+                router.push('/home/marketplace');
             }
         } catch (error) {
             console.error("Erro ao criar a prancha:", error);
             handleError("Erro ao criar a prancha.");
+            toast({
+                title: "Erro",
+                description: "Erro ao criar a prancha.",
+                variant: "destructive",
+            });
         } finally {
             setIsPending(false);
         }
@@ -127,44 +153,50 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                     <div className="space-y-1">
                         <Label htmlFor="title">Título</Label>
                         <Input id="title" {...register("title")} required placeholder='Prancha Realce' />
-                        <FormMessage message={errors.title?.message as string} />
+                        <FormError message={errors.title?.message as string} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="model">Modelo</Label>
                         <Input id="model" {...register("model")} placeholder='Coringa' />
-                        <FormMessage message={errors.model?.message as string} />
+                        <FormError message={errors.model?.message as string} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="description">Descrição</Label>
                         <Textarea id="description" {...register("description")} placeholder='Triquílha' />
-                        <FormMessage message={errors.description?.message as string} />
+                        <FormError message={errors.description?.message as string} />
                     </div>
                     <div className='flex gap-4'>
                         <div className="space-y-1">
                             <Label htmlFor="volume">Volume</Label>
-                            <Input id="volume" type="number" step="0.01" {...register("volume", { valueAsNumber: true })} placeholder='32' />
-                            <FormMessage message={errors.volume?.message as string} />
+                            <Input
+                                id="volume"
+                                type="number"
+                                step="0.01"
+                                {...register("volume")}
+                                placeholder='32'
+                            />
+                            <FormError message={errors.volume?.message as string} />
                         </div>
                         <div className="space-y-1">
                             <Label htmlFor="size">Tamanho</Label>
                             <Input id="size" {...register("size")} placeholder={`5'10"`} />
-                            <FormMessage message={errors.size?.message as string} />
+                            <FormError message={errors.size?.message as string} />
                         </div>
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="price">Preço</Label>
                         <Input id="price" type="number" step="0.01" {...register("price", { valueAsNumber: true })} required placeholder='R$ 600' />
-                        <FormMessage message={errors.price?.message as string} />
+                        <FormError message={errors.price?.message as string} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="coverImage">Imagem de Capa</Label>
                         <Input id="coverImage" name="coverImage" type="file" accept="image/*" required />
-                        <FormMessage message={errors.coverImage?.message as string} />
+                        <FormError message={errors.coverImage?.message as string} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="image">Imagens</Label>
                         <Input id="image" name="image" type="file" multiple accept="image/*" required />
-                        <FormMessage message={errors.image?.message as string} />
+                        <FormError message={errors.image?.message as string} />
                     </div>
                 </CardContent>
                 <CardFooter>

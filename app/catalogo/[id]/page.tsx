@@ -44,6 +44,10 @@ const Page: React.FC = () => {
     }
   }, [id]);
 
+  const generateWhatsappLink = (pathName: string) => {
+    return `https://api.whatsapp.com/send?phone=5581988145906&text=Olá, gostaria de comprar essa prancha: painel.realcenordeste.com.br/${pathName}`;
+  }
+
   const handleImageClick = (image: string) => {
     setCurrentImage(image);
   };
@@ -136,10 +140,11 @@ const Page: React.FC = () => {
             <p className="text-realce text-2xl font-bold">
               R$ {surfboard.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </p>
-            <button className="border-[1px] text-white border-white px-6 py-1 rounded-xl flex items-center gap-2">
+
+            <a href={generateWhatsappLink(pathName)} className="border-[1px] text-white border-white px-6 py-1 rounded-xl flex items-center gap-2">
               <WhatsAppIcon />
-              <p className="">Entre em contato conosco!</p>
-            </button>
+              <p className="">Compre agora!</p>
+            </a>
           </div>
           <div className="flex flex-col p-4 gap-3">
             {surfboard.model && (
@@ -160,7 +165,7 @@ const Page: React.FC = () => {
         </div>
       </div>
       <Footer />
-    </div>
+    </div >
   );
 };
 

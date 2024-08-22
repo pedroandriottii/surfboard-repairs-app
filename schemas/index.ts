@@ -87,8 +87,11 @@ export const ChangeStatusSchema = z.object({
 export const SurfboardSchema = z.object({
     title: z.string().min(1, { message: "Insira o Título!" }),
     price: z.number().min(0, { message: "Insira o Preço!" }),
-    size: z.string().min(1, { message: "Insira o Tamanho!" }).optional(),
-    volume: z.number().min(0, { message: "Insira o Volume!" }).optional(),
+    size: z.string().optional(),
+    volume: z.preprocess((val) => {
+        if (val === "" || val === null || val === undefined) return undefined;
+        return Number(val);
+    }, z.number().positive("O volume deve ser um número positivo").optional()),
     model: z.string().optional(),
     description: z.string().optional(),
 });
