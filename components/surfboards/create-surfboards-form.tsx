@@ -16,7 +16,7 @@ import { Textarea } from '../ui/textarea';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/components/ui/use-toast";
 
-const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => {
+const SurfboardForm: React.FC = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
@@ -162,7 +162,7 @@ const SurfboardForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="description">Descrição</Label>
-                        <Textarea id="description" {...register("description")} placeholder='Triquílha' />
+                        <Textarea id="description" {...register("description")} placeholder='Triquilha' />
                         <FormError message={errors.description?.message as string} />
                     </div>
                     <div className='flex gap-4'>

@@ -15,11 +15,6 @@ import { Button } from '@/components/ui/button';
 const Page: React.FC = () => {
     const role = useCurrentRole() ?? null;
 
-    const handleSurfboardSubmit = (formData: any) => {
-        const brandId = formData.surfboardBrandingId;
-        console.log("Selected Brand ID:", brandId);
-    };
-
     return (
         <div className='relative w-full flex flex-col min-h-screen'>
             <BackgroundImage src="/splash.png" alt="Background" />
@@ -35,7 +30,7 @@ const Page: React.FC = () => {
                                 <TabsTrigger value="accessories">Acessórios</TabsTrigger>
                             </TabsList>
                             <TabsContent value="surfboard">
-                                <SurfboardForm onSubmit={handleSurfboardSubmit} />
+                                <SurfboardForm />
                             </TabsContent>
                             <TabsContent value="accessories">
                                 <Card>
