@@ -52,12 +52,20 @@ export default function Home() {
         <div className="flex flex-col p-6 justify-center w-full md:justify-center items-center">
           <div className="flex flex-col gap-8">
             <h1 className="text-realce text-5xl font-bold max-w-80 md:text-7xl md:max-w-[80vw]">Bem vindo à uma área exclusiva para clientes!</h1>
-            <p className="text-white text-xl md:text-2xl md:max-w-[80vw]">
+            <p className="text-white text-justify text-xl md:text-2xl md:max-w-[80vw]">
               Aqui, você pode acessar facilmente todas as informações sobre os serviços e reparos realizados em suas pranchas de surf, além de consultar a ficha técnica detalhada de cada uma delas.
             </p>
-            <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
-              <Link href="/catalogo">Confira nosso catálogo!</Link>
-            </button>
+            <p className="text-white text-xl text-justify md:text-2xl md:max-w-[80vw]">
+              Aproveite para conferir nosso catálogo de pranchas e fique por dentro das novidades e promoções exclusivas!
+            </p>
+            <div className="flex justify-between md:justify-start md:gap-6">
+              <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
+                <a href="https://www.realcenordeste.com.br/" target="__blank">Pranchas Novas</a>
+              </button>
+              <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
+                <Link href="/catalogo">Pranchas Usadas</Link>
+              </button>
+            </div>
           </div>
         </div>
         <div className="relative z-10 flex flex-col bg-transparent items-center gap-4 p-4">

@@ -10,6 +10,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Surfboard } from '@/lib/types';
+import { Dialog } from '@headlessui/react';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Page: React.FC = () => {
   const pathName = usePathname();
@@ -18,6 +20,7 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSurfboard = async () => {
@@ -68,6 +71,14 @@ const Page: React.FC = () => {
     }
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
@@ -102,7 +113,7 @@ const Page: React.FC = () => {
               >
                 <ArrowLeftIcon fontSize="large" />
               </button>
-              <div className="relative">
+              <div className="relative cursor-pointer" onClick={openModal}>
                 <Image
                   src={currentImage || surfboard.coverImage}
                   alt={surfboard.title}
@@ -165,6 +176,25 @@ const Page: React.FC = () => {
         </div>
       </div>
       <Footer />
+      <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">
+          <div className="relative">
+            <Image
+              src={currentImage || surfboard.coverImage}
+              alt={surfboard.title}
+              width={600}
+              height={600}
+              className="rounded-xl object-cover"
+            />
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 bg-realce rounded-full text-black p-1"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+        </div>
+      </Dialog>
     </div >
   );
 };

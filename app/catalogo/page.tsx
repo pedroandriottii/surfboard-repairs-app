@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import Footer from '@/components/base/footer';
 import TuneIcon from '@mui/icons-material/Tune';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,6 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
-  const [showUsedBoards, setShowUsedBoards] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSurfboards = async () => {
@@ -34,7 +32,6 @@ const Page: React.FC = () => {
           throw new Error('Erro ao buscar pranchas de surf');
         }
         const data = await response.json();
-        // Filtra pranchas que não estão vendidas
         const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null);
 
         setSurfboards(availableSurfboards);
@@ -59,10 +56,6 @@ const Page: React.FC = () => {
 
   const filteredSurfboards = surfboards.filter(surfboard => surfboard.price <= selectedPrice);
 
-  const handleToggleBoards = () => {
-    setShowUsedBoards(!showUsedBoards);
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <div className='flex justify-center p-2'>
@@ -78,137 +71,76 @@ const Page: React.FC = () => {
           <ArrowBackIcon />
           Voltar
         </Link>
-        <div
-          onClick={handleToggleBoards}
-          className='bg-realce text-black py-1 px-6 rounded-l-2xl flex items-center justify-around cursor-pointer'
-        >
-          {showUsedBoards ? 'Pranchas Novas' : 'Pranchas Usadas'}
-          <ArrowForwardIcon />
-        </div>
       </div>
       <div className='flex text-white items-center p-4 justify-between'>
-        <p className='border-b-[1px] border-realce'>{showUsedBoards ? 'Pranchas Usadas' : 'Pranchas Novas'}</p>
-        {showUsedBoards && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Badge variant='secondary' className='flex items-center gap-2 cursor-pointer'>
-                <TuneIcon />
-                Filtro
-              </Badge>
-            </AlertDialogTrigger>
-            <AlertDialogContent className='bg-black text-white'>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Filtrar por Preço</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Ajuste o valor máximo para filtrar as pranchas de surf disponíveis.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="flex flex-col items-center gap-4">
-                <Slider
-                  value={[selectedPrice]}
-                  max={maxPrice}
-                  step={50}
-                  onValueChange={handleSliderChange}
-                  className=''
-                />
-                <p className='text-realce'>{formatPrice(selectedPrice)}</p>
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel asChild>
-                  <Button className='text-black bg-realce'>Filtrar</Button>
-                </AlertDialogCancel>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
+        <p className='border-b-[1px] border-realce'>Pranchas Usadas</p>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Badge variant='secondary' className='flex items-center gap-2 cursor-pointer'>
+              <TuneIcon />
+              Filtro
+            </Badge>
+          </AlertDialogTrigger>
+          <AlertDialogContent className='bg-black text-white'>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Filtrar por Preço</AlertDialogTitle>
+              <AlertDialogDescription>
+                Ajuste o valor máximo para filtrar as pranchas de surf disponíveis.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="flex flex-col items-center gap-4">
+              <Slider
+                value={[selectedPrice]}
+                max={maxPrice}
+                step={50}
+                onValueChange={handleSliderChange}
+                className=''
+              />
+              <p className='text-realce'>{formatPrice(selectedPrice)}</p>
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel asChild>
+                <Button className='text-black bg-realce'>Filtrar</Button>
+              </AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
-      {/* PRANCHAS USADAS */}
-      {showUsedBoards ? (
-        <div className='flex-grow'>
-          {error ? (
-            <p className='text-red-500'>{error}</p>
-          ) : filteredSurfboards.length > 0 ? (
-            filteredSurfboards.map(surfboard => (
-              <Link href={`/catalogo/${surfboard.id}`} key={surfboard.id} className='text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2'>
-                <Image
-                  src={surfboard.coverImage}
-                  alt={surfboard.title}
-                  width={140}
-                  height={140}
-                  className='rounded-xl object-cover w-36 h-36'
-                />
-                <div className='flex flex-col justify-between'>
-                  <h2 className='font-bold'>{surfboard.title}</h2>
-                  {surfboard.model && (
-                    <p className='text-sm'>Modelo: {surfboard.model}</p>
-                  )}
-                  {surfboard.size && (
-                    <p className='text-sm'>Tamanho: {surfboard.size}</p>
-                  )}
-                  {surfboard.volume && (
-                    <p className='text-sm'>Volume: {surfboard.volume}L</p>
-                  )}
-                  <p className='text-xl text-realce'>{formatPrice(surfboard.price)}</p>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <p className='text-white'>Nenhuma prancha encontrada.</p>
-          )}
-        </div>
-      ) : (
-        <div className='flex flex-col w-full h-full'>
-          <a target='__blank' href='https://www.realcenordeste.com.br/bandida' className="p-4 border-b-[1px] border-[#2F2F2F] flex gap-4 text-realce items-center justify-around text-xl">
-            <Image
-              src={'/pranchas/bandida.png'}
-              alt='Realce Surfboards'
-              width={200}
-              height={200}
-            />
-            <p>Bandida</p>
-          </a>
-          <a href='https://www.realcenordeste.com.br/coringa' target='__blank' className="p-4 border-b-[1px] border-[#2F2F2F] flex gap-4 text-realce items-center justify-around text-xl">
-            <Image
-              src={'/pranchas/coringa.png'}
-              alt='Realce Surfboards'
-              width={200}
-              height={200}
-            />
-            <p>Coringa</p>
-          </a>
-          <a href='https://www.realcenordeste.com.br/funboard' target='__blank' className="p-4 border-b-[1px] border-[#2F2F2F] flex gap-4 text-realce items-center justify-around text-xl">
-            <Image
-              src={'/pranchas/funboard.png'}
-              alt='Realce Surfboards'
-              width={200}
-              height={200}
-            />
-            <p>Funboard</p>
-          </a>
-          <a href='https://www.realcenordeste.com.br/fish' target='__blank' className="p-4 border-b-[1px] border-[#2F2F2F] flex gap-4 text-realce items-center justify-around text-xl">
-            <Image
-              src={'/pranchas/70_tal.png'}
-              alt='Realce Surfboards'
-              width={200}
-              height={200}
-            />
-            <p>70 & Tal</p>
-          </a>
-          <a href='https://www.realcenordeste.com.br/mr' target='__blank' className="p-4 border-b-[1px] border-[#2F2F2F] flex gap-4 text-realce items-center justify-around text-xl">
-            <Image
-              src={'/pranchas/mr.png'}
-              alt='Realce Surfboards'
-              width={200}
-              height={200}
-            />
-            <p>M.R.</p>
-          </a>
-        </div>
-      )}
-
+      <div className='flex-grow'>
+        {error ? (
+          <p className='text-red-500'>{error}</p>
+        ) : filteredSurfboards.length > 0 ? (
+          filteredSurfboards.map(surfboard => (
+            <Link href={`/catalogo/${surfboard.id}`} key={surfboard.id} className='text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2'>
+              <Image
+                src={surfboard.coverImage}
+                alt={surfboard.title}
+                width={140}
+                height={140}
+                className='rounded-xl object-cover w-36 h-36'
+              />
+              <div className='flex flex-col justify-between'>
+                <h2 className='font-bold'>{surfboard.title}</h2>
+                {surfboard.model && (
+                  <p className='text-sm'>Modelo: {surfboard.model}</p>
+                )}
+                {surfboard.size && (
+                  <p className='text-sm'>Tamanho: {surfboard.size}</p>
+                )}
+                {surfboard.volume && (
+                  <p className='text-sm'>Volume: {surfboard.volume}L</p>
+                )}
+                <p className='text-xl text-realce'>{formatPrice(surfboard.price)}</p>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className='text-white'>Nenhuma prancha encontrada.</p>
+        )}
+      </div>
       <Footer />
-    </div>
+    </div >
   );
 };
 

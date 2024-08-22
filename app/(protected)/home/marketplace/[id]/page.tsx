@@ -15,6 +15,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Surfboard } from '@/lib/types';
 import { RoleGate } from '@/components/auth/role-gate';
 import { Input } from '@/components/ui/input';
+import { Dialog } from '@headlessui/react';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Page: React.FC = () => {
     const pathName = usePathname();
@@ -24,6 +26,7 @@ const Page: React.FC = () => {
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [images, setImages] = useState<string[]>([]);
     const [price, setPrice] = useState<number | undefined>(undefined);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const role = useCurrentRole();
     const router = useRouter();
 
@@ -52,7 +55,6 @@ const Page: React.FC = () => {
             fetchSurfboard();
         }
     }, [id]);
-
 
     const handleImageClick = (image: string) => {
         setCurrentImage(image);
@@ -92,14 +94,6 @@ const Page: React.FC = () => {
         }
     };
 
-    if (error) {
-        return <p className="text-red-500">{error}</p>;
-    }
-
-    if (!surfboard) {
-        return <p className="text-white">Carregando prancha...</p>;
-    }
-
     const handleMarkAsSold = async () => {
         try {
             const response = await fetch(`/api/marketplace/surfboards/${id}`, {
@@ -122,6 +116,21 @@ const Page: React.FC = () => {
         }
     };
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
+
+    if (!surfboard) {
+        return <p className="text-white">Carregando prancha...</p>;
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-black">
@@ -143,7 +152,7 @@ const Page: React.FC = () => {
                                 >
                                     <ArrowLeftIcon fontSize="large" />
                                 </button>
-                                <div className="relative">
+                                <div className="relative cursor-pointer" onClick={openModal}>
                                     <Image
                                         src={currentImage || surfboard.coverImage}
                                         alt={surfboard.title}
@@ -269,6 +278,26 @@ const Page: React.FC = () => {
                     </div>
                 </div>
             </RoleGate>
+
+            <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">
+                    <div className="relative">
+                        <Image
+                            src={currentImage || surfboard.coverImage}
+                            alt={surfboard.title}
+                            width={600}
+                            height={600}
+                            className="rounded-xl object-cover"
+                        />
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 bg-realce rounded-full text-black p-1"
+                        >
+                            <CloseIcon />
+                        </button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 };
