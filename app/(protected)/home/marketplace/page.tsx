@@ -14,7 +14,7 @@ import { useCurrentRole } from '@/hooks/use-current-role';
 import AddIcon from '@mui/icons-material/Add';
 import { RoleGate } from '@/components/auth/role-gate';
 import { Switch } from '@/components/ui/switch';
-
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -30,8 +30,12 @@ const Page: React.FC = () => {
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [showSold, setShowSold] = useState<boolean>(false);
   const role = useCurrentRole();
+  const ITEMS_PER_PAGE = 7;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const fetchSurfboards = async () => {
       try {
         const response = await fetch('/api/marketplace/surfboards');
@@ -55,12 +59,19 @@ const Page: React.FC = () => {
     fetchSurfboards();
   }, []);
 
+  if (!isMounted) return null;
+
   const handleSliderChange = (value: number[]) => {
     setSelectedPrice(value[0]);
   };
 
   const filteredSurfboards = surfboards.filter(surfboard =>
     showSold ? surfboard.sold !== null : surfboard.sold === null && surfboard.price <= selectedPrice
+  );
+
+  const currentSurfboards = filteredSurfboards.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   );
 
   return (
@@ -99,7 +110,6 @@ const Page: React.FC = () => {
                   max={maxPrice}
                   step={50}
                   onValueChange={handleSliderChange}
-                  className=''
                 />
                 <p className='text-realce'>{formatPrice(selectedPrice)}</p>
               </div>
@@ -115,39 +125,61 @@ const Page: React.FC = () => {
         <div className='flex-grow'>
           {error ? (
             <p className='text-red-500'>{error}</p>
-          ) : filteredSurfboards.length > 0 ? (
-            filteredSurfboards.map(surfboard => (
-              <Link href={`/home/marketplace/${surfboard.id}`} key={surfboard.id} className='text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2'>
+          ) : currentSurfboards.length > 0 ? (
+            currentSurfboards.map((surfboard, index) => (
+              <Link href={`/home/marketplace/${surfboard.id}`} key={surfboard.id} className="text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2">
                 <Image
                   src={surfboard.coverImage}
                   alt={surfboard.title}
                   width={140}
                   height={140}
-                  className='rounded-xl object-cover w-36 h-36'
+                  className="rounded-xl object-cover w-36 h-36"
+                  sizes="(max-width: 768px) 100vw, (min-width: 768px) 50vw"
                 />
-                <div className='flex flex-col justify-between'>
-                  <h2 className='font-bold'>{surfboard.title}</h2>
-                  {surfboard.model && (
-                    <p className='text-sm'>Modelo: {surfboard.model}</p>
-                  )}
-                  {surfboard.size && (
-                    <p className='text-sm'>Tamanho: {surfboard.size}</p>
-                  )}
-                  {surfboard.volume && (
-                    <p className='text-sm'>Volume: {surfboard.volume}L</p>
-                  )}
-                  <p className='text-xl text-realce'>{formatPrice(surfboard.price)}</p>
+                <div className="flex flex-col justify-between">
+                  <h2 className="font-bold">{surfboard.title}</h2>
+                  {surfboard.model && <p className="text-sm">Modelo: {surfboard.model}</p>}
+                  {surfboard.size && <p className="text-sm">Tamanho: {surfboard.size}</p>}
+                  {surfboard.volume && <p className="text-sm">Volume: {surfboard.volume}L</p>}
+                  <p className="text-xl text-realce">{formatPrice(surfboard.price)}</p>
                 </div>
               </Link>
             ))
           ) : (
-            <p className='text-white'>Nenhuma prancha encontrada.</p>
+            <p className="text-white">Nenhuma prancha encontrada.</p>
           )}
         </div>
         <Link href={'/home/marketplace/create'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
           <AddIcon className='text-black font-bold' fontSize='large' />
         </Link>
       </RoleGate>
+      <div className="flex justify-center mb-20 items-center">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+            {Array.from({ length: Math.ceil(filteredSurfboards.length / ITEMS_PER_PAGE) }).map((_, index) => (
+              <PaginationItem key={index + 1}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredSurfboards.length / ITEMS_PER_PAGE)))}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </div>
   );
 };
