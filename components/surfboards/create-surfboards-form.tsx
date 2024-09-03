@@ -15,11 +15,14 @@ import { FormError } from '../form-error';
 import { Textarea } from '../ui/textarea';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/components/ui/use-toast";
+import imageCompression from 'browser-image-compression';
+import { Progress } from '../ui/progress';
 
 const SurfboardForm: React.FC = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
     const router = useRouter()
     const { toast } = useToast();
 
@@ -33,6 +36,21 @@ const SurfboardForm: React.FC = () => {
         resolver: zodResolver(SurfboardSchema),
     });
 
+    const compressImage = async (file: File) => {
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        };
+        try {
+            const compressedFile = await imageCompression(file, options);
+            return compressedFile;
+        } catch (error) {
+            console.error("Erro ao comprimir a imagem:", error);
+            throw error;
+        }
+    };
+
     const handleError = (message: string) => {
         setError(message);
         setIsPending(false);
@@ -45,7 +63,10 @@ const SurfboardForm: React.FC = () => {
 
         return new Promise<string>((resolve, reject) => {
             uploadTask.on('state_changed',
-                null,
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setUploadProgress(progress);
+                },
                 (error) => reject(error),
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
@@ -56,8 +77,8 @@ const SurfboardForm: React.FC = () => {
         });
     };
 
-    const uploadImages = async (files: FileList) => {
-        const uploadPromises = Array.from(files).map(file => uploadImage(file));
+    const uploadImages = async (files: File[]) => {
+        const uploadPromises = files.map(file => uploadImage(file));
         return Promise.all(uploadPromises);
     };
 
@@ -91,8 +112,13 @@ const SurfboardForm: React.FC = () => {
         setIsPending(true);
 
         try {
-            const coverImageUrl = await uploadImage(coverImageFile);
-            const imageUrls = await uploadImages(files);
+            // Compress the cover image
+            const compressedCoverImageFile = await compressImage(coverImageFile);
+            const coverImageUrl = await uploadImage(compressedCoverImageFile); // Await the upload
+
+            // Convert FileList to an array of File and compress them
+            const compressedFiles = await Promise.all(Array.from(files).map(file => compressImage(file)));
+            const imageUrls = await uploadImages(compressedFiles); // Await the upload
 
             const formData = {
                 ...data,
@@ -198,6 +224,7 @@ const SurfboardForm: React.FC = () => {
                         <Input id="image" name="image" type="file" multiple accept="image/*" required />
                         <FormError message={errors.image?.message as string} />
                     </div>
+                    {isPending && <Progress value={uploadProgress} />}
                 </CardContent>
                 <CardFooter>
                     {error && <p className="text-red-500">{error}</p>}

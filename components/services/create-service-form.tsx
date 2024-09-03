@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 import InputMask from 'react-input-mask';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "../ui/use-toast";
+import imageCompression from 'browser-image-compression';
+import { Progress } from "../ui/progress";
 
 import {
     Form,
@@ -33,6 +35,7 @@ export const CreateServiceForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, setIsPending] = useState<boolean>(false);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
     const router = useRouter();
     const role = useCurrentRole();
     const { toast } = useToast();
@@ -49,6 +52,21 @@ export const CreateServiceForm = () => {
             max_time: new Date(),
         }
     });
+
+    const compressImage = async (file: File) => {
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        };
+        try {
+            const compressedFile = await imageCompression(file, options);
+            return compressedFile;
+        } catch (error) {
+            console.error("Erro ao comprimir a imagem:", error);
+            throw error;
+        }
+    };
 
     const handleError = (message: string) => {
         setError(message);
@@ -71,48 +89,55 @@ export const CreateServiceForm = () => {
 
         setIsPending(true);
 
-        const uniqueFileName = `${uuidv4()}_${file.name}`;
-        const storageRef = ref(storage, `images/${uniqueFileName}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
+        try {
+            const compressedFile = await compressImage(file);
+            const uniqueFileName = `${uuidv4()}_${compressedFile.name}`;
+            const storageRef = ref(storage, `images/${uniqueFileName}`);
+            const uploadTask = uploadBytesResumable(storageRef, compressedFile);
 
-        uploadTask.on('state_changed', (snapshot) => {
-        },
-            (error) => {
-                console.error(error);
-                handleError("Falha no upload da imagem.");
+            uploadTask.on('state_changed', (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                setUploadProgress(progress);
             },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                    const formValues = { ...values, photo_url: downloadURL, max_time: new Date(values.max_time) };
+                (error) => {
+                    console.error(error);
+                    handleError("Falha no upload da imagem.");
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                        const formValues = { ...values, photo_url: downloadURL, max_time: new Date(values.max_time) };
 
-                    try {
-                        const response = await fetch('/api/services', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(formValues),
-                        });
-
-                        const result = await response.json();
-
-                        if (response.ok) {
-                            toast({
-                                title: "Sucesso!",
-                                description: "O serviço foi criado com sucesso.",
-                                variant: "success",
+                        try {
+                            const response = await fetch('/api/services', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(formValues),
                             });
-                            setSuccess(result.success);
-                            router.push('/home');
-                        } else {
-                            handleError(result.error || "Erro desconhecido");
+
+                            const result = await response.json();
+
+                            if (response.ok) {
+                                toast({
+                                    title: "Sucesso!",
+                                    description: "O serviço foi criado com sucesso.",
+                                    variant: "success",
+                                });
+                                setSuccess(result.success);
+                                router.push('/home');
+                            } else {
+                                handleError(result.error || "Erro desconhecido");
+                            }
+                        } catch (error) {
+                            console.error("Erro ao criar serviço", error);
+                            handleError("Erro ao criar serviço.");
                         }
-                    } catch (error) {
-                        console.error("Erro ao criar serviço", error);
-                        handleError("Erro ao criar serviço.");
-                    }
+                    });
                 });
-            });
+        } catch (error) {
+            handleError("Erro ao comprimir a imagem.");
+        }
     };
 
 
@@ -202,6 +227,7 @@ export const CreateServiceForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                            {isPending && <Progress value={uploadProgress} />}
                             <FormError message={error} />
                             <FormSuccess message={success} />
                             <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={isPending}>
