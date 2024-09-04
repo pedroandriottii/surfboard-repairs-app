@@ -6,7 +6,7 @@ const ResetPage = () => {
         <div className="h-screen justify-center p-6">
             <div className="md:hidden bg-black">
                 <Image
-                    src={'/splash.png'}
+                    src={'/splash.webp'}
                     alt="Background"
                     layout="fill"
                     className="z-0 opacity-90"

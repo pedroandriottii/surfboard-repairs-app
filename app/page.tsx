@@ -9,21 +9,19 @@ export default function Home() {
       <div className="absolute inset-0 bg-black h-full w-full">
         <div className="md:hidden h-full w-full">
           <Image
-            src={'/realce_home.png'}
+            src={'/realce_home.webp'}
             alt="Background"
             layout="fill"
             className="z-0 opacity-70"
-            priority={true}
           />
         </div>
         <div className="hidden md:flex w-full h-full">
           <Image
-            src={'/realce_home_desk.png'}
+            src={'/realce_home_desk.webp'}
             alt="Background"
             width={380}
             height={380}
             className="z-0 w-1/2 h-full object-cover opacity-70"
-            priority={true}
           />
           <div className="bg-black w-1/2 h-full"></div>
         </div>

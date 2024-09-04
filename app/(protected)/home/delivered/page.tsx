@@ -11,7 +11,7 @@ import Footer from '@/components/base/footer';
 
 const GridPage: React.FC = () => {
     return (
-        <div className="min-h-screen flex flex-col justify-between overflow-x-hidden">
+        <div className="relative min-h-screen flex flex-col justify-between overflow-x-hidden">
             <BackgroundImage src="/splash.webp" alt="Background" />
             <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center flex-grow">
@@ -40,13 +40,10 @@ const GridPage: React.FC = () => {
                         </div>
                     </div>
                     <ServicesList initialStatus='DELIVERED' exibitionMode='GRID' />
-                    <div className='p-4'>
-                    </div>
+                    <div className='p-4'></div>
                 </div>
             </div>
-            <span className='inset-0 z-10'>
-                <Footer />
-            </span>
+            <Footer />
         </div>
     )
 };

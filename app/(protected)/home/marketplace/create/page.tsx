@@ -10,8 +10,8 @@ const Page: React.FC = () => {
 
     return (
         <div className='relative w-full flex flex-col min-h-screen'>
-            <BackgroundImage src="/splash.png" alt="Background" />
-            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center w-full">
                 <Navbar />
                 <div className='p-4 flex flex-col gap-4'>
