@@ -15,11 +15,11 @@ const HomePage: React.FC = () => {
     const user = useCurrentUser();
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
-            <BackgroundImage src="/splash.png" alt="Background" />
-            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center w-full flex-grow">
                 <div className='flex justify-between w-full md:pr-4'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <div className='text-white flex flex-col w-full gap-4 flex-grow'>
                     <div className='flex flex-col gap-4 p-4'>
@@ -45,7 +45,7 @@ const HomePage: React.FC = () => {
                     </div>
                 </div>
                 {(role == 'MASTER' || role == 'ADMIN') && (
-                    <Link href={'/create-service'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
+                    <Link href={'/services/create'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
                         <AddIcon className='text-black font-bold' fontSize='large' />
                     </Link>
                 )}

@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { getAllServices } from '@/data/services';
 import { Service, UserRole } from '@prisma/client';
-import { RoleGate } from '@/components/auth/role-gate';
-import { useCurrentRole } from '@/hooks/use-current-role';
+import { MonthlyData } from '@/lib/types';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
     Accordion,
@@ -12,12 +12,11 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion"
 import Navbar from '@/components/base/navbar';
-import { MonthlyData } from '@/lib/types';
+import { RoleGate } from '@/components/auth/role-gate';
 
 const ReportsPage: React.FC = () => {
     const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
     const [selectedMonth, setSelectedMonth] = useState<string>('');
-    const role = useCurrentRole();
 
     useEffect(() => {
         const fetchAndProcessData = async () => {
@@ -74,7 +73,7 @@ const ReportsPage: React.FC = () => {
         <div className=' bg-black w-full h-full'>
             <RoleGate allowedRoles={[UserRole.MASTER]}>
                 <div className='flex justify-between w-full md:pr-4'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <div className='p-4'>
 

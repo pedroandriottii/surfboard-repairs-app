@@ -13,11 +13,11 @@ const GridPage: React.FC = () => {
     const role = useCurrentRole();
     return (
         <div className="min-h-screen flex flex-col justify-between overflow-x-hidden">
-            <BackgroundImage src="/splash.png" alt="Background" />
-            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center">
                 <div className='flex justify-between w-full'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <div className='text-white flex flex-col w-full gap-4 h-full'>
                     <div className='flex items-center w-full justify-between'>

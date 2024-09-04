@@ -6,13 +6,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { getAllServices, getServicesByEmail } from '@/data/services';
 import { Service, ServiceStatus } from '@prisma/client';
 import Image from 'next/image';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-
-const statusTexts = {
-    PENDING: "Serviços Pendentes",
-    READY: "Serviços Prontos",
-    DELIVERED: "Serviços Entregues"
-}
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 const ExibitionMode = {
     LIST: "LIST",

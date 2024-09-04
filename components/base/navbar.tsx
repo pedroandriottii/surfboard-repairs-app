@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { useCurrentRole } from '@/hooks/use-current-role';
+import { usePathname } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
 import { UserButton } from '@/components/auth/user-button';
-import { UserRole } from '@/lib/types';
-import { usePathname } from 'next/navigation';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
@@ -17,15 +19,12 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-interface NavbarProps {
-    role: UserRole | null | undefined;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ role }) => {
+const Navbar: React.FC = () => {
     const pathname = usePathname();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [showSubMenuServices, setShowSubMenuServices] = useState(false);
     const [showSubMenuMarketplace, setShowSubMenuMarketplace] = useState(false);
+    const role = useCurrentRole();
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
@@ -69,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         <ListItem
                             button
                             component={Link}
-                            href="/create-service"
+                            href="/services/create"
                             className='flex gap-4 transition-all duration-300'
                         >
                             <ListItemText primary="Cadastrar" />

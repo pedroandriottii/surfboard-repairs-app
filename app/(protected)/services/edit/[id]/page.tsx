@@ -11,7 +11,6 @@ import { Service } from '@prisma/client';
 import { editService } from '@/actions/edit-service';
 import * as z from 'zod';
 import Navbar from '@/components/base/navbar';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import BackgroundImage from '@/components/base/backgroundImage';
 
 type FormValues = z.infer<typeof ServiceSchema>;
@@ -21,7 +20,6 @@ const EditService = () => {
     const pathName = usePathname();
     const id = pathName.replace('/services/edit/', '');
     const [service, setService] = useState<Service | null>(null);
-    const role = useCurrentRole();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(ServiceSchema),
@@ -68,11 +66,11 @@ const EditService = () => {
 
     return (
         <div className='relative w-full flex-grow h-full min-h-screen'>
-            <BackgroundImage src="/splash.png" alt="Background" />
-            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center w-full">
                 <div className='flex justify-between w-full md:pr-4'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <h1>Editar Serviço</h1>
                 <Form {...form}>

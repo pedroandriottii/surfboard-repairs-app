@@ -14,6 +14,8 @@ const BackgroundImage: React.FC<BackgroundImageProps> = ({ src, alt, isDesktop =
                 alt={alt}
                 layout="fill"
                 className="object-cover h-full w-full"
+                quality={50}
+                priority={true}
             />
             <div className="absolute inset-0 bg-gradient-to-tl from-transparent to-black via-black/85"></div>
         </div>

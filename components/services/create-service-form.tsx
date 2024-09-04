@@ -143,11 +143,11 @@ export const CreateServiceForm = () => {
 
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
-            <BackgroundImage src="/splash.png" alt="Background" />
-            <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center w-full">
                 <div className='flex justify-between w-full'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
                     <Form {...form}>

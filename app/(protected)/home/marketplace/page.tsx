@@ -10,7 +10,6 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/base/navbar';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import AddIcon from '@mui/icons-material/Add';
 import { RoleGate } from '@/components/auth/role-gate';
 import { Switch } from '@/components/ui/switch';
@@ -29,7 +28,6 @@ const Page: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [showSold, setShowSold] = useState<boolean>(false);
-  const role = useCurrentRole();
   const ITEMS_PER_PAGE = 7;
   const [currentPage, setCurrentPage] = useState(1);
   const [isMounted, setIsMounted] = useState(false);
@@ -76,7 +74,7 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      <Navbar role={role} />
+      <Navbar />
       <RoleGate allowedRoles={['ADMIN', 'MASTER']}>
         <div className='flex items-center justify-between pr-4'>
           <Link href='/home' className='bg-realce text-black py-1 px-6 rounded-r-2xl flex items-center justify-around'>

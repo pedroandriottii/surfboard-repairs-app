@@ -152,7 +152,7 @@ const ServiceId = () => {
             <BackgroundImage src="/splash_desk.png" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center w-full">
                 <div className='flex justify-between w-full md:pr-4'>
-                    <Navbar role={role} />
+                    <Navbar />
                 </div>
                 <div className='w-full h-full flex flex-col gap-4'>
                     <Link href={'/home'} className='bg-realce rounded-r-full flex w-1/4 font-bold md:w-1/12'>
