@@ -2,7 +2,6 @@
 import React from 'react';
 import { useCurrentRole } from '@/hooks/use-current-role';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import TopServicesList from '@/components/services/top-services-list';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ServicesList from '@/components/services/services-list';
 import Link from 'next/link';
@@ -25,11 +24,6 @@ const HomePage: React.FC = () => {
                 <div className='text-white flex flex-col w-full gap-4 flex-grow'>
                     <div className='flex flex-col gap-4 p-4'>
                         <h2 className='font-bold text-xl'>Bem Vindo, <span className='text-realce'>{user?.name}</span></h2>
-                        <div className='flex items-center'>
-                            <p>Prazos Próximos</p>
-                            <ChevronRightIcon />
-                        </div>
-                        <TopServicesList />
                     </div>
                     <Link href='/home/pending'>
                         <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
@@ -48,15 +42,6 @@ const HomePage: React.FC = () => {
                     </Link>
                     <div className='p-4'>
                         <ServicesList initialStatus='READY' exibitionMode='LIST' />
-                    </div>
-                    <Link href='/home/delivered'>
-                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
-                            <p className='ml-4'>Entregues</p>
-                            <ChevronRightIcon />
-                        </div>
-                    </Link>
-                    <div className='p-4'>
-                        <ServicesList initialStatus='DELIVERED' exibitionMode='LIST' />
                     </div>
                 </div>
                 {(role == 'MASTER' || role == 'ADMIN') && (

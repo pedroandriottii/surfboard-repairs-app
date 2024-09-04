@@ -69,6 +69,14 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         <ListItem
                             button
                             component={Link}
+                            href="/create-service"
+                            className='flex gap-4 transition-all duration-300'
+                        >
+                            <ListItemText primary="Cadastrar" />
+                        </ListItem>
+                        <ListItem
+                            button
+                            component={Link}
                             href="/home"
                             className='flex gap-4 transition-all duration-300'
                         >
@@ -77,10 +85,10 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                         <ListItem
                             button
                             component={Link}
-                            href="/create-service"
+                            href="/home/delivered"
                             className='flex gap-4 transition-all duration-300'
                         >
-                            <ListItemText primary="Cadastrar" />
+                            <ListItemText primary="Concluidos" />
                         </ListItem>
                     </List>
                 )}
@@ -106,19 +114,27 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                                 <ListItem
                                     button
                                     component={Link}
-                                    href="/home/marketplace"
-                                    className='flex gap-4 transition-all duration-300'
-                                >
-                                    <ListItemText primary="Estoque" />
-                                </ListItem>
-                                <ListItem
-                                    button
-                                    component={Link}
                                     href="/home/marketplace/create"
                                     className='flex gap-4 transition-all duration-300'
                                 >
                                     <ListItemText primary="Cadastrar" />
                                 </ListItem>
+                                <ListItem
+                                    button
+                                    component={Link}
+                                    href="/home/marketplace"
+                                    className='flex gap-4 transition-all duration-300'
+                                >
+                                    <ListItemText primary="Estoque" />
+                                </ListItem>
+                                {/* <ListItem
+                                    button
+                                    component={Link}
+                                    href="/home/marketplace"
+                                    className='flex gap-4 transition-all duration-300'
+                                >
+                                    <ListItemText primary="Vendidas" />
+                                </ListItem> */}
                             </List>
                         )}
                     </>

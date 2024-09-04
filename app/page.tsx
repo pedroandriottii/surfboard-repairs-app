@@ -13,6 +13,7 @@ export default function Home() {
             alt="Background"
             layout="fill"
             className="z-0 opacity-70"
+            priority={true}
           />
         </div>
         <div className="hidden md:flex w-full h-full">
@@ -22,6 +23,7 @@ export default function Home() {
             width={380}
             height={380}
             className="z-0 w-1/2 h-full object-cover opacity-70"
+            priority={true}
           />
           <div className="bg-black w-1/2 h-full"></div>
         </div>
