@@ -23,6 +23,9 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
+  const [loadedSurfboards, setLoadedSurfboards] = useState<Surfboards[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const ITEMS_PER_LOAD = 7;
 
   useEffect(() => {
     const fetchSurfboards = async () => {
@@ -33,11 +36,11 @@ const Page: React.FC = () => {
         }
         const data = await response.json();
         const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null);
-
         setSurfboards(availableSurfboards);
         const maxPrice = Math.max(...availableSurfboards.map((surfboard: Surfboards) => surfboard.price));
         setMaxPrice(maxPrice);
         setSelectedPrice(maxPrice);
+        setLoadedSurfboards(availableSurfboards.slice(0, ITEMS_PER_LOAD));
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -50,11 +53,34 @@ const Page: React.FC = () => {
     fetchSurfboards();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && hasMore) {
+        loadMore();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadedSurfboards, hasMore]);
+
+  const loadMore = () => {
+    const nextSurfboards = surfboards.slice(
+      loadedSurfboards.length,
+      loadedSurfboards.length + ITEMS_PER_LOAD
+    );
+    if (nextSurfboards.length > 0) {
+      setLoadedSurfboards([...loadedSurfboards, ...nextSurfboards]);
+    } else {
+      setHasMore(false);
+    }
+  };
+
   const handleSliderChange = (value: number[]) => {
     setSelectedPrice(value[0]);
   };
 
-  const filteredSurfboards = surfboards.filter(surfboard => surfboard.price <= selectedPrice);
+  const filteredSurfboards = loadedSurfboards.filter(surfboard => surfboard.price <= selectedPrice);
 
   return (
     <div className="flex flex-col min-h-screen bg-black">

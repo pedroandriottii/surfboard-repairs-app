@@ -13,7 +13,6 @@ import Navbar from '@/components/base/navbar';
 import AddIcon from '@mui/icons-material/Add';
 import { RoleGate } from '@/components/auth/role-gate';
 import { Switch } from '@/components/ui/switch';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -28,9 +27,10 @@ const Page: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [showSold, setShowSold] = useState<boolean>(false);
-  const ITEMS_PER_PAGE = 7;
-  const [currentPage, setCurrentPage] = useState(1);
   const [isMounted, setIsMounted] = useState(false);
+  const ITEMS_PER_LOAD = 7;  // Quantos itens carregar por vez
+  const [loadedSurfboards, setLoadedSurfboards] = useState<Surfboards[]>([]);
+  const [hasMore, setHasMore] = useState(true);  // Para controlar se ainda há mais itens para carregar
 
   useEffect(() => {
     setIsMounted(true);
@@ -45,6 +45,7 @@ const Page: React.FC = () => {
         const maxPrice = Math.max(...data.map((surfboard: Surfboards) => surfboard.price));
         setMaxPrice(maxPrice);
         setSelectedPrice(maxPrice);
+        setLoadedSurfboards(data.slice(0, ITEMS_PER_LOAD)); // Carrega os primeiros itens
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -57,19 +58,37 @@ const Page: React.FC = () => {
     fetchSurfboards();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && hasMore) {
+        loadMore();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadedSurfboards, hasMore]);
+
+  const loadMore = () => {
+    const nextSurfboards = surfboards.slice(
+      loadedSurfboards.length,
+      loadedSurfboards.length + ITEMS_PER_LOAD
+    );
+    if (nextSurfboards.length > 0) {
+      setLoadedSurfboards([...loadedSurfboards, ...nextSurfboards]);
+    } else {
+      setHasMore(false);
+    }
+  };
+
   if (!isMounted) return null;
 
   const handleSliderChange = (value: number[]) => {
     setSelectedPrice(value[0]);
   };
 
-  const filteredSurfboards = surfboards.filter(surfboard =>
+  const filteredSurfboards = loadedSurfboards.filter(surfboard =>
     showSold ? surfboard.sold !== null : surfboard.sold === null && surfboard.price <= selectedPrice
-  );
-
-  const currentSurfboards = filteredSurfboards.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
   );
 
   return (
@@ -123,8 +142,8 @@ const Page: React.FC = () => {
         <div className='flex-grow'>
           {error ? (
             <p className='text-red-500'>{error}</p>
-          ) : currentSurfboards.length > 0 ? (
-            currentSurfboards.map((surfboard, index) => (
+          ) : filteredSurfboards.length > 0 ? (
+            filteredSurfboards.map((surfboard, index) => (
               <Link href={`/home/marketplace/${surfboard.id}`} key={surfboard.id} className="text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2">
                 <Image
                   src={surfboard.coverImage}
@@ -151,33 +170,6 @@ const Page: React.FC = () => {
           <AddIcon className='text-black font-bold' fontSize='large' />
         </Link>
       </RoleGate>
-      <div className="flex justify-center mb-20 items-center">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              />
-            </PaginationItem>
-            {Array.from({ length: Math.ceil(filteredSurfboards.length / ITEMS_PER_PAGE) }).map((_, index) => (
-              <PaginationItem key={index + 1}>
-                <PaginationLink
-                  href="#"
-                  isActive={currentPage === index + 1}
-                  onClick={() => setCurrentPage(index + 1)}
-                >
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredSurfboards.length / ITEMS_PER_PAGE)))}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
     </div>
   );
 };
