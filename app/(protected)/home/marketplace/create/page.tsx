@@ -1,5 +1,4 @@
 'use client';
-
 import { RoleGate } from '@/components/auth/role-gate';
 import Navbar from '@/components/base/navbar';
 import React from 'react';

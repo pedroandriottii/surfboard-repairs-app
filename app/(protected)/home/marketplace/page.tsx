@@ -28,9 +28,9 @@ const Page: React.FC = () => {
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [showSold, setShowSold] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState(false);
-  const ITEMS_PER_LOAD = 7;  // Quantos itens carregar por vez
+  const ITEMS_PER_LOAD = 7;
   const [loadedSurfboards, setLoadedSurfboards] = useState<Surfboards[]>([]);
-  const [hasMore, setHasMore] = useState(true);  // Para controlar se ainda há mais itens para carregar
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
@@ -45,7 +45,7 @@ const Page: React.FC = () => {
         const maxPrice = Math.max(...data.map((surfboard: Surfboards) => surfboard.price));
         setMaxPrice(maxPrice);
         setSelectedPrice(maxPrice);
-        setLoadedSurfboards(data.slice(0, ITEMS_PER_LOAD)); // Carrega os primeiros itens
+        setLoadedSurfboards(data.slice(0, ITEMS_PER_LOAD));
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);

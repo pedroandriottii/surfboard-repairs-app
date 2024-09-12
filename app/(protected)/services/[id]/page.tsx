@@ -180,11 +180,12 @@ const ServiceId = () => {
                                     <p className='bg-input-color py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
                                 </div>
                             </div>
-                            <div>
-                                <p className='text-realce'>Descrição</p>
-                                <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
-                            </div>
-
+                            {service?.description && (
+                                <div>
+                                    <p className='text-realce'>Descrição</p>
+                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
+                                </div>
+                            )}
                             {(role == 'ADMIN' || role == 'MASTER') && (
                                 <div className='flex flex-col gap-4'>
                                     <div>
@@ -252,7 +253,7 @@ const ServiceId = () => {
                                 maxTime={service?.max_time || undefined}
                             />
                             <div className='flex w-full gap-4'>
-                                {role === 'MASTER' && (
+                                {role === 'MASTER' || role === 'ADMIN' && (
                                     <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
                                         <EditIcon />
                                         Editar
