@@ -253,17 +253,14 @@ const ServiceId = () => {
                                 maxTime={service?.max_time || undefined}
                             />
                             <div className='flex w-full gap-4'>
-                                {role === 'MASTER' || role === 'ADMIN' && (
-                                    <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
+                                {role === 'MASTER' && (
+                                    <><Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
                                         <EditIcon />
                                         Editar
-                                    </Button>
-                                )}
-                                {role === 'MASTER' && (
-                                    <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full gap-2'>
-                                        <DeleteIcon />
-                                        Deletar
-                                    </Button>
+                                    </Button><Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full gap-2'>
+                                            <DeleteIcon />
+                                            Deletar
+                                        </Button></>
                                 )}
                             </div>
                             <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>

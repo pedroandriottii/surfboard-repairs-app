@@ -15,6 +15,7 @@ import BackgroundImage from '@/components/base/backgroundImage';
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from '@/components/ui/use-toast';  // Adicionando importação do hook de toast
 
 type FormValues = z.infer<typeof ServiceSchema>;
 
@@ -24,7 +25,7 @@ const EditService = () => {
   const id = pathName.replace('/services/edit/', '');
   const [service, setService] = useState<Service | null>(null);
   const role = useCurrentRole();
-
+  const { toast } = useToast();
   const form = useForm<FormValues>({
     resolver: zodResolver(ServiceSchema),
     defaultValues: {
@@ -55,11 +56,25 @@ const EditService = () => {
 
   const onSubmit = async (data: FormValues) => {
     if (typeof id === 'string') {
-      const result = await editService(id, data);
-      if (result.success) {
-        router.push(`/services/${id}`);
-      } else {
-        console.error('Erro ao atualizar serviço', result.error);
+      try {
+        const result = await editService(id, data);
+        if (result.success) {
+          toast({
+            title: "Sucesso!",
+            description: "O serviço foi atualizado com sucesso.",
+            variant: "success",
+          });
+          router.push(`/services/${id}`);
+        } else {
+          throw new Error(result.error || 'Erro desconhecido');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar serviço', error);
+        toast({
+          title: "Erro",
+          description: "Falha ao atualizar o serviço. Tente novamente.",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -170,7 +185,6 @@ const EditService = () => {
               )}
             />
 
-            {/* Botão de Submissão */}
             <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={role !== 'ADMIN' && role !== 'MASTER'}>
               Salvar Alterações
             </Button>
