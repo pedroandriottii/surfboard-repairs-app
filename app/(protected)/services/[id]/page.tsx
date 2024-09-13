@@ -1,4 +1,5 @@
 'use client';
+
 import { getServiceById } from '@/data/services';
 import { Service } from '@prisma/client';
 import { usePathname, useRouter } from 'next/navigation';
@@ -25,6 +26,7 @@ const ServiceId = () => {
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [pendingStatus, setPendingStatus] = useState<'READY' | 'DELIVERED' | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' | undefined>(undefined);
+    const [whatsappLinkGenerated, setWhatsappLinkGenerated] = useState(false);
     const pathName = usePathname();
     const role = useCurrentRole();
     const router = useRouter();
@@ -50,15 +52,17 @@ const ServiceId = () => {
         setService(fetchedService);
     };
 
+    const generateWhatsAppLink = () => {
+        if (!service?.phone) return;
 
-    const generateWhatsAppLink = (phone?: string, status?: string) => {
-        if (!phone) return null;
-
-        const cleanedPhone = phone.replace(/\D/g, '');
-
+        const cleanedPhone = service.phone.replace(/\D/g, '');
         const baseMessage = 'Olá! Sua prancha ';
-        const statusMessage = status === 'DELIVERED' ? 'foi entregue!' : 'está pronta para ser retirada!';
-        return `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
+        const statusMessage = pendingStatus === 'DELIVERED' ? 'foi entregue!' : 'está pronta para ser retirada!';
+        const link = `https://api.whatsapp.com/send?phone=${cleanedPhone}&text=${baseMessage}${statusMessage}`;
+
+        setWhatsappLink(link);
+        setWhatsappLinkGenerated(true);
+        window.open(link, '_blank');
     };
 
     const updateStatusHandler = async () => {
@@ -77,7 +81,7 @@ const ServiceId = () => {
                     title: "Erro",
                     description: "Método de pagamento é obrigatório ao entregar",
                     variant: "destructive",
-                })
+                });
                 return;
             }
         }
@@ -91,14 +95,9 @@ const ServiceId = () => {
                     variant: "success",
                 });
                 fetchService();
-                const link = generateWhatsAppLink(service?.phone, pendingStatus);
-                setWhatsappLink(link);
                 setShowAlert(false);
                 setPendingStatus(null);
-
-                if (link) {
-                    window.open(link, '_blank');
-                }
+                setWhatsappLinkGenerated(false);
             } else {
                 toast({
                     title: "Erro",
@@ -111,7 +110,7 @@ const ServiceId = () => {
                 title: "Erro",
                 description: "Erro ao mudar o Status",
                 variant: "destructive",
-            })
+            });
         }
     };
 
@@ -235,13 +234,31 @@ const ServiceId = () => {
                             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Confirmar Atualização de Status</AlertDialogTitle>
+                                        <AlertDialogTitle>
+                                            {!whatsappLinkGenerated ? 'Gerar Link do WhatsApp' : 'Confirmar Atualização de Status'}
+                                        </AlertDialogTitle>
                                     </AlertDialogHeader>
+                                    <AlertDialogDescription>
+                                        {!whatsappLinkGenerated
+                                            ? 'Clique para gerar o link do WhatsApp e enviar a mensagem.'
+                                            : 'Após enviar a mensagem no WhatsApp, confirme para atualizar o status.'}
+                                    </AlertDialogDescription>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                        <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
-                                            Enviar WhatsApp e Confirmar
-                                        </AlertDialogAction>
+                                        <AlertDialogCancel onClick={() => {
+                                            setShowAlert(false);
+                                            setWhatsappLinkGenerated(false);
+                                        }}>
+                                            Cancelar
+                                        </AlertDialogCancel>
+                                        {!whatsappLinkGenerated ? (
+                                            <AlertDialogAction className='bg-realce text-black' onClick={generateWhatsAppLink}>
+                                                Gerar Link do WhatsApp
+                                            </AlertDialogAction>
+                                        ) : (
+                                            <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
+                                                Confirmar Atualização de Status
+                                            </AlertDialogAction>
+                                        )}
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -254,13 +271,16 @@ const ServiceId = () => {
                             />
                             <div className='flex w-full gap-4'>
                                 {role === 'MASTER' && (
-                                    <><Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
-                                        <EditIcon />
-                                        Editar
-                                    </Button><Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full gap-2'>
+                                    <>
+                                        <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
+                                            <EditIcon />
+                                            Editar
+                                        </Button>
+                                        <Button onClick={() => setShowDeleteAlert(true)} className='bg-red-600 text-white hover:bg-red-300 flex items-center w-full gap-2'>
                                             <DeleteIcon />
                                             Deletar
-                                        </Button></>
+                                        </Button>
+                                    </>
                                 )}
                             </div>
                             <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
@@ -279,7 +299,7 @@ const ServiceId = () => {
                     <Footer />
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
