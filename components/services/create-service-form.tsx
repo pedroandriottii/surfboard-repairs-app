@@ -3,7 +3,6 @@ import * as z from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCurrentRole } from "@/hooks/use-current-role";
 import { ServiceSchema } from "@/schemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,6 @@ export const CreateServiceForm = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const router = useRouter();
-    const role = useCurrentRole();
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof ServiceSchema>>({

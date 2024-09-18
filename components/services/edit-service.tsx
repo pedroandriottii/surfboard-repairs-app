@@ -15,7 +15,7 @@ import BackgroundImage from '@/components/base/backgroundImage';
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from '@/components/ui/use-toast';  // Adicionando importação do hook de toast
+import { useToast } from '@/components/ui/use-toast';
 
 type FormValues = z.infer<typeof ServiceSchema>;
 
@@ -26,6 +26,7 @@ const EditService = () => {
   const [service, setService] = useState<Service | null>(null);
   const role = useCurrentRole();
   const { toast } = useToast();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(ServiceSchema),
     defaultValues: {

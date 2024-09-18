@@ -3,7 +3,6 @@ import * as z from 'zod';
 import { db } from "@/lib/db";
 import { SurfboardSchema } from "@/schemas";
 import { currentRole } from '@/lib/auth';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { SurfboardsCategory } from '@prisma/client';
 
 const ImageSchema = z.array(z.string().url());
@@ -69,33 +68,29 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const category = request.nextUrl.searchParams.get('category');
+    console.log(category);
+
+    if (!category || !Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
+      return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 });
+    }
+
     const surfboards = await db.surfboards.findMany({
+      where: {
+        category: category as SurfboardsCategory,
+        is_new: true,
+      },
     });
+
+    console.log(surfboards);
+
+    if (surfboards.length === 0) {
+      return NextResponse.json({ message: 'Nenhuma prancha encontrada para esta categoria.' }, { status: 404 });
+    }
 
     return NextResponse.json(surfboards, { status: 200 });
   } catch (error) {
-    console.error("Erro ao buscar as pranchas de surf:", error);
-    return NextResponse.json({ error: "Erro ao buscar as pranchas de surf!" }, { status: 500 });
-  }
-}
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { category } = req.query;
-
-  try {
-    if (typeof category === 'string' && Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
-      const surfboards = await db.surfboards.findMany({
-        where: {
-          category: category as SurfboardsCategory,
-        },
-      });
-
-      res.status(200).json(surfboards);
-    } else {
-      res.status(400).json({ error: 'Categoria inválida' });
-    }
-  } catch (error) {
-    console.error('Erro ao buscar pranchas:', error);
-    res.status(500).json({ error: 'Erro ao buscar pranchas' });
+    console.error("Erro ao buscar pranchas de surf:", error);
+    return NextResponse.json({ error: 'Erro ao buscar pranchas de surf.' }, { status: 500 });
   }
 }
