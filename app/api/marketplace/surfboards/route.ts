@@ -69,23 +69,33 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const category = request.nextUrl.searchParams.get('category');
-    console.log(category);
+    let surfboards;
 
-    if (!category || !Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
-      return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 });
-    }
+    if (category) {
+      if (!Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
+        return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 });
+      }
 
-    const surfboards = await db.surfboards.findMany({
-      where: {
-        category: category as SurfboardsCategory,
-        is_new: true,
-      },
-    });
+      surfboards = await db.surfboards.findMany({
+        where: {
+          category: category as SurfboardsCategory,
+          is_new: true,
+        },
+      });
 
-    console.log(surfboards);
+      if (surfboards.length === 0) {
+        return NextResponse.json({ message: 'Nenhuma prancha encontrada para esta categoria.' }, { status: 404 });
+      }
+    } else {
+      surfboards = await db.surfboards.findMany({
+        where: {
+          is_new: false,
+        },
+      });
 
-    if (surfboards.length === 0) {
-      return NextResponse.json({ message: 'Nenhuma prancha encontrada para esta categoria.' }, { status: 404 });
+      if (surfboards.length === 0) {
+        return NextResponse.json({ message: 'Nenhuma prancha usada encontrada.' }, { status: 404 });
+      }
     }
 
     return NextResponse.json(surfboards, { status: 200 });
@@ -94,3 +104,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Erro ao buscar pranchas de surf.' }, { status: 500 });
   }
 }
+
