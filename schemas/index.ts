@@ -94,4 +94,18 @@ export const SurfboardSchema = z.object({
     }, z.number().positive("O volume deve ser um número positivo").optional()),
     model: z.string().optional(),
     description: z.string().optional(),
+    category: z.enum([
+        "BANDIDA",
+        "CORINGA",
+        "MR",
+        "FISH_70",
+        "GOO_FISH",
+        "FISH_SUPER",
+        "MINI_FUN",
+        "MINI_LONG",
+        "LONG",
+        "KITE_SURF",
+        "KITE_FOIL"
+    ]).optional(),
+    is_new: z.boolean(),
 });

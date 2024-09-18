@@ -23,9 +23,6 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
-  const [loadedSurfboards, setLoadedSurfboards] = useState<Surfboards[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const ITEMS_PER_LOAD = 7;
 
   useEffect(() => {
     const fetchSurfboards = async () => {
@@ -35,12 +32,11 @@ const Page: React.FC = () => {
           throw new Error('Erro ao buscar pranchas de surf');
         }
         const data = await response.json();
-        const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null);
+        const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null && surfboard.is_new === false);
         setSurfboards(availableSurfboards);
         const maxPrice = Math.max(...availableSurfboards.map((surfboard: Surfboards) => surfboard.price));
         setMaxPrice(maxPrice);
         setSelectedPrice(maxPrice);
-        setLoadedSurfboards(availableSurfboards.slice(0, ITEMS_PER_LOAD));
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -53,34 +49,9 @@ const Page: React.FC = () => {
     fetchSurfboards();
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && hasMore) {
-        loadMore();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadedSurfboards, hasMore]);
-
-  const loadMore = () => {
-    const nextSurfboards = surfboards.slice(
-      loadedSurfboards.length,
-      loadedSurfboards.length + ITEMS_PER_LOAD
-    );
-    if (nextSurfboards.length > 0) {
-      setLoadedSurfboards([...loadedSurfboards, ...nextSurfboards]);
-    } else {
-      setHasMore(false);
-    }
-  };
-
   const handleSliderChange = (value: number[]) => {
     setSelectedPrice(value[0]);
   };
-
-  const filteredSurfboards = loadedSurfboards.filter(surfboard => surfboard.price <= selectedPrice);
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
@@ -136,8 +107,8 @@ const Page: React.FC = () => {
       <div className='flex-grow'>
         {error ? (
           <p className='text-red-500'>{error}</p>
-        ) : filteredSurfboards.length > 0 ? (
-          filteredSurfboards.map(surfboard => (
+        ) : surfboards.length > 0 ? (
+          surfboards.map(surfboard => (
             <Link href={`/catalogo/${surfboard.id}`} key={surfboard.id} className='text-white p-4 flex gap-4 border-b-2 border-[#2F2F2F] mb-2'>
               <Image
                 src={surfboard.coverImage}

@@ -3,6 +3,8 @@ import * as z from 'zod';
 import { db } from "@/lib/db";
 import { SurfboardSchema } from "@/schemas";
 import { currentRole } from '@/lib/auth';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { SurfboardsCategory } from '@prisma/client';
 
 const ImageSchema = z.array(z.string().url());
 const CoverImageSchema = z.string().url();
@@ -12,6 +14,7 @@ export async function POST(request: NextRequest) {
     const role = await currentRole();
 
     const values = await request.json();
+    console.log(values)
 
     if (role !== "ADMIN" && role !== "MASTER") {
       return NextResponse.json({ error: "Você não tem permissão para criar uma prancha!" }, { status: 403 });
@@ -22,6 +25,8 @@ export async function POST(request: NextRequest) {
       console.error("Erro de validação:", validatedFields.error);
       return NextResponse.json({ error: "Campos Inválidos!" }, { status: 400 });
     }
+
+    console.log("Dados Validos", validatedFields.data);
 
     const imageValidation = ImageSchema.safeParse(values.image);
     if (!imageValidation.success) {
@@ -35,7 +40,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Imagem de capa inválida!" }, { status: 400 });
     }
 
-    const { title, description, price, volume, size, model } = validatedFields.data;
+    const { title, description, price, volume, size, model, category, is_new } = validatedFields.data;
     const coverImage = CoverImageSchema.parse(values.coverImage);
     const image = imageValidation.data;
 
@@ -49,6 +54,8 @@ export async function POST(request: NextRequest) {
         coverImage,
         volume,
         size,
+        category,
+        is_new,
         registered: new Date(),
       },
     });
@@ -69,5 +76,26 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Erro ao buscar as pranchas de surf:", error);
     return NextResponse.json({ error: "Erro ao buscar as pranchas de surf!" }, { status: 500 });
+  }
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { category } = req.query;
+
+  try {
+    if (typeof category === 'string' && Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
+      const surfboards = await db.surfboards.findMany({
+        where: {
+          category: category as SurfboardsCategory,
+        },
+      });
+
+      res.status(200).json(surfboards);
+    } else {
+      res.status(400).json({ error: 'Categoria inválida' });
+    }
+  } catch (error) {
+    console.error('Erro ao buscar pranchas:', error);
+    res.status(500).json({ error: 'Erro ao buscar pranchas' });
   }
 }

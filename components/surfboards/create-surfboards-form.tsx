@@ -17,12 +17,16 @@ import { useRouter } from 'next/navigation';
 import { useToast } from "@/components/ui/use-toast";
 import imageCompression from 'browser-image-compression';
 import { Progress } from '../ui/progress';
+import { Switch } from '../ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const SurfboardForm: React.FC = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
+    const [isNew, setIsNew] = useState<boolean>(false);
+    const [category, setCategory] = useState<string | undefined>(undefined);
     const router = useRouter()
     const { toast } = useToast();
 
@@ -30,6 +34,7 @@ const SurfboardForm: React.FC = () => {
         register,
         handleSubmit,
         setValue,
+        getValues,
         formState: { errors },
         reset,
     } = useForm({
@@ -83,6 +88,7 @@ const SurfboardForm: React.FC = () => {
     };
 
     const onSubmitForm = async (data: any) => {
+        console.log("formulario submetido", data)
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
@@ -109,22 +115,22 @@ const SurfboardForm: React.FC = () => {
             return;
         }
 
-        setIsPending(true);
-
+        setIsPending(true)
         try {
-            // Compress the cover image
             const compressedCoverImageFile = await compressImage(coverImageFile);
-            const coverImageUrl = await uploadImage(compressedCoverImageFile); // Await the upload
+            const coverImageUrl = await uploadImage(compressedCoverImageFile);
 
-            // Convert FileList to an array of File and compress them
             const compressedFiles = await Promise.all(Array.from(files).map(file => compressImage(file)));
-            const imageUrls = await uploadImages(compressedFiles); // Await the upload
+            const imageUrls = await uploadImages(compressedFiles);
 
             const formData = {
                 ...data,
                 coverImage: coverImageUrl,
                 image: imageUrls,
+                is_new: isNew,
+                category: isNew ? category : undefined,
             };
+            console.log(formData);
 
             const response = await fetch('/api/marketplace/surfboards', {
                 method: 'POST',
@@ -181,6 +187,44 @@ const SurfboardForm: React.FC = () => {
                         <Input id="title" {...register("title")} required placeholder='Prancha Realce' />
                         <FormError message={errors.title?.message as string} />
                     </div>
+                    <div className="space-y-1 flex items-center gap-4">
+                        <Label htmlFor="is_new">A prancha é nova?</Label>
+                        <Switch
+                            id="isNew"
+                            checked={isNew}
+                            onCheckedChange={(checked) => {
+                                setIsNew(checked);
+                                setValue("is_new", checked);
+                            }}
+                        />
+                    </div>
+                    {isNew && (
+                        <div className="space-y-1">
+                            <Label htmlFor="category">Categoria</Label>
+                            <Select onValueChange={(value) => {
+                                setValue("category", value);
+                                setCategory(value);
+                                console.log("Categoria selecionada:", value);
+                            }}>
+                                <SelectTrigger id="category">
+                                    <SelectValue placeholder="Selecione a categoria" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="BANDIDA">BANDIDA</SelectItem>
+                                    <SelectItem value="CORINGA">CORINGA</SelectItem>
+                                    <SelectItem value="MR">M.R</SelectItem>
+                                    <SelectItem value="FISH_70">FISH 70 & TAL</SelectItem>
+                                    <SelectItem value="GOO_FISH">GOO FISH</SelectItem>
+                                    <SelectItem value="FISH_SUPER">FISH SUPER CAT</SelectItem>
+                                    <SelectItem value="MINI_FUN">MINI FUN</SelectItem>
+                                    <SelectItem value="MINI_LONG">MINI LONG</SelectItem>
+                                    <SelectItem value="LONG">LONG</SelectItem>
+                                    <SelectItem value="KITE_SURF">KITE SURF</SelectItem>
+                                    <SelectItem value="KITE_FOIL">KITE FOIL</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                     <div className="space-y-1">
                         <Label htmlFor="model">Modelo</Label>
                         <Input id="model" {...register("model")} placeholder='Coringa' />
@@ -229,7 +273,7 @@ const SurfboardForm: React.FC = () => {
                 <CardFooter>
                     {error && <p className="text-red-500">{error}</p>}
                     {success && <p className="text-green-500">{success}</p>}
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" disabled={isPending} className='w-full bg-realce text-black hover:bg-realce/80'>
                         {isPending ? "Criando..." : "Criar Prancha"}
                     </Button>
                 </CardFooter>
