@@ -1,19 +1,16 @@
-"use client";
-
-import * as z from "zod";
-
-import { useState, useTransition } from "react";
-import { CardWrapper } from "@/components/auth/card-wrapper"
+'use client';
+import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { RegisterSchema } from "@/schemas";
+import { register } from "@/actions/register";
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import InputMask from 'react-input-mask';
+import * as z from "zod";
 
-import { register } from "@/actions/register"
 
 import {
     Form,
@@ -24,11 +21,13 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { FormSuccess } from "../form-success";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -47,12 +46,20 @@ export const RegisterForm = () => {
         const transformedValues = {
             ...values,
             email: values.email.toLowerCase(),
+            phone: values.phone.replace(/\D/g, ''),
         };
 
         startTransition(() => {
             register(transformedValues).then((data) => {
                 setError(data.error);
                 setSuccess(data.success);
+
+                if (data.success) {
+                    form.reset()
+                    setTimeout(() => {
+                        router.push('/auth/verification')
+                    }, 3000)
+                }
             });
         });
     };

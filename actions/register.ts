@@ -1,41 +1,32 @@
-"use server";
+interface RegisterData {
+    name: string
+    email: string
+    password: string
+    phone: string
+}
 
-import * as z from "zod";
-import bcrypt from "bcryptjs";
+export async function register(userData: RegisterData): Promise<{ success: string; error: string }> {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
 
-import { db } from "@/lib/db";
-import { RegisterSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/user";
-import { generateVerificationToken } from "@/lib/tokens";
-import { sendVerificationEmail } from "@/lib/mail";
+        const data = await response.json()
 
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
-    const validatedFields = RegisterSchema.safeParse(values);
-
-    if(!validatedFields.success) {
-        return { error: "Campos Inválidos!"};
-    }
-
-    const { email, password, name, phone } = validatedFields.data;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const existingUser = await getUserByEmail(email);
-
-    if(existingUser) {
-        return { error: "Email já cadastrado!"};
-    }
-
-    await db.user.create({
-        data: {
-            email,
-            password: hashedPassword,
-            name,
-            phone,
+        if (!response.ok) {
+            throw new Error(data.message || 'Erro ao cadastrar usuário')
         }
-    });
 
-    const verificationToken = await generateVerificationToken(email);
-    await sendVerificationEmail(verificationToken.email, verificationToken.token);
-
-    return { success: "E-mail de confirmação enviado!" };
+        return { success: 'Usuário cadastrado com sucesso. Verifique sua caixa de e-mail para valida-lo', error: '' }
+    } catch (error) {
+        if (error instanceof Error) {
+            return { success: '', error: error.message }
+        } else {
+            return { success: '', error: 'Erro desconhecido' }
+        }
+    }
 }
