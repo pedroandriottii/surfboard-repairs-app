@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { useCurrentRole } from "@/hooks/use-current-role";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { getAllServices, getServicesByEmail } from '@/data/services';
+import { getServicesByStatus } from '@/data/services'; // A nova função que você criará para buscar serviços filtrados.
 import { Service, ServiceStatus } from '@prisma/client';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { getCurrentUser } from '@/utils/getCurrentUser';
 
 const ExibitionMode = {
     LIST: "LIST",
@@ -21,24 +20,20 @@ interface ServicesListProps {
 }
 
 const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMode }) => {
-    const role = useCurrentRole();
-    const user = useCurrentUser();
+    const user = getCurrentUser();
     const [services, setServices] = useState<Service[] | null>(null);
-    const [statusFilter, setStatusFilter] = useState<ServiceStatus>(initialStatus);
+    const [statusFilter] = useState<ServiceStatus>(initialStatus);
 
     useEffect(() => {
         const fetchServices = async () => {
-            if (role === "ADMIN" || role === "MASTER") {
-                const services = await getAllServices();
-                setServices(services);
-            } else if (role === "USER") {
-                const services = await getServicesByEmail(user?.email ?? '');
+            if (user?.role) {
+                const services = await getServicesByStatus(statusFilter); // Chama a nova função para pegar serviços filtrados
                 setServices(services);
             }
         };
 
         fetchServices();
-    }, [role, user?.email]);
+    }, [user?.role, statusFilter]);
 
     const formatDate = (date: Date) => {
         const d = new Date(date);
@@ -47,16 +42,14 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
         const monthIndex = d.getMonth();
         const month = months[monthIndex];
         return `${day}/${month}/${d.getFullYear()}`;
-    }
-
-    const filteredServices = services?.filter(service => service.status === statusFilter);
+    };
 
     return (
         <div>
             {exibitionMode === ExibitionMode.LIST ? (
                 <Carousel>
                     <CarouselContent>
-                        {filteredServices?.map((service, index) => (
+                        {services?.map((service) => (
                             <CarouselItem key={service.id} className="basis-1/2 flex flex-col items-center md:basis-1/6">
                                 <Link href={`/services/${service.id}`} className="w-full">
                                     <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
@@ -81,7 +74,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                 </Carousel>
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-2">
-                    {filteredServices?.map((service, index) => (
+                    {services?.map((service) => (
                         <div key={service.id} className="flex flex-col items-center">
                             <Link href={`/services/${service.id}`} className="w-full">
                                 <div className="relative w-full" style={{ aspectRatio: '1/1' }}>

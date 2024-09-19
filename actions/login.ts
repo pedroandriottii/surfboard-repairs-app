@@ -1,52 +1,55 @@
-"use server";
+import { UserRole } from "@prisma/client";
+import Cookies from 'js-cookie';
 
-import * as z from "zod";
-import { AuthError } from "next-auth";
+interface LoginData {
+    email: string;
+    password: string;
+}
 
-import { signIn } from "@/auth";
-import { LoginSchema } from "@/schemas";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { generateVerificationToken } from "@/lib/tokens";
-import { getUserByEmail } from "@/data/user";
-import { sendVerificationEmail } from "@/lib/mail";
+interface LoginResponse {
+    error?: string;
+    success?: string;
+    user?: {
+        id: string;
+        email: string;
+        name: string;
+        phone: string;
+        role: UserRole;
+    };
+    accessToken?: string;
+}
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
-    const validatedFields = LoginSchema.safeParse(values);
+export async function login(data: LoginData): Promise<LoginResponse> {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
 
-    if(!validatedFields.success) {
-        return { error: "Campos Inválidos!"};
-    }
-    const { email, password } = validatedFields.data;
-
-    const existingUser = await getUserByEmail(email);
-
-    if (!existingUser || !existingUser.email || !existingUser.password){
-        return { error: "Email inexistente!"};
-    }
-
-    if(!existingUser.emailVerified){
-        const verificationToken = await generateVerificationToken(existingUser.email);
-
-        await sendVerificationEmail(existingUser.email, verificationToken.token);
-        
-        return { success: "E-mail de confirmação enviado!" };
-    }
-
-    try{
-        await signIn("credentials", {
-            email,
-            password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT,
-        })
-    } catch (error) {
-        if (error instanceof AuthError){
-            switch(error.type){
-                case "CredentialsSignin":
-                    return { error: "Credenciais Inválidas!"};
-                default:
-                    return { error: "Algo deu errado!"}
+        if (!response.ok) {
+            const errorData = await response.json();
+            return {
+                error: errorData.message || 'Erro ao tentar fazer login. Verifique suas credenciais.',
             };
         }
-        throw error;
+
+        const result = await response.json();
+        if (result.accessToken) {
+            Cookies.set('accessToken', result.accessToken, { expires: 7 });
+            localStorage.setItem('user', JSON.stringify(result.user));
+        }
+        console.log(result)
+        return {
+            success: 'Login realizado com sucesso!',
+            user: result.user,
+            accessToken: result.accessToken,
+        };
+    } catch (error) {
+        return {
+            error: 'Erro de conexão. Por favor, tente novamente.',
+        };
     }
 }

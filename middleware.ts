@@ -1,42 +1,54 @@
-import authConfig from "@/auth.config";
-import NextAuth from "next-auth";
+// middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-import {
-    DEFAULT_LOGIN_REDIRECT,
-    apiAuthPrefix,
-    authRoutes,
-    publicRoutes,
-} from "@/routes";
+export default function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
 
-const { auth } = NextAuth(authConfig);
+    const cookieHeader = req.headers.get('cookie') || '';
+    const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
 
+    const accessToken = cookies.accessToken;
 
-export default auth(async (req) => {
-    const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
+    // Definição das rotas públicas e autenticadas
+    const publicRoutes = [
+        "/",
+        "/auth/login",
+        "/auth/register",
+        "/auth/reset",
+        "/catalogo",
+        "/api/marketplace/surfboards",
+        "/auth/new-verification"
+    ];
+    const authRoutes = [
+        "/home",
+        "/profile",
+        "/dashboard",
+    ];
 
-    const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/api/marketplace") || nextUrl.pathname.startsWith("/catalogo");
-    const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
-    if (isApiAuthRoute) {
-        return;
+    const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+
+    console.log('Cookies disponíveis middleware');
+
+    if (!accessToken && isAuthRoute) {
+        console.log('Redirecionando para /auth/login, accessToken não encontrado');
+        return NextResponse.redirect(new URL('/auth/login', req.url));
     }
 
-    if (isAuthRoute) {
-        if (isLoggedIn) {
-            return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    if (accessToken && isPublicRoute) {
+        if (pathname === '/home') {
+            return NextResponse.next();
         }
-        return;
+        console.log('Redirecionando para /home, accessToken encontrado');
+        return NextResponse.redirect(new URL('/home', req.url));
     }
 
-    if (!isLoggedIn && !isPublicRoute) {
-        return Response.redirect(new URL("/", nextUrl));
-    }
-
-    return;
-})
+    // Permitir o prosseguimento para a rota solicitada
+    return NextResponse.next();
+}
 
 export const config = {
-    matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-}
+    matcher: ["/((?!.*\\.).*)"], // Inclui todas as rotas, excluindo arquivos estáticos
+};

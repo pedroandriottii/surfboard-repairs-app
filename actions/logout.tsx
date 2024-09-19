@@ -1,7 +1,5 @@
-"use server";
+import Cookies from 'js-cookie';
 
-import { signOut } from "@/auth"
-
-export const logout = async () => {
-    await signOut();
+export function logout() {
+    Cookies.remove('accessToken');
 }
