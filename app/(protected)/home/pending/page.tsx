@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import ServicesList from '@/components/services/services-list';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -10,7 +9,6 @@ import Footer from '@/components/base/footer';
 import BackgroundImage from '@/components/base/backgroundImage';
 
 const GridPage: React.FC = () => {
-    const role = useCurrentRole();
     return (
         <div className="min-h-screen flex flex-col justify-between overflow-x-hidden">
             <BackgroundImage src="/splash.webp" alt="Background" />

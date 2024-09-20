@@ -1,55 +1,29 @@
-import { UserRole } from "@prisma/client";
 import Cookies from 'js-cookie';
 
-interface LoginData {
-    email: string;
-    password: string;
-}
-
-interface LoginResponse {
-    error?: string;
-    success?: string;
-    user?: {
-        id: string;
-        email: string;
-        name: string;
-        phone: string;
-        role: UserRole;
-    };
-    accessToken?: string;
-}
-
-export async function login(data: LoginData): Promise<LoginResponse> {
+export async function login(email: string, password: string) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({ email, password }),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            return {
-                error: errorData.message || 'Erro ao tentar fazer login. Verifique suas credenciais.',
-            };
+            throw new Error(data.message || 'Erro ao fazer login.');
         }
 
-        const result = await response.json();
-        if (result.accessToken) {
-            Cookies.set('accessToken', result.accessToken, { expires: 7 });
-            localStorage.setItem('user', JSON.stringify(result.user));
-        }
-        console.log(result)
-        return {
-            success: 'Login realizado com sucesso!',
-            user: result.user,
-            accessToken: result.accessToken,
-        };
+        Cookies.set('accessToken', data.accessToken, { expires: 1 });
+
+        return { success: true, accessToken: data.accessToken, user: data.user, error: '' };
     } catch (error) {
-        return {
-            error: 'Erro de conexão. Por favor, tente novamente.',
-        };
+        if (error instanceof Error) {
+            return { success: false, error: error.message };
+        } else {
+            return { success: false, error: 'Erro desconhecido' };
+        }
     }
 }

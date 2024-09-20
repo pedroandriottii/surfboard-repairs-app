@@ -7,10 +7,8 @@ export default function middleware(req: NextRequest) {
 
     const cookieHeader = req.headers.get('cookie') || '';
     const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
-
     const accessToken = cookies.accessToken;
 
-    // Definição das rotas públicas e autenticadas
     const publicRoutes = [
         "/",
         "/auth/login",
@@ -27,28 +25,21 @@ export default function middleware(req: NextRequest) {
     ];
 
     const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
-
     const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
-    console.log('Cookies disponíveis middleware');
-
-    if (!accessToken && isAuthRoute) {
-        console.log('Redirecionando para /auth/login, accessToken não encontrado');
-        return NextResponse.redirect(new URL('/auth/login', req.url));
-    }
-
-    if (accessToken && isPublicRoute) {
-        if (pathname === '/home') {
-            return NextResponse.next();
-        }
-        console.log('Redirecionando para /home, accessToken encontrado');
+    if (accessToken && isPublicRoute && pathname === '/') {
+        console.log('Usuário autenticado tentando acessar rota pública raiz, redirecionando para /home');
         return NextResponse.redirect(new URL('/home', req.url));
     }
 
-    // Permitir o prosseguimento para a rota solicitada
+    if (!accessToken && isAuthRoute) {
+        console.log('Usuário não autenticado tentando acessar rota protegida, redirecionando para /auth/login');
+        return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
+
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!.*\\.).*)"], // Inclui todas as rotas, excluindo arquivos estáticos
+    matcher: ["/((?!.*\\.).*)"],
 };

@@ -7,10 +7,11 @@ import AddIcon from '@mui/icons-material/Add';
 import Navbar from '@/components/base/navbar';
 import BackgroundImage from '@/components/base/backgroundImage';
 import Footer from '@/components/base/footer';
-import { getCurrentUser } from '@/utils/getCurrentUser';
+import { useUser } from '@/context/UserContext';
 
 const HomePage: React.FC = () => {
-    const user = getCurrentUser();
+    const { user } = useUser();
+    console.log(user)
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
             <BackgroundImage src="/splash.webp" alt="Background" />

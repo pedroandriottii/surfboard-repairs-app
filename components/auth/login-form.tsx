@@ -25,6 +25,7 @@ import {
 import { FormSuccess } from "@/components/form-success";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useUser } from "@/context/UserContext";
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -34,6 +35,7 @@ export const LoginForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [showPassword, setShowPassword] = useState(false);
+    const { setUser } = useUser();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -52,24 +54,27 @@ export const LoginForm = () => {
             email: values.email.toLowerCase(),
         };
 
-        const data = await login(transformedValues);
-        if (data?.error) {
-            setError(data.error);
+        const result = await login(transformedValues.email, transformedValues.password);
+
+        if (!result.success) {
+            setError(result.error);
         } else {
-            setSuccess(data.success);
+            setSuccess("Login realizado com sucesso!");
 
-            if (data.accessToken) {
-                Cookies.set('accessToken', data.accessToken, {
-                    expires: 30,
-                    path: '/',
-                    sameSite: 'lax',
-                });
+            // Armazena o accessToken no cookie
+            Cookies.set('accessToken', result.accessToken, {
+                expires: 30,
+                path: '/',
+                sameSite: 'lax',
+            });
+
+            // Atualiza o estado global com as informações do usuário
+            if (result.user) {
+                setUser(result.user);
+                localStorage.setItem("user", JSON.stringify(result.user));
             }
 
-            if (data.user) {
-                localStorage.setItem("user", JSON.stringify(data.user));
-            }
-
+            // Redireciona para a página home
             router.push('/home');
         }
     };
