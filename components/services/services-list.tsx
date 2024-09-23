@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { getServicesByStatus } from '@/data/services'; // A nova função que você criará para buscar serviços filtrados.
 import { Service, ServiceStatus } from '@prisma/client';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { getCurrentUser } from '@/utils/getCurrentUser';
+import { useUser } from '@/context/UserContext';
 
 const ExibitionMode = {
     LIST: "LIST",
@@ -20,7 +19,7 @@ interface ServicesListProps {
 }
 
 const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMode }) => {
-    const user = getCurrentUser();
+    const { user } = useUser();
     const [services, setServices] = useState<Service[] | null>(null);
     const [statusFilter] = useState<ServiceStatus>(initialStatus);
 

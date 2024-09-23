@@ -11,24 +11,27 @@ const font = Inter({
     weight: ["600"]
 });
 
-
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-
-    const phoneNumber = '5581988145906'
-    const whatsappLink = `https://api.whatsapp.com/send?phone=${phoneNumber}`
+    const phoneNumber = '5581988145906';
+    const whatsappLink = `https://api.whatsapp.com/send?phone=${phoneNumber}`;
 
     return (
         <UserProvider>
-            <body className={cn("bg-realce-background w-full h-full", font.className)}>
+            <div className={cn("bg-realce-background w-full h-full", font.className)}>
                 {children}
                 <Toaster />
                 <SpeedInsights />
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="fixed bottom-4 right-4 z-50 flex items-center justify-center w-16 h-16 bg-green-600 text-white rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg">
+                <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="fixed bottom-4 right-4 z-50 flex items-center justify-center w-16 h-16 bg-green-600 text-white rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg"
+                >
                     <FaWhatsapp size={30} />
                 </a>
-            </body>
+            </div>
         </UserProvider>
-    )
-}
+    );
+};
 
-export default ProtectedLayout
+export default ProtectedLayout;

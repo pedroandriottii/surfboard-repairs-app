@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ServicesList from '@/components/services/services-list';
 import Link from 'next/link';

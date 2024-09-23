@@ -17,14 +17,14 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { getCurrentUser } from '@/utils/getCurrentUser';
+import { useUser } from '@/context/UserContext';
 
 const Navbar: React.FC = () => {
     const pathname = usePathname();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [showSubMenuServices, setShowSubMenuServices] = useState(false);
     const [showSubMenuMarketplace, setShowSubMenuMarketplace] = useState(false);
-    const user = getCurrentUser();
+    const { user } = useUser();
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
