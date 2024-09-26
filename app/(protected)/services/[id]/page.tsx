@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import Image from 'next/image';
 import { updateStatus } from '@/actions/update-status';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Footer from '@/components/base/footer';
 import { useToast } from '@/components/ui/use-toast';
+import { useUser } from '@/context/UserContext';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
@@ -28,7 +28,7 @@ const ServiceId = () => {
     const [paymentMethod, setPaymentMethod] = useState<'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' | undefined>(undefined);
     const [whatsappLinkGenerated, setWhatsappLinkGenerated] = useState(false);
     const pathName = usePathname();
-    const role = useCurrentRole();
+    const { user } = useUser();
     const router = useRouter();
     const id = pathName.replace('/services/', '');
     const { toast } = useToast();
@@ -185,7 +185,7 @@ const ServiceId = () => {
                                     <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
                                 </div>
                             )}
-                            {(role == 'ADMIN' || role == 'MASTER') && (
+                            {(user?.role == 'ADMIN' || user?.role == 'MASTER') && (
                                 <div className='flex flex-col gap-4'>
                                     <div>
                                         <p className='text-realce'>Email</p>
@@ -203,12 +203,12 @@ const ServiceId = () => {
                                     )}
                                 </div>
                             )}
-                            {(service?.status === 'PENDING' && (role === "ADMIN" || role === "MASTER")) && (
+                            {(service?.status === 'PENDING' && (user?.role === "ADMIN" || user?.role === "MASTER")) && (
                                 <Button onClick={() => { setPendingStatus('READY'); setShowAlert(true); }} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
                                     Mudar para Pronto
                                 </Button>
                             )}
-                            {(service?.status === 'READY' && (role === "ADMIN" || role === "MASTER")) && (
+                            {(service?.status === 'READY' && (user?.role === "ADMIN" || user?.role === "MASTER")) && (
                                 <div>
                                     <div className='flex flex-col items-center text-center'>
                                         <p className='p-1 text-realce text-md'>Método de Pagamento</p>
@@ -270,7 +270,7 @@ const ServiceId = () => {
                                 maxTime={service?.max_time || undefined}
                             />
                             <div className='flex w-full gap-4'>
-                                {role === 'MASTER' && (
+                                {user?.role === 'MASTER' && (
                                     <>
                                         <Button onClick={() => router.push(`/services/edit/${id}`)} className='bg-blue-400 text-white hover:bg-blue-200 flex items-center w-full gap-2'>
                                             <EditIcon />
