@@ -36,7 +36,7 @@ const Page: React.FC = () => {
     setIsMounted(true);
     const fetchSurfboards = async () => {
       try {
-        const response = await fetch('/api/marketplace/surfboards');
+        const response = await fetch('/api/marketplace/surfboards?is_new=false');
         if (!response.ok) {
           throw new Error('Erro ao buscar pranchas de surf');
         }

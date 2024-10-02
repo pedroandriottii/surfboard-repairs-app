@@ -69,23 +69,19 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const category = request.nextUrl.searchParams.get('category');
-    console.log(category);
+    const isNew = request.nextUrl.searchParams.get('is_new');
 
-    if (!category || !Object.values(SurfboardsCategory).includes(category as SurfboardsCategory)) {
-      return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 });
-    }
+    const isNewBoolean = isNew === 'true' ? true : isNew === 'false' ? false : undefined;
 
     const surfboards = await db.surfboards.findMany({
       where: {
-        category: category as SurfboardsCategory,
-        is_new: true,
+        ...(isNewBoolean !== undefined && { is_new: isNewBoolean }),
+        ...(isNewBoolean === true && { category: category as SurfboardsCategory }),
       },
     });
 
-    console.log(surfboards);
-
     if (surfboards.length === 0) {
-      return NextResponse.json({ message: 'Nenhuma prancha encontrada para esta categoria.' }, { status: 404 });
+      return NextResponse.json({ message: 'Nenhuma prancha encontrada.' }, { status: 404 });
     }
 
     return NextResponse.json(surfboards, { status: 200 });

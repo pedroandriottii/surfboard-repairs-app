@@ -26,7 +26,7 @@ const CategoryPage: React.FC = () => {
     if (category) {
       const fetchSurfboardsByCategory = async () => {
         try {
-          const response = await fetch(`/api/marketplace/surfboards?category=${category}`);
+          const response = await fetch(`/api/marketplace/surfboards?category=${category}&is_new=true`);
           if (!response.ok) {
             throw new Error('Erro ao buscar pranchas de surf por categoria');
           }
