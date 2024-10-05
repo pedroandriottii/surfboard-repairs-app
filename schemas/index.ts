@@ -90,7 +90,8 @@ export const SurfboardSchema = z.object({
     size: z.string().optional(),
     volume: z.preprocess((val) => {
         if (val === "" || val === null || val === undefined) return undefined;
-        return Number(val);
+        const num = Number(val);
+        return isNaN(num) ? undefined : num;
     }, z.number().positive("O volume deve ser um número positivo").optional()),
     model: z.string().optional(),
     description: z.string().optional(),

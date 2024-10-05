@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,10 @@ const SurfboardForm: React.FC = () => {
     } = useForm({
         resolver: zodResolver(SurfboardSchema),
     });
+
+    useEffect(() => {
+        setValue("is_new", isNew);
+    }, [isNew, setValue]);
 
     const compressImage = async (file: File) => {
         const options = {
@@ -88,7 +92,6 @@ const SurfboardForm: React.FC = () => {
     };
 
     const onSubmitForm = async (data: any) => {
-        console.log("formulario submetido", data)
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
