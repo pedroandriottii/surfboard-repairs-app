@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Link from 'next/link';
 import Image from 'next/image';
-import { updateStatus } from '@/actions/update-status';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogAction, AlertDialogTitle, AlertDialogDescription } from '@/components/ui/alert-dialog';
 import Timeline from '@/components/services/timeline';

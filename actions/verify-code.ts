@@ -3,25 +3,19 @@ export async function verifyCode(email: string, token: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, token })
+            body: JSON.stringify({ email, token }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || 'Erro ao verificar código');
+            throw new Error(data.message || 'Erro ao verificar código.');
         }
 
-        return { success: 'E-mail verificado com sucesso!', error: '' };
+        return { success: true, accessToken: data.accessToken, message: "E-mail verificado com sucesso!", user: data.user };
     } catch (error) {
-        if (error instanceof Error) {
-            return { success: '', error: error.message };
-        }
-        else {
-            return { success: '', error: 'Erro desconhecido' };
-        }
-
+        return { success: false, message: (error instanceof Error ? error.message : 'Erro desconhecido ao verificar o código') };
     }
 }

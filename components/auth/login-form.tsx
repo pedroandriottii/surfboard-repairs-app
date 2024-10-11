@@ -26,6 +26,7 @@ import { FormSuccess } from "@/components/form-success";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useUser } from "@/context/UserContext";
+import { VerifyCodeForm } from "./verification-form";
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -35,6 +36,8 @@ export const LoginForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isEmailVerified, setIsEmailVerified] = useState<boolean>(true);
+    const [verificationEmail, setVerificationEmail] = useState<string | undefined>();
     const { setUser } = useUser();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -54,29 +57,45 @@ export const LoginForm = () => {
             email: values.email.toLowerCase(),
         };
 
-        const result = await login(transformedValues.email, transformedValues.password);
+        try {
+            const result = await login(transformedValues.email, transformedValues.password);
 
-        if (!result.success) {
-            setError(result.error);
-        } else {
-            setSuccess("Login realizado com sucesso!");
+            console.log("Resultado do login:", result);
+            console.log("EMAIL VERIFICADO? ", result.emailVerified)
 
-            Cookies.set('accessToken', result.accessToken, {
-                expires: 30,
-                path: '/',
-                sameSite: 'lax',
-            });
+            if (result.success && result.emailVerified) {
+                setSuccess("Login realizado com sucesso!");
 
-            if (result.user) {
-                setUser(result.user);
-                localStorage.setItem("user", JSON.stringify(result.user));
+                Cookies.set('accessToken', result.accessToken, {
+                    expires: 30,
+                    path: '/',
+                    sameSite: 'lax',
+                });
+
+                if (result.user) {
+                    setUser(result.user);
+                    localStorage.setItem("user", JSON.stringify(result.user));
+                    router.push('/home');
+                }
             }
-
-            console.log('usuario logado', result.user);
-            console.log('token no cookie', Cookies.get('accessToken'));
-            router.push('/home');
+            else if (!result.emailVerified) {
+                setIsEmailVerified(false);
+                setVerificationEmail(values.email);
+            }
+            else if (result.error) {
+                setError(result.error);
+            } else {
+                setError("Erro desconhecido ao realizar login.");
+            }
+        } catch (error) {
+            console.error("Erro no submit: ", error);
+            setError("Erro ao realizar login.");
         }
     };
+
+    if (!isEmailVerified && verificationEmail) {
+        return <VerifyCodeForm email={verificationEmail} />;
+    }
 
     return (
         <CardWrapper

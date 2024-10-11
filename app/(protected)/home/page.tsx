@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
 
     useEffect(() => {
         if (!user) {
-            router.push('/auth/login');
+            router.push('/');
         }
     }, [user, router]);
 

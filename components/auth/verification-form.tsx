@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -22,19 +21,22 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { verifyCode } from "@/actions/verify-code";
-import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
+import { CardWrapper } from "./card-wrapper";
+import Cookies from "js-cookie";
+import { useUser } from "@/context/UserContext";
 
 const FormSchema = z.object({
     pin: z.string().min(6, {
-        message: "O código OTP deve ter 6 dígitos.",
+        message: "O código deve ter 6 dígitos.",
     }),
-    email: z.string().email({ message: "Insira um email válido." }),
+    email: z.string().email(),
 });
 
-export function VerifyCodeForm() {
+export function VerifyCodeForm({ email }: { email: string }) {
     const [error, setError] = useState<string | undefined>();
     const [success, setSuccess] = useState<string | undefined>();
+    const { setUser } = useUser();
     const { toast } = useToast();
     const router = useRouter();
 
@@ -42,7 +44,7 @@ export function VerifyCodeForm() {
         resolver: zodResolver(FormSchema),
         defaultValues: {
             pin: "",
-            email: "",
+            email: email,
         },
     });
 
@@ -52,86 +54,79 @@ export function VerifyCodeForm() {
 
         try {
             const response = await verifyCode(data.email, data.pin);
-            if (response.error) {
-                setError(response.error);
+
+            if (!response.success) {
+                setError(response.message || "Erro ao tentar verificar o código.");
+                return
             } else {
-                setSuccess(response.success);
+                setSuccess(response.message);
                 toast({
                     title: "Verificação bem-sucedida!",
                     description: "Seu e-mail foi verificado com sucesso.",
                     variant: "success",
                 });
-                router.push("/home")
+                Cookies.set('accessToken', response.accessToken, {
+                    expires: 30,
+                    path: '/',
+                    sameSite: 'lax',
+                });
+
+                if (response.user) {
+                    setUser(response.user);
+                    localStorage.setItem("user", JSON.stringify(response.user));
+                    router.push('/home');
+                }
             }
         } catch (err) {
-            setError("Erro ao verificar o código.");
+            setError("Erro ao tentar verificar o código.");
         }
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-                {/* Campo de Email */}
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type="email"
-                                    placeholder="exemplo@email.com"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormDescription>
-                                Insira o e-mail que você utilizou para cadastro.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
+        <CardWrapper
+            headerTitle="Verificação de E-mail"
+            headerLabel="Insira o código de 6 dígitos enviado para o seu e-mail."
+        >
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-center  space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="pin"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col items-center">
+                                <FormLabel>Código de Verificação</FormLabel>
+                                <FormControl>
+                                    <InputOTP maxLength={6} {...field} >
+                                        <InputOTPGroup className="bg-gray-50/50 rounded-md text-black">
+                                            <InputOTPSlot index={0} />
+                                            <InputOTPSlot index={1} />
+                                            <InputOTPSlot index={2} />
+                                            <InputOTPSlot index={3} />
+                                            <InputOTPSlot index={4} />
+                                            <InputOTPSlot index={5} />
+                                        </InputOTPGroup>
+                                    </InputOTP>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+
+                    <Button type="submit" className="bg-realce w-2/3 text-black hover:bg-realce/70">Verificar</Button>
+
+                    {error && (
+                        <div className="text-red-500 mt-2">
+                            <p>{error}</p>
+                        </div>
                     )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="pin"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Código de Verificação</FormLabel>
-                            <FormControl>
-                                <InputOTP maxLength={6} {...field}>
-                                    <InputOTPGroup>
-                                        <InputOTPSlot index={0} />
-                                        <InputOTPSlot index={1} />
-                                        <InputOTPSlot index={2} />
-                                        <InputOTPSlot index={3} />
-                                        <InputOTPSlot index={4} />
-                                        <InputOTPSlot index={5} />
-                                    </InputOTPGroup>
-                                </InputOTP>
-                            </FormControl>
-                            <FormDescription>
-                                Insira o código de 6 dígitos enviado para o seu e-mail.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
+                    {success && (
+                        <div className="text-green-500 mt-2">
+                            <p>{success}</p>
+                        </div>
                     )}
-                />
-
-                <Button type="submit">Verificar</Button>
-
-                {error && (
-                    <div className="text-red-500 mt-2">
-                        <FormMessage>{error}</FormMessage>
-                    </div>
-                )}
-                {success && (
-                    <div className="text-green-500 mt-2">
-                        <FormMessage>{success}</FormMessage>
-                    </div>
-                )}
-            </form>
-        </Form>
+                </form>
+            </Form>
+        </CardWrapper>
     );
 }

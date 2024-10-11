@@ -13,12 +13,17 @@ export async function login(email: string, password: string) {
         const data = await response.json();
 
         if (!response.ok) {
+            if (data.emailVerified === false) {
+                return { success: true, emailVerified: false };
+            }
             throw new Error(data.message || 'Erro ao fazer login.');
         }
 
-        Cookies.set('accessToken', data.accessToken, { expires: 1 });
+        if (data.emailVerified) {
+            Cookies.set('accessToken', data.accessToken, { expires: 1 });
+        }
 
-        return { success: true, accessToken: data.accessToken, user: data.user, error: '' };
+        return { success: true, accessToken: data.accessToken, user: data.user, error: '', emailVerified: data.emailVerified };
     } catch (error) {
         if (error instanceof Error) {
             return { success: false, error: error.message };

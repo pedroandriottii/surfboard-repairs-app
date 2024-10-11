@@ -7,7 +7,6 @@ export default function middleware(req: NextRequest) {
     const cookieHeader = req.headers.get('cookie') || '';
     const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
     const accessToken = cookies.accessToken;
-    console.log("AccessToken middleware: ", accessToken)
 
     const publicRoutes = [
         "/",
@@ -18,6 +17,7 @@ export default function middleware(req: NextRequest) {
         "/api/marketplace/surfboards",
         "/auth/new-verification"
     ];
+
     const authRoutes = [
         "/home",
         "/profile",
@@ -28,13 +28,13 @@ export default function middleware(req: NextRequest) {
     const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
     if (accessToken && isPublicRoute && pathname === '/') {
-        console.log('Usuário autenticado tentando acessar rota pública raiz, redirecionando para /home');
         return NextResponse.redirect(new URL('/home', req.url));
     }
 
     if (!accessToken && isAuthRoute) {
-        console.log('Usuário não autenticado tentando acessar rota protegida, redirecionando para /auth/login');
-        return NextResponse.redirect(new URL('/auth/login', req.url));
+        if (!pathname.startsWith('/auth/verify-email')) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
     }
 
     return NextResponse.next();
