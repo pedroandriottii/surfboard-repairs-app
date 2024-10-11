@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import { useTransition, useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useCurrentUser } from "@/hooks/use-current-user"
+import { useUser } from '@/context/UserContext';
 import { FormSuccess } from "@/components/form-success"
 import { FormError } from "@/components/form-error"
 import BackgroundImage from "@/components/base/backgroundImage"
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form"
 
 const SettingsPage = () => {
-    const user = useCurrentUser();
+    const { user } = useUser();
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -93,7 +93,7 @@ const SettingsPage = () => {
                                 </FormItem>
                             )} />
 
-                            {user?.isOAuth === false && (
+                            {/* {user?.isOAuth === false && (
                                 <>
                                     <FormField control={form.control} name="email" render={({ field }) => (
                                         <FormItem className="relative">
@@ -144,7 +144,7 @@ const SettingsPage = () => {
                                         </FormItem>
                                     )} />
                                 </>
-                            )}
+                            )} */}
                         </div>
 
                         <FormError message={error as string} />

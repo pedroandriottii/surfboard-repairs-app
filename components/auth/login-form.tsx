@@ -61,20 +61,19 @@ export const LoginForm = () => {
         } else {
             setSuccess("Login realizado com sucesso!");
 
-            // Armazena o accessToken no cookie
             Cookies.set('accessToken', result.accessToken, {
                 expires: 30,
                 path: '/',
                 sameSite: 'lax',
             });
 
-            // Atualiza o estado global com as informações do usuário
             if (result.user) {
                 setUser(result.user);
                 localStorage.setItem("user", JSON.stringify(result.user));
             }
 
-            // Redireciona para a página home
+            console.log('usuario logado', result.user);
+            console.log('token no cookie', Cookies.get('accessToken'));
             router.push('/home');
         }
     };

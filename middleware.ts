@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -8,6 +7,7 @@ export default function middleware(req: NextRequest) {
     const cookieHeader = req.headers.get('cookie') || '';
     const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
     const accessToken = cookies.accessToken;
+    console.log("AccessToken middleware: ", accessToken)
 
     const publicRoutes = [
         "/",

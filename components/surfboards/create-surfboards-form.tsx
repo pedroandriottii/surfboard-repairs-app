@@ -88,7 +88,7 @@ const SurfboardForm: React.FC = () => {
     };
 
     const onSubmitForm = async (data: any) => {
-        console.log("formulario submetido", data)
+        console.log("formulario submetido: ", data)
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
@@ -130,7 +130,7 @@ const SurfboardForm: React.FC = () => {
                 is_new: isNew,
                 category: isNew ? category : undefined,
             };
-            console.log(formData);
+            console.log("forms submetido:", formData);
 
             const response = await fetch('/api/marketplace/surfboards', {
                 method: 'POST',
@@ -204,7 +204,7 @@ const SurfboardForm: React.FC = () => {
                             <Select onValueChange={(value) => {
                                 setValue("category", value);
                                 setCategory(value);
-                                console.log("Categoria selecionada:", value);
+                                console.log("Categoria selecionada: ", value);
                             }}>
                                 <SelectTrigger id="category">
                                     <SelectValue placeholder="Selecione a categoria" />

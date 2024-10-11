@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 import { db } from "@/lib/db";
 import { SurfboardSchema } from "@/schemas";
-import { currentRole } from '@/lib/auth';
+import { useUser } from '@/context/UserContext';
 import { SurfboardsCategory } from '@prisma/client';
 
 const ImageSchema = z.array(z.string().url());
@@ -10,7 +10,8 @@ const CoverImageSchema = z.string().url();
 
 export async function POST(request: NextRequest) {
   try {
-    const role = await currentRole();
+    const { user } = useUser();
+    const role = await user?.role;
 
     const values = await request.json();
     console.log(values)
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Campos Inválidos!" }, { status: 400 });
     }
 
-    console.log("Dados Validos", validatedFields.data);
+    console.log("Dados Validos para tal", validatedFields.data);
 
     const imageValidation = ImageSchema.safeParse(values.image);
     if (!imageValidation.success) {

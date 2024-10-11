@@ -11,8 +11,8 @@ import BackgroundImage from '@/components/base/backgroundImage';
 const GridPage: React.FC = () => {
     return (
         <div className="min-h-screen flex flex-col justify-between overflow-x-hidden">
-            <BackgroundImage src="/bgImage.webp" alt="Background" />
-            <BackgroundImage src="/bgImageDesk.webp" alt="Background" isDesktop />
+            <BackgroundImage src="/splash.webp" alt="Background" />
+            <BackgroundImage src="/splash_desk.webp" alt="Background" isDesktop />
             <div className="relative z-20 flex flex-col items-center">
                 <div className='flex justify-between w-full'>
                     <Navbar />

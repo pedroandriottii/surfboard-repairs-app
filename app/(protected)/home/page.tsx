@@ -8,10 +8,22 @@ import Navbar from '@/components/base/navbar';
 import BackgroundImage from '@/components/base/backgroundImage';
 import Footer from '@/components/base/footer';
 import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 const HomePage: React.FC = () => {
     const { user } = useUser();
-    console.log(user)
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user) {
+            router.push('/auth/login');
+        }
+    }, [user, router]);
+
+    if (!user) {
+        return <p>Carregando...</p>;
+    }
+
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
             <BackgroundImage src="/splash.webp" alt="Background" />
@@ -53,7 +65,7 @@ const HomePage: React.FC = () => {
                 <Footer />
             </div>
         </div>
-    )
+    );
 };
 
 export default HomePage;

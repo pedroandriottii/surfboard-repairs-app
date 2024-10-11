@@ -32,12 +32,12 @@ export const UserButton = () => {
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <SettingsButton>
+                {/* <SettingsButton>
                     <DropdownMenuItem>
                         <IoSettingsOutline className="h-4 w-4 mr-2" />
                         Configurações
                     </DropdownMenuItem>
-                </SettingsButton>
+                </SettingsButton> */}
                 <LogoutButton>
                     <DropdownMenuItem>
                         <ExitIcon className="h-4 w-4 mr-2" />

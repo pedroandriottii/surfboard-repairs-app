@@ -18,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Footer from '@/components/base/footer';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
+import Cookies from 'js-cookie';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
@@ -66,29 +67,18 @@ const ServiceId = () => {
     };
 
     const updateStatusHandler = async () => {
-        if (!pendingStatus) return;
-
-        const formValues: { status: 'READY' | 'DELIVERED'; ready_time?: Date; delivered_time?: Date; payment_method?: 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH' | 'PIX' | 'FREE' } = { status: pendingStatus };
-        const currentDate = new Date();
-
-        if (pendingStatus === 'READY') {
-            formValues.ready_time = currentDate;
-        } else if (pendingStatus === 'DELIVERED') {
-            formValues.delivered_time = currentDate;
-            formValues.payment_method = paymentMethod;
-            if (!paymentMethod) {
-                toast({
-                    title: "Erro",
-                    description: "Método de pagamento é obrigatório ao entregar",
-                    variant: "destructive",
-                });
-                return;
-            }
-        }
-
         try {
-            const result = await updateStatus(id, formValues);
-            if (result.success) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/${id}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
                 toast({
                     title: "Sucesso",
                     description: "Status atualizado com sucesso",
@@ -101,7 +91,7 @@ const ServiceId = () => {
             } else {
                 toast({
                     title: "Erro",
-                    description: `Erro ao mudar o Status: ${result.error}`,
+                    description: `Erro ao mudar o Status: ${result.error || "Erro desconhecido"}`,
                     variant: "destructive",
                 });
             }
@@ -113,14 +103,15 @@ const ServiceId = () => {
             });
         }
     };
-
     const handleDelete = async () => {
         try {
-            const response = await fetch(`/api/services/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`,
+                    'Content-Type': 'application/json',
+                },
             });
-
-            const result = await response.json();
 
             if (response.ok) {
                 toast({
@@ -130,6 +121,7 @@ const ServiceId = () => {
                 });
                 router.push('/home');
             } else {
+                const result = await response.json()
                 toast({
                     title: "Erro",
                     description: `Erro ao deletar serviço: ${result.error || "Erro desconhecido"}`,

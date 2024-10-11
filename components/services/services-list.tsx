@@ -50,7 +50,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
 
             // Convertendo a resposta para JSON
             const data: Service[] = await response.json();
-            console.log(data);
+            console.log('Service List:', data);
             return data;
         } catch (error) {
             console.error('Erro ao buscar os serviços:', error);
