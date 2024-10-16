@@ -46,6 +46,10 @@ const SurfboardForm: React.FC = () => {
         setValue("is_new", isNew);
     }, [isNew, setValue]);
 
+    useEffect(() => {
+        setValue("is_new", isNew);
+    }, [isNew, setValue]);
+
     const compressImage = async (file: File) => {
         const options = {
             maxSizeMB: 1,
