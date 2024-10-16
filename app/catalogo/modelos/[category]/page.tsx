@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Surfboards } from '@prisma/client';
 import Footer from '@/components/base/footer';
 import { Badge } from '@/components/ui/badge';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MarketplaceNavbar from '@/components/base/marketplaceNavbar';
 
 function formatPrice(price: number): string {
@@ -26,7 +25,7 @@ const CategoryPage: React.FC = () => {
     if (category) {
       const fetchSurfboardsByCategory = async () => {
         try {
-          const response = await fetch(`/api/marketplace/surfboards?category=${category}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/category/${category}`);
           if (!response.ok) {
             throw new Error('Erro ao buscar pranchas de surf por categoria');
           }

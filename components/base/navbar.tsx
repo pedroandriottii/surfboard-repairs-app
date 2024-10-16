@@ -143,7 +143,7 @@ const Navbar: React.FC = () => {
                 </div>
 
                 {/* Finanças */}
-                {user?.role === 'MASTER' ? (
+                {/* {user?.role === 'MASTER' ? (
                     <ListItem
                         button
                         component={Link}
@@ -153,7 +153,7 @@ const Navbar: React.FC = () => {
                         <PaymentsIcon />
                         <ListItemText primary="Finanças" />
                     </ListItem>
-                ) : null}
+                ) : null} */}
             </List>
         </div>
     );

@@ -25,7 +25,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     const fetchSurfboard = async () => {
       try {
-        const response = await fetch(`/api/marketplace/surfboards/${id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/${id}`);
         if (!response.ok) {
           throw new Error('Erro ao buscar a prancha de surf');
         }
