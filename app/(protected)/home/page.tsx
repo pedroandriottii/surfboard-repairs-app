@@ -36,8 +36,8 @@ const HomePage: React.FC = () => {
                     <div className='flex flex-col gap-4 p-4'>
                         <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}<span className='text-realce'></span></h2>
                     </div>
-                    <Link href='/home/pending'>
-                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                    <Link href='/services/status/pending'>
+                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Pendentes</p>
                             <ChevronRightIcon />
                         </div>
@@ -45,8 +45,8 @@ const HomePage: React.FC = () => {
                     <div className='p-4'>
                         <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
                     </div>
-                    <Link href='/home/ready'>
-                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                    <Link href='/services/status/ready'>
+                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Prontos</p>
                             <ChevronRightIcon />
                         </div>

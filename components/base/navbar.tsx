@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
                         <ListItem
                             button
                             component={Link}
-                            href="/home/delivered"
+                            href="/services/status/delivered"
                             className='flex gap-4 transition-all duration-300'
                         >
                             <ListItemText primary="Concluidos" />

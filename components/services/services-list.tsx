@@ -5,7 +5,7 @@ import { Service, ServiceStatus } from '@prisma/client';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { useUser } from '@/context/UserContext';
-import Cookies from 'js-cookie'; // Importando a biblioteca js-cookie
+import Cookies from 'js-cookie';
 
 const ExibitionMode = {
     LIST: "LIST",
@@ -24,15 +24,13 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
     const [services, setServices] = useState<Service[] | null>(null);
     const [statusFilter] = useState<ServiceStatus>(initialStatus);
 
-    // Função para buscar os serviços pelo status
     const getServicesByStatus = async (status: ServiceStatus) => {
         try {
-            const token = Cookies.get('accessToken'); // Buscando o token dos cookies
+            const token = Cookies.get('accessToken');
             if (!token) {
                 throw new Error('Token JWT não encontrado nos cookies.');
             }
 
-            // Fazendo a requisição para buscar os serviços
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services?status=${status}`, {
                 method: 'GET',
                 headers: {
@@ -41,14 +39,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                 }
             });
 
-            // Verificando se a resposta foi bem-sucedida
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('Erro na API:', errorData);
                 throw new Error(errorData.message || 'Erro ao buscar os serviços.');
             }
 
-            // Convertendo a resposta para JSON
             const data: Service[] = await response.json();
             console.log('Service List:', data);
             return data;
