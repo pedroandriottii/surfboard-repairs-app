@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -18,13 +17,14 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useUser } from '@/context/UserContext';
 
 const Navbar: React.FC = () => {
     const pathname = usePathname();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [showSubMenuServices, setShowSubMenuServices] = useState(false);
     const [showSubMenuMarketplace, setShowSubMenuMarketplace] = useState(false);
-    const role = useCurrentRole();
+    const { user } = useUser();
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
                         <ListItem
                             button
                             component={Link}
-                            href="/home/delivered"
+                            href="/services/status/delivered"
                             className='flex gap-4 transition-all duration-300'
                         >
                             <ListItemText primary="Concluidos" />
@@ -92,41 +92,43 @@ const Navbar: React.FC = () => {
                     </List>
                 )}
 
-                {/* Marketplace */}
-                {role === 'MASTER' || role === 'ADMIN' ? (
-                    <>
-                        <ListItem
-                            button
-                            onClick={toggleSubMenuMarketplace}
-                            className={`flex justify-between items-center gap-4 transition-all duration-300 text-realce`}
-                        >
-                            <div className='flex items-center gap-4'>
-                                <StorefrontIcon />
-                                <ListItemText primary="Marketplace" />
-                            </div>
-                            <span>
-                                {showSubMenuMarketplace ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
-                            </span>
-                        </ListItem>
-                        {showSubMenuMarketplace && (
-                            <List component="div" disablePadding className='pl-12'>
-                                <ListItem
-                                    button
-                                    component={Link}
-                                    href="/home/marketplace/create"
-                                    className='flex gap-4 transition-all duration-300'
-                                >
-                                    <ListItemText primary="Cadastrar" />
-                                </ListItem>
-                                <ListItem
-                                    button
-                                    component={Link}
-                                    href="/home/marketplace"
-                                    className='flex gap-4 transition-all duration-300'
-                                >
-                                    <ListItemText primary="Estoque" />
-                                </ListItem>
-                                {/* <ListItem
+                <div>
+
+                    {/* Marketplace */}
+                    {user?.role === 'MASTER' || user?.role === 'ADMIN' ? (
+                        <>
+                            <ListItem
+                                button
+                                onClick={toggleSubMenuMarketplace}
+                                className={`flex justify-between items-center gap-4 transition-all duration-300 text-realce`}
+                            >
+                                <div className='flex items-center gap-4'>
+                                    <StorefrontIcon />
+                                    <ListItemText primary="Marketplace" />
+                                </div>
+                                <span>
+                                    {showSubMenuMarketplace ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
+                                </span>
+                            </ListItem>
+                            {showSubMenuMarketplace && (
+                                <List component="div" disablePadding className='pl-12'>
+                                    <ListItem
+                                        button
+                                        component={Link}
+                                        href="/marketplace/create"
+                                        className='flex gap-4 transition-all duration-300'
+                                    >
+                                        <ListItemText primary="Cadastrar" />
+                                    </ListItem>
+                                    <ListItem
+                                        button
+                                        component={Link}
+                                        href="/marketplace"
+                                        className='flex gap-4 transition-all duration-300'
+                                    >
+                                        <ListItemText primary="Estoque" />
+                                    </ListItem>
+                                    {/* <ListItem
                                     button
                                     component={Link}
                                     href="/home/marketplace"
@@ -134,13 +136,14 @@ const Navbar: React.FC = () => {
                                 >
                                     <ListItemText primary="Vendidas" />
                                 </ListItem> */}
-                            </List>
-                        )}
-                    </>
-                ) : null}
+                                </List>
+                            )}
+                        </>
+                    ) : null}
+                </div>
 
                 {/* Finanças */}
-                {role === 'MASTER' ? (
+                {/* {user?.role === 'MASTER' ? (
                     <ListItem
                         button
                         component={Link}
@@ -150,14 +153,14 @@ const Navbar: React.FC = () => {
                         <PaymentsIcon />
                         <ListItemText primary="Finanças" />
                     </ListItem>
-                ) : null}
+                ) : null} */}
             </List>
         </div>
     );
 
     return (
         <div className='w-full'>
-            {role === 'USER' && (
+            {user?.role === 'USER' && (
                 <div className='flex justify-between w-full md:pr-4 p-4'>
                     <Link href={'/home'}>
                         <Image
@@ -179,7 +182,7 @@ const Navbar: React.FC = () => {
                     </div>
                 </div>
             )}
-            {role === 'ADMIN' || role === 'MASTER' ? (
+            {user?.role === 'ADMIN' || user?.role === 'MASTER' ? (
                 <><div className='flex justify-between p-4 w-full items-center'>
                     <span className='text-realce' onClick={toggleDrawer(true)}>
                         <MenuIcon fontSize='large' />
@@ -216,7 +219,7 @@ const Navbar: React.FC = () => {
                         </div>
                     </Drawer></>
             ) : null}
-        </div>
+        </div >
     );
 };
 

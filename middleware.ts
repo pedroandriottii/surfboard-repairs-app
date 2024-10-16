@@ -1,42 +1,46 @@
-import authConfig from "@/auth.config";
-import NextAuth from "next-auth";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-import {
-    DEFAULT_LOGIN_REDIRECT,
-    apiAuthPrefix,
-    authRoutes,
-    publicRoutes,
-} from "@/routes";
+export default function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
 
-const { auth } = NextAuth(authConfig);
+    const cookieHeader = req.headers.get('cookie') || '';
+    const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
+    const accessToken = cookies.accessToken;
+    console.log('Middleware Access Token', accessToken);
 
+    const publicRoutes = [
+        "/",
+        "/auth/login",
+        "/auth/register",
+        "/auth/reset",
+        "/catalogo",
+        "/api/marketplace/surfboards",
+        "/auth/new-verification"
+    ];
 
-export default auth(async (req) => {
-    const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
+    const authRoutes = [
+        "/home",
+        "/profile",
+        "/dashboard",
+    ];
 
-    const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/api/marketplace") || nextUrl.pathname.startsWith("/catalogo");
-    const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+    const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
-    if (isApiAuthRoute) {
-        return;
+    if (accessToken && isPublicRoute && pathname === '/') {
+        return NextResponse.redirect(new URL('/home', req.url));
     }
 
-    if (isAuthRoute) {
-        if (isLoggedIn) {
-            return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    if (!accessToken && isAuthRoute) {
+        if (!pathname.startsWith('/auth/verify-email')) {
+            return NextResponse.redirect(new URL('/', req.url));
         }
-        return;
     }
 
-    if (!isLoggedIn && !isPublicRoute) {
-        return Response.redirect(new URL("/", nextUrl));
-    }
-
-    return;
-})
+    return NextResponse.next();
+}
 
 export const config = {
-    matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-}
+    matcher: ["/((?!.*\\.).*)"],
+};

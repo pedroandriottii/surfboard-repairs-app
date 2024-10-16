@@ -1,7 +1,5 @@
 'use client';
-import React from 'react';
-import { useCurrentRole } from '@/hooks/use-current-role';
-import { useCurrentUser } from '@/hooks/use-current-user';
+import React, { useEffect } from 'react';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ServicesList from '@/components/services/services-list';
 import Link from 'next/link';
@@ -9,10 +7,23 @@ import AddIcon from '@mui/icons-material/Add';
 import Navbar from '@/components/base/navbar';
 import BackgroundImage from '@/components/base/backgroundImage';
 import Footer from '@/components/base/footer';
+import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 const HomePage: React.FC = () => {
-    const role = useCurrentRole();
-    const user = useCurrentUser();
+    const { user } = useUser();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user) {
+            router.push('/');
+        }
+    }, [user, router]);
+
+    if (!user) {
+        return <p>Carregando...</p>;
+    }
+
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
             <BackgroundImage src="/splash.webp" alt="Background" />
@@ -23,10 +34,10 @@ const HomePage: React.FC = () => {
                 </div>
                 <div className='text-white flex flex-col w-full gap-4 flex-grow'>
                     <div className='flex flex-col gap-4 p-4'>
-                        <h2 className='font-bold text-xl'>Bem Vindo, <span className='text-realce'>{user?.name}</span></h2>
+                        <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}<span className='text-realce'></span></h2>
                     </div>
-                    <Link href='/home/pending'>
-                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                    <Link href='/services/status/pending'>
+                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Pendentes</p>
                             <ChevronRightIcon />
                         </div>
@@ -34,8 +45,8 @@ const HomePage: React.FC = () => {
                     <div className='p-4'>
                         <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
                     </div>
-                    <Link href='/home/ready'>
-                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full hover:w-1/3 hover:transition-all'>
+                    <Link href='/services/status/ready'>
+                        <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Prontos</p>
                             <ChevronRightIcon />
                         </div>
@@ -44,7 +55,7 @@ const HomePage: React.FC = () => {
                         <ServicesList initialStatus='READY' exibitionMode='LIST' />
                     </div>
                 </div>
-                {(role == 'MASTER' || role == 'ADMIN') && (
+                {(user?.role == 'MASTER' || user?.role == 'ADMIN') && (
                     <Link href={'/services/create'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
                         <AddIcon className='text-black font-bold' fontSize='large' />
                     </Link>
@@ -54,7 +65,7 @@ const HomePage: React.FC = () => {
                 <Footer />
             </div>
         </div>
-    )
+    );
 };
 
 export default HomePage;

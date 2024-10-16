@@ -8,32 +8,34 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Navbar from '@/components/base/navbar';
-import { useCurrentRole } from '@/hooks/use-current-role';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Surfboard } from '@/lib/types';
-import { RoleGate } from '@/components/auth/role-gate';
 import { Input } from '@/components/ui/input';
 import { Dialog } from '@headlessui/react';
 import CloseIcon from '@mui/icons-material/Close';
+import { useUser } from '@/context/UserContext';
+import Cookies from 'js-cookie';
 
 const Page: React.FC = () => {
     const pathName = usePathname();
-    const id = pathName.replace('/home/marketplace/', '');
+    const id = pathName.split('/').pop()
+    console.log(id)
     const [surfboard, setSurfboard] = useState<Surfboard | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [images, setImages] = useState<string[]>([]);
     const [price, setPrice] = useState<number | undefined>(undefined);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const role = useCurrentRole();
+    const { user } = useUser();
     const router = useRouter();
+
 
     useEffect(() => {
         const fetchSurfboard = async () => {
             try {
-                const response = await fetch(`/api/marketplace/surfboards/${id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/${id}`);
                 if (!response.ok) {
                     throw new Error('Erro ao buscar a prancha de surf');
                 }
@@ -78,13 +80,17 @@ const Page: React.FC = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`/api/marketplace/surfboards/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`,
+                },
             });
             if (!response.ok) {
                 throw new Error('Erro ao deletar a prancha de surf');
             }
-            router.push('/home/marketplace');
+            router.push('/marketplace');
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -95,18 +101,21 @@ const Page: React.FC = () => {
     };
 
     const handleMarkAsSold = async () => {
+        console.log("Cheguei aqui!");
         try {
-            const response = await fetch(`/api/marketplace/surfboards/${id}`, {
-                method: 'PUT',
+            console.log("Enviado id e price: ", id, price);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/${id}/sell`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`,
                 },
                 body: JSON.stringify({ price }),
             });
             if (!response.ok) {
                 throw new Error('Erro ao marcar a prancha como vendida');
             }
-            router.push('/home/marketplace');
+            router.push('/marketplace');
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -135,10 +144,11 @@ const Page: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen bg-black">
             <Navbar />
-            <RoleGate allowedRoles={['MASTER', 'ADMIN']}>
+            {user?.role === 'ADMIN' || user?.role === 'MASTER' ? (
+
                 <div className="flex-grow">
                     <div className="py-2">
-                        <Link href="/home/marketplace" className="bg-realce text-black py-1 px-6 rounded-r-2xl">
+                        <Link href="/marketplace" className="bg-realce text-black py-1 px-6 rounded-r-2xl">
                             <ArrowBackIcon />
                             Voltar
                         </Link>
@@ -216,7 +226,7 @@ const Page: React.FC = () => {
                             )}
                         </div>
                         <div>
-                            {role === 'MASTER' && (
+                            {user.role === 'MASTER' && (
                                 <div className="flex justify-between px-4 mb-20">
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
@@ -240,18 +250,22 @@ const Page: React.FC = () => {
                                         </AlertDialogContent>
                                     </AlertDialog>
                                     {!surfboard.sold && (
-
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
-                                                <Button variant='secondary' className="bg-green-600 text-white py-2 px-4 rounded-lg">
+                                                <Button
+                                                    variant='secondary'
+                                                    className="bg-green-600 text-white py-2 px-4 rounded-lg"
+                                                    onClick={() => console.log("Botão de 'Prancha Vendida' clicado")}
+                                                >
                                                     Prancha Vendida
                                                 </Button>
                                             </AlertDialogTrigger>
+
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
                                                     <AlertDialogTitle>Confirmação de Venda</AlertDialogTitle>
                                                     <AlertDialogDescription>
-                                                        Confirme o preço da venda. O preço atual da prancha está pré-preenchido, mas você pode alterar se necessário.
+                                                        Confirme o preço da venda.
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <div className="px-4 py-2">
@@ -277,7 +291,7 @@ const Page: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </RoleGate>
+            ) : null}
 
             <Dialog open={isModalOpen} onClose={closeModal} className="relative z-50">
                 <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">

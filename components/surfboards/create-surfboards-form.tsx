@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import imageCompression from 'browser-image-compression';
 import { Progress } from '../ui/progress';
 import { Switch } from '../ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import Cookies from 'js-cookie'
 
 const SurfboardForm: React.FC = () => {
     const [isPending, setIsPending] = useState<boolean>(false);
@@ -40,6 +41,10 @@ const SurfboardForm: React.FC = () => {
     } = useForm({
         resolver: zodResolver(SurfboardSchema),
     });
+
+    useEffect(() => {
+        setValue("is_new", isNew);
+    }, [isNew, setValue]);
 
     useEffect(() => {
         setValue("is_new", isNew);
@@ -92,6 +97,7 @@ const SurfboardForm: React.FC = () => {
     };
 
     const onSubmitForm = async (data: any) => {
+        console.log("formulario submetido: ", data);
         const coverImageInput = document.querySelector('input[name="coverImage"]') as HTMLInputElement | null;
         const coverImageFile = coverImageInput?.files?.[0];
 
@@ -118,7 +124,7 @@ const SurfboardForm: React.FC = () => {
             return;
         }
 
-        setIsPending(true)
+        setIsPending(true);
         try {
             const compressedCoverImageFile = await compressImage(coverImageFile);
             const coverImageUrl = await uploadImage(compressedCoverImageFile);
@@ -133,12 +139,14 @@ const SurfboardForm: React.FC = () => {
                 is_new: isNew,
                 category: isNew ? category : undefined,
             };
-            console.log(formData);
+            console.log("forms submetido:", formData);
 
-            const response = await fetch('/api/marketplace/surfboards', {
+            const accessToken = Cookies.get('accessToken');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`
                 },
                 body: JSON.stringify(formData),
             });
@@ -160,7 +168,7 @@ const SurfboardForm: React.FC = () => {
                     variant: "success",
                 });
                 reset();
-                router.push('/home/marketplace');
+                router.push('/marketplace');
             }
         } catch (error) {
             console.error("Erro ao criar a prancha:", error);
@@ -174,6 +182,7 @@ const SurfboardForm: React.FC = () => {
             setIsPending(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-md mx-auto">
@@ -207,7 +216,7 @@ const SurfboardForm: React.FC = () => {
                             <Select onValueChange={(value) => {
                                 setValue("category", value);
                                 setCategory(value);
-                                console.log("Categoria selecionada:", value);
+                                console.log("Categoria selecionada: ", value);
                             }}>
                                 <SelectTrigger id="category">
                                     <SelectValue placeholder="Selecione a categoria" />
