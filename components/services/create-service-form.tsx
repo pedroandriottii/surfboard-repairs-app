@@ -30,11 +30,9 @@ import { Textarea } from "../ui/textarea";
 import BackgroundImage from "../base/backgroundImage";
 import { useUser } from "@/context/UserContext";
 
-// Tipos para os valores do formulário
 type ServiceFormValues = z.infer<typeof ServiceSchema>;
 
 export const CreateServiceForm = () => {
-    // Estados para controle do formulário e envio
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, setIsPending] = useState<boolean>(false);
@@ -43,7 +41,6 @@ export const CreateServiceForm = () => {
     const { user } = useUser();
     const { toast } = useToast();
 
-    // Instância do formulário com validação usando Zod e React Hook Form
     const form = useForm<ServiceFormValues>({
         resolver: zodResolver(ServiceSchema),
         defaultValues: {
@@ -57,7 +54,6 @@ export const CreateServiceForm = () => {
         }
     });
 
-    // Função para compressão de imagens
     const compressImage = async (file: File): Promise<File> => {
         const options = {
             maxSizeMB: 1,
@@ -73,13 +69,11 @@ export const CreateServiceForm = () => {
         }
     };
 
-    // Função para tratamento de erros
     const handleError = (message: string) => {
         setError(message);
         setIsPending(false);
     };
 
-    // Função de submissão do formulário
     const onSubmit = async (values: ServiceFormValues) => {
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         const file = fileInput?.files ? fileInput.files[0] : null;
@@ -167,7 +161,6 @@ export const CreateServiceForm = () => {
                                 Cadastrar Serviço
                             </h1>
                             <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-4">
-                                {/* Campo para upload de imagem */}
                                 <FormField
                                     control={form.control}
                                     name="photo_url"
@@ -187,7 +180,6 @@ export const CreateServiceForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Campo para nome do cliente */}
                                 <FormField
                                     control={form.control}
                                     name="client_name"
@@ -206,7 +198,6 @@ export const CreateServiceForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Campo para e-mail do cliente */}
                                 <FormField
                                     control={form.control}
                                     name="user_mail"
@@ -225,7 +216,6 @@ export const CreateServiceForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Campo para telefone do cliente */}
                                 <FormField
                                     control={form.control}
                                     name="phone"
@@ -246,7 +236,6 @@ export const CreateServiceForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Campo para valor do serviço */}
                                 <FormField
                                     control={form.control}
                                     name="value"
@@ -271,7 +260,6 @@ export const CreateServiceForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                {/* Campo para prazo do serviço */}
                                 <FormField
                                     control={form.control}
                                     name="max_time"
@@ -295,7 +283,6 @@ export const CreateServiceForm = () => {
                                     )}
                                 />
                             </div>
-                            {/* Campo para descrição do serviço */}
                             <FormField
                                 control={form.control}
                                 name="description"
@@ -315,7 +302,6 @@ export const CreateServiceForm = () => {
                                     </FormItem>
                                 )}
                             />
-                            {/* Exibir progresso de upload */}
                             {isPending && <Progress value={uploadProgress} />}
                             <FormError message={error} />
                             <FormSuccess message={success} />

@@ -115,7 +115,7 @@ const Navbar: React.FC = () => {
                                     <ListItem
                                         button
                                         component={Link}
-                                        href="/home/marketplace/create"
+                                        href="/marketplace/create"
                                         className='flex gap-4 transition-all duration-300'
                                     >
                                         <ListItemText primary="Cadastrar" />
@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
                                     <ListItem
                                         button
                                         component={Link}
-                                        href="/home/marketplace"
+                                        href="/marketplace"
                                         className='flex gap-4 transition-all duration-300'
                                     >
                                         <ListItemText primary="Estoque" />
