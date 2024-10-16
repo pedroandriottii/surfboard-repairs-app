@@ -48,8 +48,16 @@ const ServiceId = () => {
     }, [id]);
 
     const fetchService = async () => {
-        const fetchedService = await getServiceById(id);
-        setService(fetchedService);
+        try {
+            const fetchedService = await getServiceById(id);
+            setService(fetchedService);
+        } catch (error) {
+            toast({
+                title: 'Erro',
+                description: 'Falha ao carregar o serviço.',
+                variant: 'destructive',
+            });
+        }
     };
 
     const generateWhatsAppLink = () => {
@@ -102,6 +110,7 @@ const ServiceId = () => {
             });
         }
     };
+
     const handleDelete = async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/${id}`, {

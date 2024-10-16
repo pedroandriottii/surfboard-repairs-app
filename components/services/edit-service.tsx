@@ -12,10 +12,11 @@ import { editService } from '@/actions/edit-service';
 import * as z from 'zod';
 import Navbar from '@/components/base/navbar';
 import BackgroundImage from '@/components/base/backgroundImage';
-import { useCurrentRole } from "@/hooks/use-current-role";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from '@/components/ui/use-toast';
+import { useUser } from '@/context/UserContext';
+import Cookies from 'js-cookie';
 
 type FormValues = z.infer<typeof ServiceSchema>;
 
@@ -24,7 +25,7 @@ const EditService = () => {
   const pathName = usePathname();
   const id = pathName.replace('/services/edit/', '');
   const [service, setService] = useState<Service | null>(null);
-  const role = useCurrentRole();
+  const { user } = useUser();
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -58,7 +59,11 @@ const EditService = () => {
   const onSubmit = async (data: FormValues) => {
     if (typeof id === 'string') {
       try {
-        const result = await editService(id, data);
+        const accessToken = Cookies.get('accessToken');
+        if (!accessToken) {
+          throw new Error('Access token is missing');
+        }
+        const result = await editService(id, data, accessToken);
         if (result.success) {
           toast({
             title: "Sucesso!",
@@ -103,7 +108,7 @@ const EditService = () => {
                   <FormItem>
                     <FormLabel className='text-realce'>Email do Cliente</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} disabled={role !== 'ADMIN' && role !== 'MASTER'} />
+                      <Input type="email" {...field} disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +122,7 @@ const EditService = () => {
                   <FormItem>
                     <FormLabel className='text-realce'>Nome do Cliente</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={role !== 'ADMIN' && role !== 'MASTER'} />
+                      <Input {...field} disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -131,14 +136,14 @@ const EditService = () => {
                   <FormItem>
                     <FormLabel className='text-realce'>Telefone</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={role !== 'ADMIN' && role !== 'MASTER'} />
+                      <Input {...field} disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {role === 'MASTER' && (
+              {user?.role === 'MASTER' && (
                 <FormField
                   control={form.control}
                   name="value"
@@ -164,7 +169,20 @@ const EditService = () => {
                   <FormItem>
                     <FormLabel className='text-realce'>Prazo</FormLabel>
                     <FormControl>
-                      <Input {...field} type="date" disabled={role !== 'ADMIN' && role !== 'MASTER'} onChange={(e) => { const selectedDate = new Date(e.target.value); form.setValue("max_time", selectedDate); }} value={field.value ? field.value.toISOString().substring(0, 10) : ''} />
+                      <Input
+                        {...field}
+                        type="date"
+                        disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'}
+                        onChange={(e) => {
+                          const selectedDate = new Date(e.target.value);
+                          form.setValue("max_time", selectedDate);
+                        }}
+                        value={
+                          field.value instanceof Date && !isNaN(field.value.getTime())
+                            ? field.value.toISOString().substring(0, 10)
+                            : ''
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -179,14 +197,14 @@ const EditService = () => {
                 <FormItem>
                   <FormLabel className='text-realce'>Descrição do Serviço</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder="Descrição" disabled={role !== 'ADMIN' && role !== 'MASTER'} className='bg-white' />
+                    <Textarea {...field} placeholder="Descrição" disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'} className='bg-white' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={role !== 'ADMIN' && role !== 'MASTER'}>
+            <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={user?.role !== 'ADMIN' && user?.role !== 'MASTER'}>
               Salvar Alterações
             </Button>
           </form>

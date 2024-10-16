@@ -26,7 +26,7 @@ const Page: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
-  const [showSold, setShowSold] = useState<boolean>(false); // Controla o switch de vendidas
+  const [showSold, setShowSold] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState(false);
   const { user } = useUser();
 
@@ -35,8 +35,8 @@ const Page: React.FC = () => {
     const fetchSurfboards = async () => {
       try {
         const url = showSold
-          ? `${process.env.NEXT_PUBLIC_API_URL}/surfboards/sold` // Rota para pranchas vendidas
-          : `${process.env.NEXT_PUBLIC_API_URL}/surfboards`; // Rota para todas as pranchas disponíveis
+          ? `${process.env.NEXT_PUBLIC_API_URL}/surfboards/sold`
+          : `${process.env.NEXT_PUBLIC_API_URL}/surfboards`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -60,7 +60,7 @@ const Page: React.FC = () => {
     };
 
     fetchSurfboards();
-  }, [showSold]); // Recarrega os dados ao alterar o valor do switch
+  }, [showSold]);
 
   if (!isMounted) return null;
 
