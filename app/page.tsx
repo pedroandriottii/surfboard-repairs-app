@@ -60,7 +60,7 @@ export default function Home() {
             </p>
             <div className="flex justify-between md:justify-start md:gap-6">
               <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
-                <Link href="/catalogo/modelos/CORINGA" target="__blank">Pranchas Novas</Link>
+                <Link href="/catalogo/modelos/CORINGA" >Pranchas Novas</Link>
               </button>
               <button className="rounded-full bg-realce font-bold self-start justify-around py-2 px-4 md:text-center">
                 <Link href="/catalogo">Pranchas Usadas</Link>
