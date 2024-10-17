@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
-    const [loading, setLoading] = useState(true); // Estado de carregamento
+    const [loading, setLoading] = useState(true);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -60,7 +60,7 @@ const ServiceId = () => {
                 variant: 'destructive',
             });
         } finally {
-            setLoading(false); // Define loading como falso após o carregamento dos dados
+            setLoading(false);
         }
     };
 
@@ -85,6 +85,7 @@ const ServiceId = () => {
                     'Authorization': `Bearer ${Cookies.get('accessToken')}`,
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ status: pendingStatus })
             });
 
             const result = await response.json();
@@ -237,6 +238,7 @@ const ServiceId = () => {
                                     Mudar para Pronto
                                 </Button>
                             )}
+
                             {(service?.status === 'READY' && (user?.role === "ADMIN" || user?.role === "MASTER")) && (
                                 <div>
                                     <div className='flex flex-col items-center text-center'>
@@ -259,6 +261,38 @@ const ServiceId = () => {
                                     </Button>
                                 </div>
                             )}
+                            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            {!whatsappLinkGenerated ? 'Gerar Link do WhatsApp' : 'Confirmar Atualização de Status'}
+                                        </AlertDialogTitle>
+                                    </AlertDialogHeader>
+                                    <AlertDialogDescription>
+                                        {!whatsappLinkGenerated
+                                            ? 'Clique para gerar o link do WhatsApp e enviar a mensagem.'
+                                            : 'Após enviar a mensagem no WhatsApp, confirme para atualizar o status.'}
+                                    </AlertDialogDescription>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel onClick={() => {
+                                            setShowAlert(false);
+                                            setWhatsappLinkGenerated(false);
+                                        }}>
+                                            Cancelar
+                                        </AlertDialogCancel>
+                                        {!whatsappLinkGenerated ? (
+                                            <AlertDialogAction className='bg-realce text-black' onClick={generateWhatsAppLink}>
+                                                Gerar Link do WhatsApp
+                                            </AlertDialogAction>
+                                        ) : (
+                                            <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
+                                                Confirmar Atualização de Status
+                                            </AlertDialogAction>
+                                        )}
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
                             <Timeline
                                 nowTime={service?.now_time || undefined}
                                 readyTime={service?.ready_time || undefined}
