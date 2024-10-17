@@ -17,6 +17,7 @@ import { Dialog } from '@headlessui/react';
 import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '@/context/UserContext';
 import Cookies from 'js-cookie';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Page: React.FC = () => {
     const pathName = usePathname();
@@ -138,7 +139,15 @@ const Page: React.FC = () => {
     }
 
     if (!surfboard) {
-        return <p className="text-white">Carregando prancha...</p>;
+        return (
+            <div className="flex flex-col items-center gap-4 p-4">
+                <Skeleton className="w-72 h-72 rounded-xl" />
+                <Skeleton className="h-6 w-40 rounded-md" />
+                <Skeleton className="h-6 w-32 rounded-md" />
+                <Skeleton className="h-6 w-20 rounded-md" />
+                <Skeleton className="w-full h-32 rounded-md" />
+            </div>
+        );
     }
 
     return (

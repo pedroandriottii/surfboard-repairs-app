@@ -18,9 +18,11 @@ import Footer from '@/components/base/footer';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
 import Cookies from 'js-cookie';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ServiceId = () => {
     const [service, setService] = useState<Service | null>(null);
+    const [loading, setLoading] = useState(true); // Estado de carregamento
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -57,6 +59,8 @@ const ServiceId = () => {
                 description: 'Falha ao carregar o serviço.',
                 variant: 'destructive',
             });
+        } finally {
+            setLoading(false); // Define loading como falso após o carregamento dos dados
         }
     };
 
@@ -129,7 +133,7 @@ const ServiceId = () => {
                 });
                 router.push('/home');
             } else {
-                const result = await response.json()
+                const result = await response.json();
                 toast({
                     title: "Erro",
                     description: `Erro ao deletar serviço: ${result.error || "Erro desconhecido"}`,
@@ -159,42 +163,67 @@ const ServiceId = () => {
                         <p className='text-black pl-4 justify-self-start'>Voltar</p>
                     </Link>
                     <div className='flex flex-col text-white w-full h-full items-center md:flex-row md:p-8'>
-                        <div className="relative w-2/3 items-center md:w-1/2" style={{ aspectRatio: '1/1' }}>
-                            <Image
-                                src={service?.photo_url ?? '/placeholder.jpg'}
-                                alt='Foto da Prancha'
-                                layout='fill'
-                                className="rounded-lg object-cover"
-                            />
-                        </div>
+                        {loading ? (
+                            <Skeleton className="w-2/3 h-full rounded-lg" />
+                        ) : (
+                            <div className="relative w-2/3 items-center md:w-1/2" style={{ aspectRatio: '1/1' }}>
+                                <Image
+                                    src={service?.photo_url ?? '/placeholder.jpg'}
+                                    alt='Foto da Prancha'
+                                    layout='fill'
+                                    className="rounded-lg object-cover"
+                                />
+                            </div>
+                        )}
                         <div className='flex flex-col justify-self-start w-full p-4 gap-4'>
                             <h1 className='text-realce font-bold md:text-2xl text-center'>Detalhes do Serviço</h1>
-                            <div className='md:flex-row w-full h-full flex flex-col gap-4'>
-                                <div className='md:w-1/2'>
-                                    <p className='text-realce'>Prancha</p>
-                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
-                                </div>
-                                <div className='md:w-1/2'>
-                                    <p className='text-realce'>Valor</p>
-                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
-                                </div>
-                            </div>
-                            {service?.description && (
-                                <div>
-                                    <p className='text-realce'>Descrição</p>
-                                    <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
+                            {loading ? (
+                                <>
+                                    <Skeleton className="h-8 w-full rounded-md" />
+                                    <Skeleton className="h-8 w-full rounded-md" />
+                                    <Skeleton className="h-8 w-full rounded-md" />
+                                </>
+                            ) : (
+                                <div className='md:flex-row w-full h-full flex flex-col gap-4'>
+                                    <div className='md:w-1/2'>
+                                        <p className='text-realce'>Prancha</p>
+                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.client_name}</p>
+                                    </div>
+                                    <div className='md:w-1/2'>
+                                        <p className='text-realce'>Valor</p>
+                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>R$ {service?.value}</p>
+                                    </div>
                                 </div>
                             )}
-                            {(user?.role == 'ADMIN' || user?.role == 'MASTER') && (
+                            {loading ? (
+                                <Skeleton className="h-8 w-full rounded-md" />
+                            ) : (
+                                service?.description && (
+                                    <div>
+                                        <p className='text-realce'>Descrição</p>
+                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.description}</p>
+                                    </div>
+                                )
+                            )}
+                            {user?.role === 'ADMIN' || user?.role === 'MASTER' ? (
                                 <div className='flex flex-col gap-4'>
-                                    <div>
-                                        <p className='text-realce'>Email</p>
-                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.user_mail}</p>
-                                    </div>
-                                    <div>
-                                        <p className='text-realce'>Telefone</p>
-                                        <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.phone}</p>
-                                    </div>
+                                    {loading ? (
+                                        <>
+                                            <Skeleton className="h-8 w-full rounded-md" />
+                                            <Skeleton className="h-8 w-full rounded-md" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div>
+                                                <p className='text-realce'>Email</p>
+                                                <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.user_mail}</p>
+                                            </div>
+                                            <div>
+                                                <p className='text-realce'>Telefone</p>
+                                                <p className='bg-input-color py-1 rounded-md text-black pl-2'>{service?.phone}</p>
+                                            </div>
+                                        </>
+                                    )}
                                     {service?.payment_method && (
                                         <div>
                                             <p className='text-realce'>Método de Pagamento</p>
@@ -202,7 +231,7 @@ const ServiceId = () => {
                                         </div>
                                     )}
                                 </div>
-                            )}
+                            ) : null}
                             {(service?.status === 'PENDING' && (user?.role === "ADMIN" || user?.role === "MASTER")) && (
                                 <Button onClick={() => { setPendingStatus('READY'); setShowAlert(true); }} className='mt-4 bg-realce text-black font-bold hover:bg-white'>
                                     Mudar para Pronto
@@ -230,39 +259,6 @@ const ServiceId = () => {
                                     </Button>
                                 </div>
                             )}
-
-                            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                            {!whatsappLinkGenerated ? 'Gerar Link do WhatsApp' : 'Confirmar Atualização de Status'}
-                                        </AlertDialogTitle>
-                                    </AlertDialogHeader>
-                                    <AlertDialogDescription>
-                                        {!whatsappLinkGenerated
-                                            ? 'Clique para gerar o link do WhatsApp e enviar a mensagem.'
-                                            : 'Após enviar a mensagem no WhatsApp, confirme para atualizar o status.'}
-                                    </AlertDialogDescription>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel onClick={() => {
-                                            setShowAlert(false);
-                                            setWhatsappLinkGenerated(false);
-                                        }}>
-                                            Cancelar
-                                        </AlertDialogCancel>
-                                        {!whatsappLinkGenerated ? (
-                                            <AlertDialogAction className='bg-realce text-black' onClick={generateWhatsAppLink}>
-                                                Gerar Link do WhatsApp
-                                            </AlertDialogAction>
-                                        ) : (
-                                            <AlertDialogAction className='bg-realce text-black' onClick={updateStatusHandler}>
-                                                Confirmar Atualização de Status
-                                            </AlertDialogAction>
-                                        )}
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-
                             <Timeline
                                 nowTime={service?.now_time || undefined}
                                 readyTime={service?.ready_time || undefined}

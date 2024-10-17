@@ -13,10 +13,7 @@ import { ServiceStatus } from '@prisma/client';
 
 const StatusPage: React.FC = () => {
     const pathname = usePathname();
-
     const status = pathname.split('/').pop()
-
-    console.log(status)
 
     const getServiceStatus = (status: string | string[] | undefined): ServiceStatus => {
         switch (status) {

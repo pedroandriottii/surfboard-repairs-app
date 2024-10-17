@@ -30,7 +30,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
             if (!token) {
                 throw new Error('Token JWT não encontrado nos cookies.');
             }
-
+            console.log("STATUS É ESSE AQUI ---->>> ", status)
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services?status=${status}`, {
                 method: 'GET',
                 headers: {
@@ -58,6 +58,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
         const fetchServices = async () => {
             if (user?.role) {
                 try {
+                    console.log("Status Filter atual: ", statusFilter);
                     const services = await getServicesByStatus(statusFilter);
                     setServices(services);
                 } catch (error) {
