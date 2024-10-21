@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
+import { Badge } from '../ui/badge';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface StatusSelectorProps {
     currentStatus: string;
@@ -19,17 +21,18 @@ const StatusSelector: React.FC<StatusSelectorProps> = ({ currentStatus }) => {
 
     return (
         <div className='pr-4'>
-            <Button
+            <Badge
                 onClick={() => setOpen(true)}
-                className="bg-realce text-black hover:bg-white hover:text-black"
+                className="bg-realce text-black hover:bg-white hover:text-black flex gap-2"
             >
+                <FilterListIcon />
                 Filtrar Status
-            </Button>
+            </Badge>
 
             <Drawer open={open} onOpenChange={setOpen}>
-                <DrawerContent className="bg-black text-white">
+                <DrawerContent className="bg-black text-white border-none">
                     <DrawerHeader>
-                        <DrawerTitle>Selecionar Status</DrawerTitle>
+                        <DrawerTitle>Selecione o Status</DrawerTitle>
                         <DrawerClose />
                     </DrawerHeader>
                     <div className="p-4 space-y-4">

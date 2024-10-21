@@ -9,20 +9,17 @@ import BackgroundImage from '@/components/base/backgroundImage';
 import Footer from '@/components/base/footer';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const HomePage: React.FC = () => {
     const { user } = useUser();
     const router = useRouter();
 
     useEffect(() => {
-        if (!user) {
+        if (!user && typeof user !== 'undefined') {
             router.push('/');
         }
     }, [user, router]);
-
-    if (!user) {
-        return <p>Carregando...</p>;
-    }
 
     return (
         <div className="relative w-full flex flex-col min-h-screen overflow-x-hidden">
@@ -34,33 +31,55 @@ const HomePage: React.FC = () => {
                 </div>
                 <div className='text-white flex flex-col w-full gap-4 flex-grow'>
                     <div className='flex flex-col gap-4 p-4'>
-                        <h2 className='font-bold text-xl'>Bem Vindo, {user?.name}<span className='text-realce'></span></h2>
+                        <h2 className='font-bold text-xl'>
+                            Bem Vindo,{' '}
+                            {user ? (
+                                <span className='text-realce'>{user.name}</span>
+                            ) : (
+                                <Skeleton className="inline-block w-24 h-6 bg-gray-300 rounded-md" />
+                            )}
+                            <span className='text-realce'></span>
+                        </h2>
                     </div>
+
                     <Link href='/services/status/pending'>
                         <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Pendentes</p>
                             <ChevronRightIcon />
                         </div>
                     </Link>
+
                     <div className='p-4'>
-                        <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
+                        {user ? (
+                            <ServicesList initialStatus='PENDING' exibitionMode='LIST' />
+                        ) : (
+                            <Skeleton className="w-full h-40 bg-gray-300 rounded-lg" />
+                        )}
                     </div>
+
                     <Link href='/services/status/ready'>
                         <div className='font-bold flex items-center bg-realce w-1/3 md:w-1/12 justify-between text-black py-1 rounded-r-full'>
                             <p className='ml-4'>Prontos</p>
                             <ChevronRightIcon />
                         </div>
                     </Link>
+
                     <div className='p-4'>
-                        <ServicesList initialStatus='READY' exibitionMode='LIST' />
+                        {user ? (
+                            <ServicesList initialStatus='READY' exibitionMode='LIST' />
+                        ) : (
+                            <Skeleton className="w-full h-40 bg-gray-300 rounded-lg" />
+                        )}
                     </div>
                 </div>
+
                 {(user?.role == 'MASTER' || user?.role == 'ADMIN') && (
                     <Link href={'/services/create'} className='fixed bottom-4 left-4 z-50 flex w-16 h-16 bg-realce rounded-full items-center justify-center'>
                         <AddIcon className='text-black font-bold' fontSize='large' />
                     </Link>
                 )}
             </div>
+
             <div className='relative z-10 flex flex-col items-center w-full flex-grow'>
                 <Footer />
             </div>

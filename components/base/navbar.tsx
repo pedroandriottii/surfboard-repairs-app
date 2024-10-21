@@ -18,6 +18,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useUser } from '@/context/UserContext';
+import { Bell } from 'lucide-react';
 
 const Navbar: React.FC = () => {
     const pathname = usePathname();
@@ -178,7 +179,12 @@ const Navbar: React.FC = () => {
                                 Serviços
                             </Button>
                         </Link>
-                        <UserButton />
+                        <div className='flex items-center gap-4'>
+                            <span className='text-white'>
+                                <Bell />
+                            </span>
+                            <UserButton />
+                        </div>
                     </div>
                 </div>
             )}
@@ -194,7 +200,12 @@ const Navbar: React.FC = () => {
                             width={50}
                             height={50} />
                     </Link>
-                    <UserButton />
+                    <div className='flex items-center gap-4'>
+                        <span className='text-white'>
+                            <Bell />
+                        </span>
+                        <UserButton />
+                    </div>
                 </div><Drawer open={drawerOpen} onClose={toggleDrawer(false)} sx={{
                     '& .MuiDrawer-paper': {
                         backgroundColor: '#212121',

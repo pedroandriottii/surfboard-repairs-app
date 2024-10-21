@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { useUser } from '@/context/UserContext';
 import Cookies from 'js-cookie';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ExibitionMode = {
     LIST: "LIST",
@@ -23,6 +24,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
     const { user } = useUser();
     const [services, setServices] = useState<Service[] | null>(null);
     const [statusFilter] = useState<ServiceStatus>(initialStatus);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getServicesByStatus = async (status: ServiceStatus) => {
         try {
@@ -30,7 +32,6 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
             if (!token) {
                 throw new Error('Token JWT não encontrado nos cookies.');
             }
-            console.log("STATUS É ESSE AQUI ---->>> ", status)
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services?status=${status}`, {
                 method: 'GET',
                 headers: {
@@ -46,7 +47,6 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
             }
 
             const data: Service[] = await response.json();
-            console.log('Service List:', data);
             return data;
         } catch (error) {
             console.error('Erro ao buscar os serviços:', error);
@@ -56,13 +56,15 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
 
     useEffect(() => {
         const fetchServices = async () => {
+            setIsLoading(true); // Iniciar o loading
             if (user?.role) {
                 try {
-                    console.log("Status Filter atual: ", statusFilter);
                     const services = await getServicesByStatus(statusFilter);
                     setServices(services);
                 } catch (error) {
                     console.error('Erro ao buscar os serviços:', error);
+                } finally {
+                    setIsLoading(false); // Finalizar o loading
                 }
             }
         };
@@ -79,13 +81,60 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
         return `${day}/${month}/${d.getFullYear()}`;
     };
 
+    const renderSkeleton = () => (
+        <>
+            {Array.from({ length: 6 }).map((_, i) => (
+                <CarouselItem key={i} className="basis-1/2 flex flex-col items-center md:basis-1/6">
+                    <Skeleton className="relative w-full h-40 bg-gray-200 rounded-lg" />
+                    <div className="w-full bg-gray-100 h-6 mt-2 rounded-md"></div>
+                    <div className="w-full bg-gray-100 h-6 mt-1 rounded-md"></div>
+                </CarouselItem>
+            ))}
+        </>
+    );
+
     return (
         <div>
             {exibitionMode === ExibitionMode.LIST ? (
                 <Carousel>
                     <CarouselContent>
-                        {services?.map((service) => (
-                            <CarouselItem key={service.id} className="basis-1/2 flex flex-col items-center md:basis-1/6">
+                        {isLoading
+                            ? renderSkeleton()
+                            : services?.map((service) => (
+                                <CarouselItem key={service.id} className="basis-1/2 flex flex-col items-center md:basis-1/6">
+                                    <Link href={`/services/${service.id}`} className="w-full">
+                                        <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                            <Image
+                                                src={service.photo_url ?? '/placeholder.jpg'}
+                                                alt="Foto da Prancha"
+                                                layout="fill"
+                                                className="rounded-t-lg object-cover"
+                                            />
+                                        </div>
+                                        <div className="w-full flex justify-between items-center bg-realce text-black p-1 pl-4">
+                                            <p>{formatDate(service.max_time)}</p>
+                                            <ChevronRightIcon style={{ width: '24px', height: '24px' }} />
+                                        </div>
+                                        <div className='bg-white text-black font-bold p-1 pl-4 rounded-b-lg'>
+                                            <p className='truncate'>{service.client_name}</p>
+                                        </div>
+                                    </Link>
+                                </CarouselItem>
+                            ))}
+                    </CarouselContent>
+                </Carousel>
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-2">
+                    {isLoading
+                        ? Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="flex flex-col items-center">
+                                <Skeleton className="relative w-full h-40 bg-gray-200 rounded-lg" />
+                                <div className="w-full bg-gray-100 h-6 mt-2 rounded-md"></div>
+                                <div className="w-full bg-gray-100 h-6 mt-1 rounded-md"></div>
+                            </div>
+                        ))
+                        : services?.map((service) => (
+                            <div key={service.id} className="flex flex-col items-center">
                                 <Link href={`/services/${service.id}`} className="w-full">
                                     <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
                                         <Image
@@ -103,33 +152,8 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                                         <p className='truncate'>{service.client_name}</p>
                                     </div>
                                 </Link>
-                            </CarouselItem>
+                            </div>
                         ))}
-                    </CarouselContent>
-                </Carousel>
-            ) : (
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 p-2">
-                    {services?.map((service) => (
-                        <div key={service.id} className="flex flex-col items-center">
-                            <Link href={`/services/${service.id}`} className="w-full">
-                                <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                    <Image
-                                        src={service.photo_url ?? '/placeholder.jpg'}
-                                        alt="Foto da Prancha"
-                                        layout="fill"
-                                        className="rounded-t-lg object-cover"
-                                    />
-                                </div>
-                                <div className="w-full flex justify-between items-center bg-realce text-black p-1 pl-4">
-                                    <p>{formatDate(service.max_time)}</p>
-                                    <ChevronRightIcon style={{ width: '24px', height: '24px' }} />
-                                </div>
-                                <div className='bg-white text-black font-bold p-1 pl-4 rounded-b-lg'>
-                                    <p className='truncate'>{service.client_name}</p>
-                                </div>
-                            </Link>
-                        </div>
-                    ))}
                 </div>
             )}
         </div>
