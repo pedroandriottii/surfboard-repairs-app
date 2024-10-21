@@ -94,7 +94,13 @@ export const LoginForm = () => {
     };
 
     if (!isEmailVerified && verificationEmail) {
-        return <VerifyCodeForm email={verificationEmail} />;
+        return (
+            <CardWrapper
+            headerTitle="Verificação de E-mail"
+            headerLabel="Insira o código de 6 dígitos enviado para o seu e-mail.">
+                <VerifyCodeForm email={verificationEmail} />
+            </CardWrapper>
+    );
     }
 
     return (

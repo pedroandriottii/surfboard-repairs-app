@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="relative flex flex-col min-h-screen">
-      <div className="absolute inset-0 bg-black h-full w-full">
+      <div className="absolute inset-0 bg-realce-bg h-full w-full">
         <div className="md:hidden h-full w-full">
           <Image
             src={'/realce_home.webp'}
@@ -23,7 +23,7 @@ export default function Home() {
             height={380}
             className="z-0 w-1/2 h-full object-cover opacity-70"
           />
-          <div className="bg-black w-1/2 h-full"></div>
+          <div className="bg-realce-bg w-1/2 h-full"></div>
         </div>
       </div>
       <div className="relative z-10 flex flex-col flex-grow justify-between">

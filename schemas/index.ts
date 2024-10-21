@@ -110,3 +110,10 @@ export const SurfboardSchema = z.object({
     ]).optional(),
     is_new: z.boolean(),
 });
+
+export const OtpFormSchema = z.object({
+    pin: z.string().min(6, {
+        message: "O código deve ter 6 dígitos.",
+    }),
+    email: z.string().email(),
+});

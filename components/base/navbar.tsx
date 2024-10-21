@@ -172,13 +172,6 @@ const Navbar: React.FC = () => {
                         />
                     </Link>
                     <div className='flex gap-4 items-center'>
-                        <Link href={'/home'}>
-                            <Button
-                                className={`bg-transparent border-2 border-realce text-realce max-h-8 rounded-xl hover:bg-white hover:text-black hover:border-none hover:transition-all ${pathname.startsWith('/home') || pathname.startsWith('/services/') || pathname === '/create-service' ? 'bg-realce text-black' : ''}`}
-                            >
-                                Serviços
-                            </Button>
-                        </Link>
                         <div className='flex items-center gap-4'>
                             <span className='text-white'>
                                 <Bell />

@@ -24,6 +24,7 @@ const config = {
         'realce-background': '#D0D5DD',
         'realce-seccondary-background': '#F9FAFB',
         'marketplace-bg': '#212121',
+        'realce-bg': '#121212',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,17 +1,16 @@
 'use client';
+
 import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterSchema } from "@/schemas";
 import { register } from "@/actions/register";
-import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import InputMask from 'react-input-mask';
 import * as z from "zod";
-
-
+import { useRouter } from "next/navigation";
 import {
     Form,
     FormControl,
@@ -21,13 +20,18 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { FormSuccess } from "../form-success";
-import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { VerifyCodeForm } from "./verification-form";
+import { CardWrapper } from "@/components/auth/card-wrapper";
 
 export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
-    const router = useRouter()
+    const [isEmailVerified, setIsEmailVerified] = useState<boolean>(true);
+    const [verificationEmail, setVerificationEmail] = useState<string | undefined>();
+    const router = useRouter();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -55,23 +59,38 @@ export const RegisterForm = () => {
                 setSuccess(data.success);
 
                 if (data.success) {
-                    form.reset()
-                    setTimeout(() => {
-                        router.push('/auth/verification')
-                    }, 3000)
+                    toast({
+                        title: "Registro bem-sucedido!",
+                        description: "Verifique seu e-mail para continuar.",
+                        variant: "success",
+                    });
+
+                    setIsEmailVerified(false);
+                    setVerificationEmail(values.email);
                 }
             });
         });
     };
 
+    if (!isEmailVerified && verificationEmail) {
+        return (
+            <VerifyCodeForm email={verificationEmail} />
+        );
+    }
+
     return (
-        <CardWrapper headerTitle="Cadastre-se" headerLabel="Crie sua conta!" backButtonLabel="Já tem uma conta?" backButtonHref="/auth/login" showSocial>
+        <div className="space-y-6">
+            <div className="flex space-x-2 mb-4">
+                <div className="h-2 flex-1 rounded bg-realce"></div>
+                <div className="h-2 flex-1 rounded bg-gray-300"></div>
+            </div>
+
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
                         <FormField control={form.control} name="name" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Nome</FormLabel>
+                                <FormLabel className="text-realce">Nome</FormLabel>
                                 <FormControl>
                                     <Input {...field} placeholder="João Silva" type="text" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
@@ -80,7 +99,7 @@ export const RegisterForm = () => {
                         )} />
                         <FormField control={form.control} name="email" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel className="text-realce">Email</FormLabel>
                                 <FormControl>
                                     <Input {...field} placeholder="exemplo@email.com" type="email" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
@@ -89,16 +108,16 @@ export const RegisterForm = () => {
                         )} />
                         <FormField control={form.control} name="phone" render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Telefone</FormLabel>
+                                <FormLabel className="text-realce">Telefone</FormLabel>
                                 <FormControl>
-                                    <InputMask mask="+5\5 (99) 99999-9999" {...field} placeholder="(99) 99999-9999" required disabled={isPending} className="bg-input-color py-2 rounded-md text-black" />
+                                    <InputMask mask="+5\5 (99) 99999-9999" {...field} placeholder="(99) 99999-9999" required disabled={isPending} className="pl-3 bg-input-color py-2 rounded-md text-black" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="password" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Senha</FormLabel>
+                                <FormLabel className="text-realce">Senha</FormLabel>
                                 <FormControl>
                                     <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
                                 </FormControl>
@@ -108,11 +127,11 @@ export const RegisterForm = () => {
                     </div>
                     <FormError message={error} />
                     <FormSuccess message={success} />
-                    <Button type="submit" className="w-full bg-realce text-black font-bold" disabled={isPending}>
+                    <Button type="submit" className="w-full bg-realce text-black font-bold hover:bg-realce/50" disabled={isPending}>
                         Cadastrar
                     </Button>
                 </form>
             </Form>
-        </CardWrapper>
+        </div>
     );
 };

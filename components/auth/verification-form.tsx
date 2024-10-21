@@ -25,13 +25,9 @@ import { useRouter } from "next/navigation";
 import { CardWrapper } from "./card-wrapper";
 import Cookies from "js-cookie";
 import { useUser } from "@/context/UserContext";
+import {OtpFormSchema} from "@/schemas";
 
-const FormSchema = z.object({
-    pin: z.string().min(6, {
-        message: "O código deve ter 6 dígitos.",
-    }),
-    email: z.string().email(),
-});
+
 
 export function VerifyCodeForm({ email }: { email: string }) {
     const [error, setError] = useState<string | undefined>();
@@ -40,15 +36,15 @@ export function VerifyCodeForm({ email }: { email: string }) {
     const { toast } = useToast();
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+    const form = useForm<z.infer<typeof OtpFormSchema>>({
+        resolver: zodResolver(OtpFormSchema),
         defaultValues: {
             pin: "",
             email: email,
         },
     });
 
-    async function onSubmit(data: z.infer<typeof FormSchema>) {
+    async function onSubmit(data: z.infer<typeof OtpFormSchema>) {
         setError(undefined);
         setSuccess(undefined);
 
@@ -83,10 +79,7 @@ export function VerifyCodeForm({ email }: { email: string }) {
     }
 
     return (
-        <CardWrapper
-            headerTitle="Verificação de E-mail"
-            headerLabel="Insira o código de 6 dígitos enviado para o seu e-mail."
-        >
+      
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col items-center  space-y-6">
                     <FormField
@@ -127,6 +120,6 @@ export function VerifyCodeForm({ email }: { email: string }) {
                     )}
                 </form>
             </Form>
-        </CardWrapper>
+        
     );
 }

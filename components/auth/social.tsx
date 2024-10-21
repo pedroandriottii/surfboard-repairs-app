@@ -9,7 +9,7 @@ export const Social = () => {
     }
     return (
         <div className="flex items-center w-full gap-x-2">
-            <Button size="lg" className="w-full gap-2 bg-black text-white border-realce rounded-xl hover:bg-realce font-bold hover:text-black" variant="outline" onClick={() => onClick("google")}>
+            <Button disabled size="lg" className="w-full gap-2 bg-black text-white border-realce rounded-xl hover:bg-realce font-bold hover:text-black" variant="outline" onClick={() => onClick("google")}>
                 <FcGoogle size="20px" />
                 <p >Entrar com Google</p>
             </Button>
