@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/input-otp";
 import { verifyCode } from "@/actions/verify-code";
 import { useRouter } from "next/navigation";
-import { CardWrapper } from "./card-wrapper";
 import Cookies from "js-cookie";
 import { useUser } from "@/context/UserContext";
 import {OtpFormSchema} from "@/schemas";

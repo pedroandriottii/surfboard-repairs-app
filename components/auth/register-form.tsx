@@ -22,7 +22,6 @@ import {
 import { FormSuccess } from "../form-success";
 import { useToast } from "@/hooks/use-toast";
 import { VerifyCodeForm } from "./verification-form";
-import { CardWrapper } from "@/components/auth/card-wrapper";
 
 export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
@@ -30,7 +29,6 @@ export const RegisterForm = () => {
     const [isPending, startTransition] = useTransition();
     const [isEmailVerified, setIsEmailVerified] = useState<boolean>(true);
     const [verificationEmail, setVerificationEmail] = useState<string | undefined>();
-    const router = useRouter();
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
