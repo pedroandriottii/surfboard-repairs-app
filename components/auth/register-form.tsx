@@ -19,22 +19,20 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { FormSuccess } from "../form-success";
-import { useToast } from "@/hooks/use-toast";
-import { VerifyCodeForm } from "./verification-form";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
-    const [isEmailVerified, setIsEmailVerified] = useState<boolean>(true);
-    const [verificationEmail, setVerificationEmail] = useState<string | undefined>();
-    const { toast } = useToast();
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
         defaultValues: {
             email: "",
             password: "",
+            confirmPassword: "",
             name: "",
             phone: "",
         }
@@ -50,34 +48,20 @@ export const RegisterForm = () => {
             phone: values.phone.replace(/\D/g, ''),
         };
 
-        startTransition(() => {
-            register(transformedValues).then((data) => {
-                setError(data.error);
-                setSuccess(data.success);
-
-                if (data.success) {
-                    toast({
-                        title: "Registro bem-sucedido!",
-                        description: "Verifique seu e-mail para continuar.",
-                        variant: "success",
-                    });
-
-                    setIsEmailVerified(false);
-                    setVerificationEmail(values.email);
+        startTransition(async () => {
+            try {
+                const response = await register(transformedValues);
+                if (response.success) {
+                    setSuccess(response.success);
+                    router.push(`/auth/verify?email=${transformedValues.email}`);
+                } else {
+                    setError(response.error || "Erro ao tentar cadastrar usuário.");
                 }
-            });
+            } catch (error) {
+                setError(error instanceof Error ? error.message : "Erro desconhecido.");
+            }
         });
     };
-
-    if (!isEmailVerified && verificationEmail) {
-        return (
-            <>
-                <p className='text-white text-center text-sm'>
-                    Enviamos um e-mail para <strong className="text-realce">{verificationEmail}</strong> com um código de verificação.
-                </p>
-                <VerifyCodeForm email={verificationEmail} /></>
-        );
-    }
 
     return (
         <div className="space-y-6">
@@ -120,9 +104,20 @@ export const RegisterForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
+                        <FormField control={form.control} name="confirmPassword" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-realce">Confirme a Senha</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="******" type="password" disabled={isPending} className="bg-input-color text-black" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </div>
+
                     <FormError message={error} />
                     <FormSuccess message={success} />
+                    
                     <Button type="submit" className="w-full bg-realce text-black font-bold hover:bg-realce/50" disabled={isPending}>
                         Cadastrar
                     </Button>

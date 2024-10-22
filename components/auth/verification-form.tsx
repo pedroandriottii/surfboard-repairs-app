@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,8 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useUser } from "@/context/UserContext";
 import {OtpFormSchema} from "@/schemas";
+import { FormSuccess } from "../form-success";
+import { FormError } from "../form-error";
 
 
 
@@ -32,7 +33,6 @@ export function VerifyCodeForm({ email }: { email: string }) {
     const [error, setError] = useState<string | undefined>();
     const [success, setSuccess] = useState<string | undefined>();
     const { setUser } = useUser();
-    const { toast } = useToast();
     const router = useRouter();
 
     const form = useForm<z.infer<typeof OtpFormSchema>>({
@@ -44,6 +44,7 @@ export function VerifyCodeForm({ email }: { email: string }) {
     });
 
     async function onSubmit(data: z.infer<typeof OtpFormSchema>) {
+        console.log(data)
         setError(undefined);
         setSuccess(undefined);
 
@@ -55,11 +56,6 @@ export function VerifyCodeForm({ email }: { email: string }) {
                 return
             } else {
                 setSuccess(response.message);
-                toast({
-                    title: "Verificação bem-sucedida!",
-                    description: "Seu e-mail foi verificado com sucesso.",
-                    variant: "success",
-                });
                 Cookies.set('accessToken', response.accessToken, {
                     expires: 30,
                     path: '/',
@@ -103,20 +99,8 @@ export function VerifyCodeForm({ email }: { email: string }) {
                             </FormItem>
                         )}
                     />
-
-
+                    {error && <FormError message={error}/>}
                     <Button type="submit" className="bg-realce w-2/3 text-black hover:bg-realce/70">Verificar</Button>
-
-                    {error && (
-                        <div className="text-red-500 mt-2">
-                            <p>{error}</p>
-                        </div>
-                    )}
-                    {success && (
-                        <div className="text-green-500 mt-2">
-                            <p>{success}</p>
-                        </div>
-                    )}
                 </form>
             </Form>
         

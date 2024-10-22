@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { LoginButton } from "@/components/auth/login-button";
 import Image from 'next/image';
 import Link from "next/link";
 
@@ -42,11 +41,12 @@ export default function Home() {
                 <p>Cadastre-se</p>
               </Button>
             </Link>
-            <LoginButton mode="modal" asChild>
+            <Link href={'/auth/login'}>
               <Button className="bg-realce text-black font-bold px-10 rounded-full max-h-6 max-w-36 hover:bg-white">
                 <p>Login</p>
               </Button>
-            </LoginButton>
+            </Link>
+            
           </div>
         </div>
         <div className="flex flex-col p-6 justify-center w-full md:justify-center items-center">

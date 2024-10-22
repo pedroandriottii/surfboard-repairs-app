@@ -1,5 +1,3 @@
-import Cookies from 'js-cookie';
-
 export async function login(email: string, password: string) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -12,18 +10,17 @@ export async function login(email: string, password: string) {
 
         const data = await response.json();
 
+        console.log(data)
+        console.log(data.message)
+
         if (!response.ok) {
-            if (data.emailVerified === false) {
-                return { success: true, emailVerified: false };
+            if(response.status === 401 && data.message.includes('Email não verificado')){
+                return { success: false, emailVerified: false, email}
             }
             throw new Error(data.message || 'Erro ao fazer login.');
         }
-
-        if (data.emailVerified) {
-            Cookies.set('accessToken', data.accessToken, { expires: 1 });
-        }
-
-        return { success: true, accessToken: data.accessToken, user: data.user, error: '', emailVerified: data.emailVerified };
+      
+        return { success: true, accessToken: data.accessToken, user: data.user, error: ''};
     } catch (error) {
         if (error instanceof Error) {
             return { success: false, error: error.message };

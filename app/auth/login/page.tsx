@@ -1,10 +1,10 @@
 'use client'
 import Link from 'next/link'
 import Image from "next/image"
-import { RegisterForm } from '@/components/auth/register-form'
+import { LoginForm } from '@/components/auth/login-form'
 
 
-export default function RegisterPage() {
+export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-realce-bg text-white relative overflow-hidden">
       <div className="md:hidden absolute inset-0">
@@ -18,14 +18,14 @@ export default function RegisterPage() {
             height={100}
           />
           <h2 className="mt-6 text-center text-3xl font-bold">
-            Crie sua conta!
+            Login
           </h2>
         </div>
-        <RegisterForm />
+        <LoginForm />
         <p className="mt-2 text-center text-sm text-gray-400">
-          Já tem uma conta?{' '}
-          <Link href="/auth/login" className="text-realce hover:text-realce/80">
-            Faça login
+          Não tem uma conta?{' '}
+          <Link href="/auth/register" className="text-realce hover:text-realce/80">
+            Cadastre-se
           </Link>
         </p>
       </div>

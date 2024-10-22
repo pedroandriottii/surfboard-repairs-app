@@ -14,16 +14,9 @@ import { Info } from 'lucide-react';
 
 const HomePage: React.FC = () => {
     const { user } = useUser();
-    const router = useRouter();
 
     const [hasPendingServices, setHasPendingServices] = useState(true);
     const [hasReadyServices, setHasReadyServices] = useState(true);
-
-    useEffect(() => {
-        if (!user && typeof user !== 'undefined') {
-            router.push('/');
-        }
-    }, [user, router]);
 
     const handleNoPendingServices = () => {
         setHasPendingServices(false);

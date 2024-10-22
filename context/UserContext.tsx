@@ -1,6 +1,7 @@
 'use client'
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 interface User {
     id: string;
@@ -20,6 +21,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const router = useRouter();
 
     const fetchUser = async () => {
         const accessToken = Cookies.get('accessToken');
@@ -38,6 +40,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             });
 
             if (!response.ok) {
+                if(response.status === 401) {
+                    Cookies.remove('accessToken');
+                    setUser(null);
+                    router.push('/auth/login');
+                }
                 throw new Error('Erro ao buscar o perfil do usuário');
             }
 

@@ -14,7 +14,11 @@ export const RegisterSchema = z.object({
     password: z.string()
         .min(6, { message: "A senha deve ter no mínimo 6 caracteres!" })
         .max(18, { message: "A senha deve ter no máximo 18 caracteres!" })
-        .regex(/^(?=.*[A-Z])(?=.*\d)/, { message: "A senha deve conter pelo menos uma letra maiúscula e um número!" }),
+        .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])/, { message: "A senha deve conter pelo menos uma letra maiúscula, um número e um desses caracteres especiais: !@#$%^&*." }),
+    confirmPassword: z.string().min(6, { message: "Confirme a senha!" })
+}).refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "As senhas não coincidem!",
 });
 
 export const ResetSchema = z.object({

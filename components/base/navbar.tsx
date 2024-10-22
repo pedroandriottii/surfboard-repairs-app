@@ -55,9 +55,11 @@ const Navbar: React.FC = () => {
                 </ListItem>
                 {showSubMenuServices && (
                     <List component="div" disablePadding className='pl-12'>
+                        {user?.role === 'MASTER' || user?.role === 'ADMIN' &&(
                         <ListItem button component={Link} href="/services/create" className='transition-all duration-300'>
                             <ListItemText primary="Cadastrar" />
                         </ListItem>
+                        )}
                         <ListItem button component={Link} href="/home" className='transition-all duration-300'>
                             <ListItemText primary="Visão Geral" />
                         </ListItem>
@@ -67,7 +69,7 @@ const Navbar: React.FC = () => {
                     </List>
                 )}
 
-                {user?.role === 'MASTER' || user?.role === 'ADMIN' ? (
+                {(user?.role === 'MASTER' || user?.role === 'ADMIN') && (
                     <>
                         <ListItem button onClick={toggleSubMenuMarketplace} className="flex justify-between items-center gap-4 text-realce">
                             <div className='flex items-center gap-4'>
@@ -87,7 +89,7 @@ const Navbar: React.FC = () => {
                             </List>
                         )}
                     </>
-                ) : null}
+                )}
 
                 <ListItem button onClick={handleLogout} className='transition-all duration-300 text-realce flex items-center'>
                     <LogOut className="mr-2" />
@@ -113,14 +115,12 @@ const Navbar: React.FC = () => {
                 </Link>
 
                 <div className='flex gap-4 items-center'>
-                    <span className='text-white'>
+                    <span className='text-realce'>
                         <Bell />
                     </span>
-                    {(user?.role === 'ADMIN' || user?.role === 'MASTER') && (
-                        <span className='text-realce cursor-pointer' onClick={toggleDrawer(true)}>
-                            <MenuIcon fontSize='large' />
-                        </span>
-                    )}
+                    <span className='text-realce cursor-pointer' onClick={toggleDrawer(true)}>
+                        <MenuIcon fontSize='large' />
+                    </span>
                 </div>
             </div>
 
@@ -143,7 +143,7 @@ const Navbar: React.FC = () => {
                                 />
                             </div>
                         </Link>
-                        <span className='text-white cursor-pointer' onClick={toggleDrawer(false)}>
+                        <span className='text-realce cursor-pointer' onClick={toggleDrawer(false)}>
                             <CloseIcon />
                         </span>
                     </div>

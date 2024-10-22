@@ -34,6 +34,8 @@ export default function middleware(req: NextRequest) {
 
     if (!accessToken && isAuthRoute) {
         if (!pathname.startsWith('/auth/verify-email')) {
+            console.log('Tentando redirecionar de volta e apagar cookie', accessToken);
+            req.headers.delete(accessToken)
             return NextResponse.redirect(new URL('/', req.url));
         }
     }
