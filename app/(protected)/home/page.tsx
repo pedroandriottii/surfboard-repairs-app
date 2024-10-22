@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
 
                     {!hasPendingServices && !hasReadyServices ? (
                         <div className="flex justify-center items-center flex-grow gap-4">
-                            <Info  className="text-realce"/>
+                            <Info className="text-realce" />
                             <p className="text-white text-lg">Você não tem pranchas cadastradas.</p>
                         </div>
                     ) : (
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
                                     <ServicesList
                                         initialStatus='PENDING'
                                         exibitionMode='LIST'
-                                        onEmpty={handleNoPendingServices} 
+                                        onEmpty={handleNoPendingServices}
                                     />
                                 ) : (
                                     <Skeleton className="w-full h-40 bg-gray-300 rounded-lg" />
@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
                                     <ServicesList
                                         initialStatus='READY'
                                         exibitionMode='LIST'
-                                        onEmpty={handleNoReadyServices} 
+                                        onEmpty={handleNoReadyServices}
                                     />
                                 ) : (
                                     <Skeleton className="w-full h-40 bg-gray-300 rounded-lg" />
@@ -108,7 +108,6 @@ const HomePage: React.FC = () => {
                     </Link>
                 )}
             </div>
-
             <Footer />
         </div>
     );

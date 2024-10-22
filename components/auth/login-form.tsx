@@ -96,11 +96,11 @@ export const LoginForm = () => {
     if (!isEmailVerified && verificationEmail) {
         return (
             <CardWrapper
-            headerTitle="Verificação de E-mail"
-            headerLabel="Insira o código de 6 dígitos enviado para o seu e-mail.">
+                headerTitle="Verificação de E-mail"
+                headerLabel="Insira o código de 6 dígitos enviado para o seu e-mail.">
                 <VerifyCodeForm email={verificationEmail} />
             </CardWrapper>
-    );
+        );
     }
 
     return (
@@ -165,7 +165,7 @@ export const LoginForm = () => {
                                         asChild
                                         className="px-0 font-normal text-white underline"
                                     >
-                                        <Link href="/auth/reset">Esqueceu a senha?</Link>
+                                        <Link href="/auth/forgot-password">Esqueceu a senha?</Link>
                                     </Button>
                                     <FormMessage />
                                 </FormItem>

@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import InputMask from 'react-input-mask';
 import * as z from "zod";
-import { useRouter } from "next/navigation";
 import {
     Form,
     FormControl,
@@ -72,17 +71,16 @@ export const RegisterForm = () => {
 
     if (!isEmailVerified && verificationEmail) {
         return (
-            <VerifyCodeForm email={verificationEmail} />
+            <>
+                <p className='text-white text-center text-sm'>
+                    Enviamos um e-mail para <strong className="text-realce">{verificationEmail}</strong> com um código de verificação.
+                </p>
+                <VerifyCodeForm email={verificationEmail} /></>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="flex space-x-2 mb-4">
-                <div className="h-2 flex-1 rounded bg-realce"></div>
-                <div className="h-2 flex-1 rounded bg-gray-300"></div>
-            </div>
-
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">

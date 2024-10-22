@@ -8,12 +8,13 @@ export const LoginSchema = z.object({
 });
 
 export const RegisterSchema = z.object({
-    email: z.string().email(
-        { message: "Email inválido" }
-    ),
-    password: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres!" }),
+    email: z.string().email({ message: "Email inválido" }),
     name: z.string().min(1, { message: "Insira o Nome!" }),
     phone: z.string().min(1, { message: "Insira o Telefone!" }),
+    password: z.string()
+        .min(6, { message: "A senha deve ter no mínimo 6 caracteres!" })
+        .max(18, { message: "A senha deve ter no máximo 18 caracteres!" })
+        .regex(/^(?=.*[A-Z])(?=.*\d)/, { message: "A senha deve conter pelo menos uma letra maiúscula e um número!" }),
 });
 
 export const ResetSchema = z.object({
