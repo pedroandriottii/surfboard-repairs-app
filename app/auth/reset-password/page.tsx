@@ -1,25 +1,14 @@
-'use client'
-import { useState, useTransition } from 'react';
+'use client';
+import { Suspense, useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ResetPasswordSchema } from '@/schemas';
 
-const ResetPasswordSchema = z.object({
-  password: z.string()
-    .min(6, { message: "A senha deve ter no mínimo 6 caracteres." })
-    .max(18, { message: "A senha deve ter no máximo 18 caracteres." })
-    .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])/, { message: "A senha deve conter pelo menos uma letra maiúscula, um número e um desses caracteres especiais: !@#$%^&*." }),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"]
-});
-
-export default function NewPasswordPage() {
+function ResetPasswordForm() {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -94,5 +83,13 @@ export default function NewPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewPasswordPage() {
+  return (
+    <Suspense fallback={<p>Carregando</p>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

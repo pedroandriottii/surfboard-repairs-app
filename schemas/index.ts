@@ -122,3 +122,14 @@ export const OtpFormSchema = z.object({
     }),
     email: z.string().email(),
 });
+
+export const ResetPasswordSchema = z.object({
+    password: z.string()
+        .min(6, { message: "A senha deve ter no mínimo 6 caracteres." })
+        .max(18, { message: "A senha deve ter no máximo 18 caracteres." })
+        .regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])/, { message: "A senha deve conter pelo menos uma letra maiúscula, um número e um desses caracteres especiais: !@#$%^&*." }),
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"]
+});
