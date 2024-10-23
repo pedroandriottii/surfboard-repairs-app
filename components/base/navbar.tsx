@@ -12,7 +12,7 @@ import ConstructionIcon from '@mui/icons-material/Construction';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LayoutDashboard, LogOut } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import Cookies from 'js-cookie';
 
@@ -55,10 +55,10 @@ const Navbar: React.FC = () => {
                 </ListItem>
                 {showSubMenuServices && (
                     <List component="div" disablePadding className='pl-12'>
-                        {user?.role === 'MASTER' || user?.role === 'ADMIN' &&(
-                        <ListItem button component={Link} href="/services/create" className='transition-all duration-300'>
-                            <ListItemText primary="Cadastrar" />
-                        </ListItem>
+                        {user?.role === 'MASTER' || user?.role === 'ADMIN' && (
+                            <ListItem button component={Link} href="/services/create" className='transition-all duration-300'>
+                                <ListItemText primary="Cadastrar" />
+                            </ListItem>
                         )}
                         <ListItem button component={Link} href="/home" className='transition-all duration-300'>
                             <ListItemText primary="Visão Geral" />
@@ -89,6 +89,14 @@ const Navbar: React.FC = () => {
                             </List>
                         )}
                     </>
+                )}
+                {user?.role === 'MASTER' && (
+                    <ListItem button component={Link} href="/dashboard" className='transition-all duration-300'>
+                        <div className='flex items-center gap-4'>
+                            <LayoutDashboard />
+                            <ListItemText primary="Dashboard" />
+                        </div>
+                    </ListItem>
                 )}
 
                 <ListItem button onClick={handleLogout} className='transition-all duration-300 text-realce flex items-center'>

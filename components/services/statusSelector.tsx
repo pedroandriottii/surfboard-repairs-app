@@ -23,7 +23,7 @@ const StatusSelector: React.FC<StatusSelectorProps> = ({ currentStatus }) => {
         <div className='pr-4'>
             <Badge
                 onClick={() => setOpen(true)}
-                className="bg-realce text-black hover:bg-white hover:text-black flex gap-2"
+                className="bg-realce text-black hover:bg-whiteflex gap-2"
             >
                 <FilterListIcon />
                 Filtrar Status
