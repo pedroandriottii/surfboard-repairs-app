@@ -12,9 +12,10 @@ import ConstructionIcon from '@mui/icons-material/Construction';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Bell, LayoutDashboard, LogOut } from 'lucide-react';
+import { LayoutDashboard, LogOut } from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import Cookies from 'js-cookie';
+import NotificationDropdown from '../notifications/notifications';
 
 const Navbar: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -123,9 +124,7 @@ const Navbar: React.FC = () => {
                 </Link>
 
                 <div className='flex gap-4 items-center'>
-                    <span className='text-realce'>
-                        <Bell />
-                    </span>
+                    <NotificationDropdown />
                     <span className='text-realce cursor-pointer' onClick={toggleDrawer(true)}>
                         <MenuIcon fontSize='large' />
                     </span>
