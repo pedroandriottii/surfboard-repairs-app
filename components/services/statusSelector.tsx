@@ -16,7 +16,7 @@ const StatusSelector: React.FC<StatusSelectorProps> = ({ currentStatus }) => {
     const statuses = [
         { label: 'Prontos', value: 'ready' },
         { label: 'Pendentes', value: 'pending' },
-        { label: 'Entregues', value: 'DELIVERED' },
+        { label: 'Entregues', value: 'delivered' },
     ];
 
     return (
