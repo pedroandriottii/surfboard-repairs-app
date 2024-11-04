@@ -33,7 +33,6 @@ const NotificationDropdown: React.FC = () => {
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  // Marcar notificações como lidas ao clicar
   const markAsRead = async (id: string) => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications/${id}/read`, {
@@ -50,10 +49,9 @@ const NotificationDropdown: React.FC = () => {
     }
   };
 
-  // Fetch notifications quando o componente monta
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [fetchNotifications]);
 
   return (
     <div className="relative">
@@ -71,9 +69,8 @@ const NotificationDropdown: React.FC = () => {
             notifications.map((notification, index) => (
               <div
                 key={notification.id}
-                className={`flex items-center justify-between w-full rounded p-2 ${
-                  index < notifications.length - 1 ? 'border-b border-gray-300' : ''
-                }`}
+                className={`flex items-center justify-between w-full rounded p-2 ${index < notifications.length - 1 ? 'border-b border-gray-300' : ''
+                  }`}
               >
                 <Link href={notification.url} onClick={() => markAsRead(notification.id)}>
                   <div className="flex items-center gap-4">

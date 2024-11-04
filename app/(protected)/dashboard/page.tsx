@@ -49,7 +49,7 @@ export default function Dashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [accessToken]);
 
   if (loading) {
     return (

@@ -43,12 +43,6 @@ const ServiceId = () => {
         FREE: 'Grátis',
     };
 
-    useEffect(() => {
-        if (typeof id === 'string') {
-            fetchService();
-        }
-    }, [id]);
-
     const fetchService = async () => {
         try {
             const fetchedService = await getServiceById(id);
@@ -63,6 +57,12 @@ const ServiceId = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (typeof id === 'string') {
+            fetchService();
+        }
+    }, [id, fetchService]);
 
     const generateWhatsAppLink = () => {
         if (!service?.phone) return;

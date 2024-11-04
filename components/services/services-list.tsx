@@ -64,7 +64,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                     const services = await getServicesByStatus(statusFilter);
                     setServices(services);
 
-                    if(services?.length === 0 && onEmpty) {
+                    if (services?.length === 0 && onEmpty) {
                         onEmpty();
                     }
                 } catch (error) {
@@ -76,7 +76,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
         };
 
         fetchServices();
-    }, [user?.role, statusFilter]);
+    }, [user?.role, statusFilter, onEmpty]);
 
     const formatDate = (date: Date) => {
         const d = new Date(date);
@@ -119,33 +119,33 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
                 )
             ) : services?.length === 0 ? (
                 <div className=' flex items-center gap-4'>
-                    <Info className='text-realce'/>
+                    <Info className='text-realce' />
                     <p>Você não tem pranchas nessa fase</p>
                 </div>
             ) : exibitionMode === ExibitionMode.LIST ? (
                 <Carousel>
                     <CarouselContent>
                         {services?.map((service) => (
-                           <CarouselItem key={service.id} className="basis-1/2 flex flex-col items-center md:basis-1/6">
-                           <Link href={`/services/${service.id}`} className="w-full">
-                               <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
-                                   <Image
-                                       fill
-                                       src={service.photo_url ?? '/placeholder.jpg'}
-                                       alt="Foto da Prancha"
-                                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                       className="rounded-t-lg object-cover"
-                                   />
-                               </div>
-                               <div className="w-full flex justify-between items-center bg-realce text-black p-1 pl-4">
-                                   <p>{formatDate(service.max_time)}</p>
-                                   <ChevronRightIcon style={{ width: '24px', height: '24px' }} />
-                               </div>
-                               <div className='bg-white text-black font-bold p-1 pl-4 rounded-b-lg'>
-                                   <p className='truncate'>{service.client_name}</p>
-                               </div>
-                           </Link>
-                       </CarouselItem>
+                            <CarouselItem key={service.id} className="basis-1/2 flex flex-col items-center md:basis-1/6">
+                                <Link href={`/services/${service.id}`} className="w-full">
+                                    <div className="relative w-full" style={{ aspectRatio: '1/1' }}>
+                                        <Image
+                                            fill
+                                            src={service.photo_url ?? '/placeholder.jpg'}
+                                            alt="Foto da Prancha"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            className="rounded-t-lg object-cover"
+                                        />
+                                    </div>
+                                    <div className="w-full flex justify-between items-center bg-realce text-black p-1 pl-4">
+                                        <p>{formatDate(service.max_time)}</p>
+                                        <ChevronRightIcon style={{ width: '24px', height: '24px' }} />
+                                    </div>
+                                    <div className='bg-white text-black font-bold p-1 pl-4 rounded-b-lg'>
+                                        <p className='truncate'>{service.client_name}</p>
+                                    </div>
+                                </Link>
+                            </CarouselItem>
                         ))}
                     </CarouselContent>
                 </Carousel>

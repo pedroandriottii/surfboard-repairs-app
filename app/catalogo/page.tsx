@@ -1,15 +1,16 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Surfboards } from '@prisma/client';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import Footer from '@/components/base/footer';
-import TuneIcon from '@mui/icons-material/Tune';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { ChevronLeft, Sliders } from 'lucide-react';
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -18,25 +19,42 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
+const generatePageNumbers = (currentPage: number, totalPages: number) => {
+  const pageNumbers: (number | string)[] = [];
+  const maxVisiblePages = 5;
+
+  if (totalPages <= maxVisiblePages) {
+    for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
+  } else {
+    pageNumbers.push(1);
+    if (currentPage > 3) pageNumbers.push("...");
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      pageNumbers.push(i);
+    }
+    if (currentPage < totalPages - 2) pageNumbers.push("...");
+    pageNumbers.push(totalPages);
+  }
+
+  return pageNumbers;
+};
+
 const Page: React.FC = () => {
   const [surfboards, setSurfboards] = useState<Surfboards[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [maxPrice, setMaxPrice] = useState<number>(0);
-  const [selectedPrice, setSelectedPrice] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
-    const fetchSurfboards = async () => {
+    const fetchSurfboards = async (page: number) => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards?page=${page}`);
         if (!response.ok) {
           throw new Error('Erro ao buscar pranchas de surf');
         }
         const data = await response.json();
-        const availableSurfboards = data.filter((surfboard: Surfboards) => surfboard.sold === null && surfboard.is_new === false);
+        const availableSurfboards = data.surfboards.filter((surfboard: Surfboards) => surfboard.sold === null && surfboard.is_new === false);
         setSurfboards(availableSurfboards);
-        const maxPrice = Math.max(...availableSurfboards.map((surfboard: Surfboards) => surfboard.price));
-        setMaxPrice(maxPrice);
-        setSelectedPrice(maxPrice);
+        setTotalPages(data.totalPages);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -46,15 +64,15 @@ const Page: React.FC = () => {
       }
     };
 
-    fetchSurfboards();
-  }, []);
+    fetchSurfboards(currentPage);
+  }, [currentPage]);
 
-  const handleSliderChange = (value: number[]) => {
-    setSelectedPrice(value[0]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black">
+    <div className="flex flex-col min-h-screen bg-realce-bg">
       <div className='flex justify-center p-2'>
         <Image
           src={'/realce_logo.png'}
@@ -65,46 +83,12 @@ const Page: React.FC = () => {
       </div>
       <div className='flex items-center justify-between'>
         <Link href='/' className='bg-realce text-black py-1 px-6 rounded-r-2xl flex items-center justify-around'>
-          <ArrowBackIcon />
+          <ChevronLeft className="h-4 w-4 mr-2" />
           Voltar
         </Link>
+        <h1 className='pr-4 text-white uppercase font-bold'>Pranchas Usadas</h1>
       </div>
-      <div className='flex text-white items-center p-4 justify-between'>
-        <p className='border-b-[1px] border-realce'>Pranchas Usadas</p>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Badge variant='secondary' className='flex items-center gap-2 cursor-pointer'>
-              <TuneIcon />
-              Filtro
-            </Badge>
-          </AlertDialogTrigger>
-          <AlertDialogContent className='bg-black text-white'>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Filtrar por Preço</AlertDialogTitle>
-              <AlertDialogDescription>
-                Ajuste o valor máximo para filtrar as pranchas de surf disponíveis.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="flex flex-col items-center gap-4">
-              <Slider
-                value={[selectedPrice]}
-                max={maxPrice}
-                step={50}
-                onValueChange={handleSliderChange}
-                className=''
-              />
-              <p className='text-realce'>{formatPrice(selectedPrice)}</p>
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel asChild>
-                <Button className='text-black bg-realce'>Filtrar</Button>
-              </AlertDialogCancel>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-
-      <div className='flex-grow'>
+      <div className='flex-grow mt-4'>
         {error ? (
           <p className='text-red-500'>{error}</p>
         ) : surfboards.length > 0 ? (
@@ -136,8 +120,47 @@ const Page: React.FC = () => {
           <p className='text-white'>Nenhuma prancha encontrada.</p>
         )}
       </div>
+
+      <Pagination
+        className="my-4"
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      >
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+            />
+          </PaginationItem>
+          {generatePageNumbers(currentPage, totalPages).map((page, index) => (
+            <PaginationItem key={index}>
+              {page === "..." ? (
+                <span className="text-muted-foreground px-2">...</span>
+              ) : (
+                <PaginationLink
+                  href="#"
+                  onClick={() => handlePageChange(Number(page))}
+                  isActive={currentPage === page}
+                >
+                  {page}
+                </PaginationLink>
+              )}
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+              className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
       <Footer />
-    </div >
+    </div>
   );
 };
 
