@@ -10,9 +10,6 @@ export async function login(email: string, password: string) {
 
         const data = await response.json();
 
-        console.log(data)
-        console.log(data.message)
-
         if (!response.ok) {
             if(response.status === 401 && data.message.includes('Email não verificado')){
                 return { success: false, emailVerified: false, email}

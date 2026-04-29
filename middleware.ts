@@ -7,7 +7,6 @@ export default function middleware(req: NextRequest) {
     const cookieHeader = req.headers.get('cookie') || '';
     const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
     const accessToken = cookies.accessToken;
-    console.log('Middleware Access Token', accessToken);
 
     const publicRoutes = [
         "/",
@@ -34,7 +33,6 @@ export default function middleware(req: NextRequest) {
 
     if (!accessToken && isAuthRoute) {
         if (!pathname.startsWith('/auth/verify-email')) {
-            console.log('Tentando redirecionar de volta e apagar cookie', accessToken);
             req.headers.delete(accessToken)
             return NextResponse.redirect(new URL('/', req.url));
         }

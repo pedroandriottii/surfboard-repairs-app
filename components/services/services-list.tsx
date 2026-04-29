@@ -76,7 +76,8 @@ const ServicesList: React.FC<ServicesListProps> = ({ initialStatus, exibitionMod
         };
 
         fetchServices();
-    }, [user?.role, statusFilter, onEmpty]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.role, statusFilter]);
 
     const formatDate = (date: Date) => {
         const d = new Date(date);

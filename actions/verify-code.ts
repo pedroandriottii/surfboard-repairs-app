@@ -9,8 +9,6 @@ export async function verifyCode(email: string, token: string) {
         });
 
         const data = await response.json();
-        console.log(data);
-        console.log(data.message)
 
         if (!response.ok) {
             throw new Error(data.message || 'Erro ao verificar código.');

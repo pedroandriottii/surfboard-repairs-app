@@ -44,7 +44,6 @@ export function VerifyCodeForm({ email }: { email: string }) {
     });
 
     async function onSubmit(data: z.infer<typeof OtpFormSchema>) {
-        console.log(data)
         setError(undefined);
         setSuccess(undefined);
 

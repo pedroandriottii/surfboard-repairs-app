@@ -62,7 +62,8 @@ const ServiceId = () => {
         if (typeof id === 'string') {
             fetchService();
         }
-    }, [id, fetchService]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     const generateWhatsAppLink = () => {
         if (!service?.phone) return;
@@ -78,14 +79,26 @@ const ServiceId = () => {
     };
 
     const updateStatusHandler = async () => {
+        if (pendingStatus === 'DELIVERED' && !paymentMethod) {
+            toast({
+                title: "Erro",
+                description: "Selecione o método de pagamento antes de entregar.",
+                variant: "destructive",
+            });
+            return;
+        }
         try {
+            const body: { status: 'READY' | 'DELIVERED'; payment_method?: string } = { status: pendingStatus! };
+            if (pendingStatus === 'DELIVERED' && paymentMethod) {
+                body.payment_method = paymentMethod;
+            }
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services/${id}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${Cookies.get('accessToken')}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ status: pendingStatus })
+                body: JSON.stringify(body)
             });
 
             const result = await response.json();

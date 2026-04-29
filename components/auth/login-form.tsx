@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schemas";
@@ -33,6 +33,7 @@ export const LoginForm = () => {
     const [error, setError] = useState<string | undefined>(urlError || "");
     const [success, setSuccess] = useState<string | undefined>("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -43,7 +44,7 @@ export const LoginForm = () => {
         },
     });
 
-    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
         setError("");
         setSuccess("");
 
@@ -52,25 +53,27 @@ export const LoginForm = () => {
             email: values.email.toLowerCase(),
         };
 
-        try {
-            const result = await login(transformedValues.email, transformedValues.password);
+        startTransition(async () => {
+            try {
+                const result = await login(transformedValues.email, transformedValues.password);
 
-            if (result.success) {
-                setSuccess("Login realizado com sucesso!");
-                Cookies.set('accessToken', result.accessToken, { expires: 30, path: '/', sameSite: 'lax' });
-                setUser(result.user);
-                router.push('/home');
-            } else if (!result.emailVerified && result.email) {
-                router.push(`/auth/verify?email=${encodeURIComponent(result.email)}`);
-            } else if (result.error) {
-                setError(result.error);
-            } else {
-                setError("Erro desconhecido ao realizar login.");
+                if (result.success) {
+                    setSuccess("Login realizado com sucesso!");
+                    Cookies.set('accessToken', result.accessToken, { expires: 30, path: '/', sameSite: 'lax' });
+                    setUser(result.user);
+                    router.push('/home');
+                } else if (!result.emailVerified && result.email) {
+                    router.push(`/auth/verify?email=${encodeURIComponent(result.email)}`);
+                } else if (result.error) {
+                    setError(result.error);
+                } else {
+                    setError("Erro desconhecido ao realizar login.");
+                }
+            } catch (error) {
+                console.error("Erro no submit: ", error);
+                setError("Erro ao realizar login.");
             }
-        } catch (error) {
-            console.error("Erro no submit: ", error);
-            setError("Erro ao realizar login.");
-        }
+        });
     };
 
     return (
@@ -138,9 +141,10 @@ export const LoginForm = () => {
 
                 <Button
                     type="submit"
-                    className="w-full bg-realce text-black hover:bg-white font-bold rounded-xl"
+                    disabled={isPending}
+                    className="w-full bg-realce text-black hover:bg-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Entrar
+                    {isPending ? "Entrando..." : "Entrar"}
                 </Button>
             </form>
         </Form>

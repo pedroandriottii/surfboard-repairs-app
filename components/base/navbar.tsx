@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
                 </ListItem>
                 {showSubMenuServices && (
                     <List component="div" disablePadding className='pl-12'>
-                        {user?.role === 'MASTER' || user?.role === 'ADMIN' && (
+                        {(user?.role === 'MASTER' || user?.role === 'ADMIN') && (
                             <ListItem button component={Link} href="/services/create" className='transition-all duration-300'>
                                 <ListItemText primary="Cadastrar" />
                             </ListItem>

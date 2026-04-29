@@ -14,9 +14,7 @@ export async function register(userData: RegisterData): Promise<{ success: strin
             },
             body: JSON.stringify(userData)
         })
-        console.log(response)
         const data = await response.json()
-        console.log(data)
         if (!response.ok) {
             if(response.status === 409) {
                 throw new Error(data.message || 'Email ou telefone já está em uso.')

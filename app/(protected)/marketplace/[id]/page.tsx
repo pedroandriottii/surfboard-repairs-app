@@ -22,7 +22,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 const Page: React.FC = () => {
     const pathName = usePathname();
     const id = pathName.split('/').pop()
-    console.log(id)
     const [surfboard, setSurfboard] = useState<Surfboard | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
@@ -102,9 +101,7 @@ const Page: React.FC = () => {
     };
 
     const handleMarkAsSold = async () => {
-        console.log("Cheguei aqui!");
         try {
-            console.log("Enviado id e price: ", id, price);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surfboards/${id}/sell`, {
                 method: 'PATCH',
                 headers: {
@@ -264,7 +261,6 @@ const Page: React.FC = () => {
                                                 <Button
                                                     variant='secondary'
                                                     className="bg-green-600 text-white py-2 px-4 rounded-lg"
-                                                    onClick={() => console.log("Botão de 'Prancha Vendida' clicado")}
                                                 >
                                                     Prancha Vendida
                                                 </Button>
