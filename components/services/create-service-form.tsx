@@ -305,8 +305,14 @@ export const CreateServiceForm = () => {
                             {isPending && <Progress value={uploadProgress} />}
                             <FormError message={error} />
                             <FormSuccess message={success} />
-                            <Button type="submit" className="w-full bg-realce text-black hover:bg-white" disabled={isPending}>
-                                Cadastrar
+                            <Button type="submit" className="w-full bg-realce text-black hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" disabled={isPending}>
+                                {isPending && (
+                                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                    </svg>
+                                )}
+                                {isPending ? "Cadastrando..." : "Cadastrar"}
                             </Button>
                         </form>
                     </Form>

@@ -13,12 +13,12 @@ import { FormError } from "@/components/form-error";
 import Link from "next/link";
 import { login } from "@/actions/login";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -26,127 +26,159 @@ import Cookies from "js-cookie";
 import { useUser } from "@/context/UserContext";
 
 export const LoginForm = () => {
-    const { setUser } = useUser();
-    const searchParams = useSearchParams();
-    const urlError = searchParams.get("error") === "OAuthAccountNotLinked" ? "Email já em uso!" : "";
+  const { setUser } = useUser();
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email já em uso!"
+      : "";
 
-    const [error, setError] = useState<string | undefined>(urlError || "");
-    const [success, setSuccess] = useState<string | undefined>("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+  const [error, setError] = useState<string | undefined>(urlError || "");
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
-    });
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        setError("");
-        setSuccess("");
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    setError("");
+    setSuccess("");
 
-        const transformedValues = {
-            ...values,
-            email: values.email.toLowerCase(),
-        };
-
-        startTransition(async () => {
-            try {
-                const result = await login(transformedValues.email, transformedValues.password);
-
-                if (result.success) {
-                    setSuccess("Login realizado com sucesso!");
-                    Cookies.set('accessToken', result.accessToken, { expires: 30, path: '/', sameSite: 'lax' });
-                    setUser(result.user);
-                    router.push('/home');
-                } else if (!result.emailVerified && result.email) {
-                    router.push(`/auth/verify?email=${encodeURIComponent(result.email)}`);
-                } else if (result.error) {
-                    setError(result.error);
-                } else {
-                    setError("Erro desconhecido ao realizar login.");
-                }
-            } catch (error) {
-                console.error("Erro no submit: ", error);
-                setError("Erro ao realizar login.");
-            }
-        });
+    const transformedValues = {
+      ...values,
+      email: values.email.toLowerCase(),
     };
 
-    return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        placeholder="exemplo@email.com"
-                                        type="email"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Senha</FormLabel>
-                                <FormControl>
-                                    <div className="relative">
-                                        <Input
-                                            {...field}
-                                            placeholder="******"
-                                            type={showPassword ? "text" : "password"}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute inset-y-0 right-0 flex items-center px-2 focus:outline-none"
-                                        >
-                                            {showPassword ? (
-                                                <VisibilityOffIcon className="w-5 h-5 text-gray-500" />
-                                            ) : (
-                                                <VisibilityIcon className="w-5 h-5 text-gray-500" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </FormControl>
-                                <Button
-                                    size="sm"
-                                    variant="link"
-                                    asChild
-                                    className="px-0 font-normal text-white underline"
-                                >
-                                    <Link href="/auth/forgot-password">Esqueceu a senha?</Link>
-                                </Button>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+    startTransition(async () => {
+      try {
+        const result = await login(
+          transformedValues.email,
+          transformedValues.password,
+        );
 
-                {error && <FormError message={error} />}
+        if (result.success) {
+          setSuccess("Login realizado com sucesso!");
+          Cookies.set("accessToken", result.accessToken, {
+            expires: 30,
+            path: "/",
+            sameSite: "lax",
+          });
+          setUser(result.user);
+          router.push("/home");
+        } else if (!result.emailVerified && result.email) {
+          router.push(`/auth/verify?email=${encodeURIComponent(result.email)}`);
+        } else if (result.error) {
+          setError(result.error);
+        } else {
+          setError("Erro desconhecido ao realizar login.");
+        }
+      } catch (error) {
+        console.error("Erro no submit: ", error);
+        setError("Erro ao realizar login.");
+      }
+    });
+  };
 
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="exemplo@email.com"
+                    type="email"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      placeholder="******"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center px-2 focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon className="w-5 h-5 text-gray-500" />
+                      ) : (
+                        <VisibilityIcon className="w-5 h-5 text-gray-500" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
                 <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="w-full bg-realce text-black hover:bg-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  size="sm"
+                  variant="link"
+                  asChild
+                  className="px-0 font-normal text-white underline"
                 >
-                    {isPending ? "Entrando..." : "Entrar"}
+                  <Link href="/auth/forgot-password">Esqueceu a senha?</Link>
                 </Button>
-            </form>
-        </Form>
-    );
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {error && <FormError message={error} />}
+
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full bg-realce text-black hover:bg-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isPending && (
+            <svg
+              className="animate-spin h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
+            </svg>
+          )}
+          {isPending ? "Entrando..." : "Entrar"}
+        </Button>
+      </form>
+    </Form>
+  );
 };
