@@ -19,18 +19,6 @@ const NotificationDropdown: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useUser();
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications/user/${user?.email}`);
-      const data = await response.json();
-      setNotifications(data);
-      const unread = data.filter((notification: Notification) => !notification.isRead).length;
-      setUnreadCount(unread);
-    } catch (error) {
-      console.error('Erro ao buscar notificações:', error);
-    }
-  };
-
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const markAsRead = async (id: string) => {
@@ -50,8 +38,20 @@ const NotificationDropdown: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!user?.email) return;
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications/user/${user.email}`);
+        const data = await response.json();
+        setNotifications(data);
+        const unread = data.filter((notification: Notification) => !notification.isRead).length;
+        setUnreadCount(unread);
+      } catch (error) {
+        console.error('Erro ao buscar notificações:', error);
+      }
+    };
     fetchNotifications();
-  }, [fetchNotifications]);
+  }, [user?.email]);
 
   return (
     <div className="relative">
